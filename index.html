@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EarnHub</title>
+
+<style>
+body{
+margin:0;
+height:100vh;
+background:#000;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+width:350px;
+background:#111;
+padding:30px;
+border-radius:25px;
+text-align:center;
+box-shadow:0 0 25px cyan;
+}
+
+.logo{
+font-size:40px;
+font-weight:bold;
+color:cyan;
+margin-bottom:25px;
+}
+
+h2{
+color:white;
+}
+
+input{
+width:90%;
+padding:13px;
+margin:8px;
+border-radius:10px;
+border:none;
+}
+
+button{
+width:95%;
+padding:13px;
+margin:10px;
+border:none;
+border-radius:25px;
+background:cyan;
+font-weight:bold;
+}
+
+a{
+color:cyan;
+cursor:pointer;
+}
+
+p{
+color:white;
+}
+
+#loginBox,#dashboard{
+display:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="logo">💰 EarnHub</div>
+
+
+<div id="signupBox">
+
+<h2>Sign Up</h2>
+
+<input id="suser" placeholder="Username">
+
+<input id="semail" placeholder="Email">
+
+<input id="spass" type="password" placeholder="Password">
+
+<button onclick="signup()">Create Account</button>
+
+<p>Already have account?</p>
+<a onclick="showLogin()">Login</a>
+
+</div>
+
+
+
+<div id="loginBox">
+
+<h2>Login</h2>
+
+<input id="luser" placeholder="Username">
+
+<input id="lpass" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+
+<p>
+<a onclick="forgotPassword()">Forgot Password?</a>
+</p>
+
+
+<p>New user?</p>
+<a onclick="showSignup()">Sign Up</a>
+
+</div>
+
+
+
+
+<div id="dashboard">
+
+<h2>Welcome 🎉</h2>
+
+<p id="name"></p>
+
+<button>Deposit</button>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+function signup(){
+
+let user=document.getElementById("suser").value;
+let email=document.getElementById("semail").value;
+let pass=document.getElementById("spass").value;
+
+
+if(user=="" || email=="" || pass==""){
+alert("Fill all fields");
+return;
+}
+
+
+localStorage.setItem("user",user);
+localStorage.setItem("email",email);
+localStorage.setItem("pass",pass);
+
+
+alert("Account Created Successfully");
+
+showLogin();
+
+}
+
+
+
+function login(){
+
+let user=document.getElementById("luser").value;
+let pass=document.getElementById("lpass").value;
+
+
+if(user==localStorage.getItem("user") &&
+pass==localStorage.getItem("pass")){
+
+
+document.getElementById("loginBox").style.display="none";
+
+document.getElementById("dashboard").style.display="block";
+
+document.getElementById("name").innerHTML=
+"Welcome "+user;
+
+
+}else{
+
+alert("Wrong Username or Password");
+
+}
+
+}
+
+
+
+
+function forgotPassword(){
+
+let email=prompt("Enter your email");
+
+
+if(email==localStorage.getItem("email")){
+
+alert("Your Password is: "+localStorage.getItem("pass"));
+
+}else{
+
+alert("Email not found");
+
+}
+
+}
+
+
+
+function showLogin(){
+
+document.getElementById("signupBox").style.display="none";
+
+document.getElementById("loginBox").style.display="block";
+
+}
+
+
+
+function showSignup(){
+
+document.getElementById("loginBox").style.display="none";
+
+document.getElementById("signupBox").style.display="block";
+
+}
+
+
+</script>
+
+
+</body>
+</html>
