@@ -138,6 +138,8 @@ display:none;
 
 <script>
 
+let urlParams = new URLSearchParams(window.location.search);
+let refUser = urlParams.get("ref");
 
 function signup(){
 
@@ -157,7 +159,7 @@ let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
 localStorage.setItem("myReferralCode", myCode);
 localStorage.setItem("email",email);
 localStorage.setItem("pass",pass);
-localStorage.setItem("referral",ref);
+localStorage.setItem("referral",refUser);
 
 alert("Account Created Successfully");
 
