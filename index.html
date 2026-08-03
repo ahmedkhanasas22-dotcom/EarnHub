@@ -144,7 +144,7 @@ function signup(){
 let user=document.getElementById("suser").value;
 let email=document.getElementById("semail").value;
 let pass=document.getElementById("spass").value;
-
+let ref=document.getElementById("sref").value;
 
 if(user=="" || email=="" || pass==""){
 alert("Fill all fields");
@@ -155,7 +155,7 @@ return;
 localStorage.setItem("user",user);
 localStorage.setItem("email",email);
 localStorage.setItem("pass",pass);
-
+localStorage.setItem("referral",ref);
 
 alert("Account Created Successfully");
 
