@@ -190,7 +190,7 @@ display:none;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -229,13 +229,16 @@ window.signup = async function() {
     btn.innerText = "Creating...";
 
     try {
+        // نیا اکاؤنٹ بنانے سے پہلے لوکل سٹوریج کلیئر کر دیں تاکہ پرانا ڈیٹا مٹ جائے
+        localStorage.clear();
+
         let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         let firebaseUser = userCredential.user;
 
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
 
-        // Naye user ka account ban raha hai (Package shuru mein active nahi hoga)
+        // نئے اکاؤنٹ کا بیلنس بالکل 0 سے شروع ہوگا
         await setDoc(doc(db, "users", firebaseUser.uid), {
             username: user,
             email: email,
@@ -244,7 +247,7 @@ window.signup = async function() {
             referral: ref,
             mainBalance: 0,
             totalReferrals: 0,
-            packageActive: false, // Withdrawal unlock ke liye tracking
+            packageActive: false,
             userId: userIdVal,
             role: "user"
         });
@@ -263,7 +266,7 @@ window.signup = async function() {
 
                     await updateDoc(uplineRef, {
                         totalReferrals: currentReferrals + 1,
-                        mainBalance: currentBalance + 50 // Direct main balance mein 50 add honge
+                        mainBalance: currentBalance + 50
                     });
                 });
             }
@@ -311,6 +314,7 @@ window.login = async function() {
         let userName = email.split('@')[0];
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
+        let userBalance = 0;
 
         if (!userDoc.exists()) {
             await setDoc(userDocRef, {
@@ -330,13 +334,16 @@ window.login = async function() {
             userName = data.username || userName;
             myCode = data.myReferralCode || myCode;
             userIdVal = data.userId || userIdVal;
+            userBalance = Number(data.mainBalance || 0);
         }
 
+        // لاگ ان پر یوزر کا اصل ڈیٹا اور بیلنس لوکل سٹوریج میں سیو ہو جائے گا
         localStorage.setItem("userName", userName);
         localStorage.setItem("user", userName);
         localStorage.setItem("myReferralCode", myCode);
         localStorage.setItem("email", email);
         localStorage.setItem("userId", userIdVal);
+        localStorage.setItem("mainBalance", userBalance);
 
         window.location.href = "dashboard.html";
     } catch (error) {
