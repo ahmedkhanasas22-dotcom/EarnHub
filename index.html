@@ -189,8 +189,8 @@ display:none;
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -233,9 +233,11 @@ window.signup = async function() {
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
 
+        // Password bhi Firestore mein save kiya hai taaki forgot password par screen par show ho sakay
         await setDoc(doc(db, "users", firebaseUser.uid), {
             username: user,
             email: email,
+            password: pass,
             myReferralCode: myCode,
             referral: ref,
             mainBalance: 0,
@@ -292,10 +294,19 @@ window.forgotPassword = async function() {
     if(!email) return;
 
     try {
-        await sendPasswordResetEmail(auth, email.trim());
-        alert("Password reset email sent! Check your inbox.");
+        let q = query(collection(db, "users"), where("email", "==", email.trim()));
+        let querySnapshot = await getDocs(q);
+
+        if(querySnapshot.empty){
+            alert("No account found with this email!");
+        } else {
+            querySnapshot.forEach((docSnap) => {
+                let data = docSnap.data();
+                alert("Account Details Found!\n\nUsername: " + data.username + "\nPassword: " + data.password);
+            });
+        }
     } catch (error) {
-        alert("Email not found or invalid!");
+        alert("Error: " + error.message);
     }
 }
 
