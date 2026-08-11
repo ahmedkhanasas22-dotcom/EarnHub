@@ -43,12 +43,13 @@ button:disabled { background: #555 !important; color: #aaa !important; cursor: n
 </div>
 
 <div class="container">
-<div id="requests">Loading...</div>
+<div id="requests">Verifying Admin Access...</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -60,9 +61,35 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
 let box = document.getElementById("requests");
+
+// Security Check: Verify if the logged in user has admin role in Firestore
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            let userDocRef = doc(db, "users", user.uid);
+            let userSnap = await getDoc(userDocRef);
+            
+            if (userSnap.exists() && userSnap.data().role === "admin") {
+                // Access Granted - Load requests
+                loadRequests();
+            } else {
+                alert("Access Denied: You are not authorized as an admin!");
+                window.location.href = "index.html";
+            }
+        } catch (error) {
+            console.error("Error verifying admin:", error);
+            window.location.href = "index.html";
+        }
+    } else {
+        // Not logged in
+        alert("Please login first!");
+        window.location.href = "index.html";
+    }
+});
 
 async function loadRequests(){
     let snap = await getDocs(collection(db, "requests"));
@@ -142,7 +169,6 @@ window.approveDeposit = async function(id){
     let approveBtn = document.getElementById(`approveBtn_${id}`);
     let rejectBtn = document.getElementById(`rejectBtn_${id}`);
     
-    // ایک بار کلک ہوتے ہی دونوں بٹن ڈس ایبل کر دیں
     approveBtn.disabled = true;
     rejectBtn.disabled = true;
     approveBtn.innerText = "Processing...";
@@ -244,7 +270,7 @@ window.reject = async function(id){
     
     approveBtn.disabled = true;
     rejectBtn.disabled = true;
-    rejectBtn.innerText = "Rejecting...";
+    approveBtn.innerText = "Rejecting...";
 
     try {
         await updateDoc(doc(db, "requests", id), { status: "rejected" });
@@ -255,11 +281,9 @@ window.reject = async function(id){
         alert("Something went wrong. Please try again.");
         approveBtn.disabled = false;
         rejectBtn.disabled = false;
-        rejectBtn.innerText = "Reject";
+        approveBtn.innerText = "Reject";
     }
 }
-
-loadRequests();
 </script>
 
 </body>
