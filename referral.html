@@ -151,9 +151,9 @@ onAuthStateChanged(auth, async (user) => {
 
             if (userSnap.exists()) {
                 let data = userSnap.data();
-                globalRefCode = data.myReferralCode || "EarnHub" + user.uid.substring(0, 6);
+                // اب یہ بالکل وہی کوڈ اٹھائے گا جو ڈیش بورڈ استعمال کر رہا ہے
+                globalRefCode = data.myReferralCode || localStorage.getItem("myReferralCode") || "EarnHub" + user.uid.substring(0, 6);
                 
-                // لیول 1 کا کاؤنٹ فائر بیس سے اٹھائیں گے
                 let level1Count = Number(data.level1Count || data.totalReferrals || 0);
                 let totalEarnings = level1Count * 50;
 
@@ -164,26 +164,24 @@ onAuthStateChanged(auth, async (user) => {
             console.log("Error fetching referral data:", err);
         }
     } else {
-        // اگر فائر بیس سے لاگ ان نہ ہو تو لوکل اسٹوریج سے فال بیک
+        globalRefCode = localStorage.getItem("myReferralCode") || localStorage.getItem("userName") || "MuhammedAhmed";
         let localRefs = Number(localStorage.getItem("totalReferrals") || 0);
         document.getElementById("refEarnings").innerText = "Rs. " + (localRefs * 50);
-        globalRefCode = localStorage.getItem("userName") || "MuhammedAhmed";
         renderLevels(localRefs);
     }
 
-    // ریفرل لنک تیار کرنا
+    // اب ڈیش بورڈ اور ریفرل پیج دونوں کا لنک بالکل ایک جیسا بنے گا
     let currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
     let refUrl = window.location.origin + currentPath + "index.html?ref=" + globalRefCode;
     document.getElementById("refLink").innerText = refUrl;
     window.fullRefUrl = refUrl;
 });
 
-// 10 لیولز کا سسٹم رینڈر کرنے کا فنکشن
 function renderLevels(refCount) {
     let levelsContainer = document.getElementById("levelsList");
     levelsContainer.innerHTML = "";
 
-    let requiredMembers = 2; // Level 1 target
+    let requiredMembers = 2;
 
     for (let i = 1; i <= 10; i++) {
         if (i > 1) {
