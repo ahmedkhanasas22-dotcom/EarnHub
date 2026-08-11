@@ -233,7 +233,6 @@ window.signup = async function() {
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
 
-        // Password bhi Firestore mein save kiya hai taaki forgot password par screen par show ho sakay
         await setDoc(doc(db, "users", firebaseUser.uid), {
             username: user,
             email: email,
@@ -257,7 +256,16 @@ window.signup = async function() {
         alert("Account Created Successfully! Please Login.");
         showLogin();
     } catch (error) {
-        alert("Error: " + error.message);
+        if (error.code === 'auth/email-already-in-use') {
+            alert("This email is already registered! Please login.");
+            showLogin();
+        } else if (error.code === 'auth/invalid-email') {
+            alert("Please enter a valid email address!");
+        } else if (error.code === 'auth/weak-password') {
+            alert("Password should be at least 6 characters!");
+        } else {
+            alert("Error: " + error.message);
+        }
     } finally {
         btn.disabled = false;
         btn.innerText = "Create Account";
