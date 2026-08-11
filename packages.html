@@ -196,7 +196,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -212,68 +212,79 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 window.buyPlan = async function(planName, price) {
-    let currentBalance = parseFloat(localStorage.getItem("mainBalance")) || 0;
-    
-    if (currentBalance >= price) {
-        currentBalance -= price;
-        localStorage.setItem("mainBalance", currentBalance);
+    let firebaseUser = auth.currentUser;
+    if (!firebaseUser) {
+        alert("Pehle login karein!");
+        window.location.href = "login.html";
+        return;
+    }
 
-        let firebaseUser = auth.currentUser;
+    try {
+        let userDocRef = doc(db, "users", firebaseUser.uid);
+        let userSnap = await getDoc(userDocRef);
 
-        if (firebaseUser) {
-            try {
-                let userDocRef = doc(db, "users", firebaseUser.uid);
-                let userSnap = await getDoc(userDocRef);
+        if (!userSnap.exists()) {
+            alert("User data nahi mila!");
+            return;
+        }
 
-                if (userSnap.exists()) {
-                    let userData = userSnap.data();
-                    let myReferralUsed = userData.referral; // جس کے لنک سے اس یوزر نے جوائن کیا تھا
-                    let alreadyBoughtPackage = userData.packageActive || false;
+        let userData = userSnap.data();
+        let currentBalance = Number(userData.mainBalance || localStorage.getItem("mainBalance") || 0);
 
-                    // اس یوزر کا اپنا بیلنس اور پیکج سٹیٹس فائر بیس پر اپڈیٹ کریں
-                    await updateDoc(userDocRef, {
-                        mainBalance: currentBalance,
-                        packageActive: true
+        if (currentBalance < price) {
+            alert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.");
+            window.location.href = "deposit.html";
+            return;
+        }
+
+        let alreadyBoughtPackage = userData.packageActive || false;
+        let myReferralUsed = userData.referral; // جس کے لنک سے اس نے جوائن کیا تھا
+
+        let newBalance = currentBalance - price;
+
+        // یوزر کا بیلنس اور پیکج سٹیٹس فائر بیس پر اپڈیٹ کریں (ساتھ میں خریدنے کی تاریخ بھی سیو کریں)
+        await updateDoc(userDocRef, {
+            mainBalance: newBalance,
+            packageActive: true,
+            activePlanName: planName,
+            packageBuyDate: serverTimestamp()
+        });
+
+        // صرف پہلی بار پیکج خریدنے پر اپلائن کے کاؤنٹس بڑھائیں گے (بار بار کاؤنٹ نہیں بڑھے گا)
+        if (!alreadyBoughtPackage && myReferralUsed) {
+            let q = query(collection(db, "users"), where("myReferralCode", "==", myReferralUsed));
+            let querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach(async (uDoc) => {
+                    let uplineData = uDoc.data();
+                    let uplineRef = doc(db, "users", uDoc.id);
+
+                    let currentLevel1 = Number(uplineData.level1Count || uplineData.totalReferrals || 0);
+                    let currentWithdrawCount = Number(uplineData.withdrawActiveCount || 0);
+
+                    // اپلائن کے لیول 1 اور ودڈرا کاؤنٹ میں صرف 1 کا اضافہ ہوگا
+                    await updateDoc(uplineRef, {
+                        level1Count: currentLevel1 + 1,
+                        totalReferrals: currentLevel1 + 1,
+                        withdrawActiveCount: currentWithdrawCount + 1
                     });
-
-                    // اگر اس یوزر نے زندگی میں پہلی بار پیکج خریدا ہے اور اس کا ڈائریکٹ اپلائن موجود ہے
-                    if (!alreadyBoughtPackage && myReferralUsed) {
-                        let q = query(collection(db, "users"), where("myReferralCode", "==", myReferralUsed));
-                        let querySnapshot = await getDocs(q);
-
-                        if (!querySnapshot.empty) {
-                            querySnapshot.forEach(async (uDoc) => {
-                                let uplineData = uDoc.data();
-                                let uplineRef = doc(db, "users", uDoc.id);
-
-                                let currentLevel1 = Number(uplineData.level1Count || uplineData.totalReferrals || 0);
-                                let currentWithdrawCount = Number(uplineData.withdrawActiveCount || 0);
-
-                                // صرف ڈائریکٹ اپلائن کے لیول 1 اور ودھڈرا کاؤنٹ میں +1 ہو جائے گا
-                                await updateDoc(uplineRef, {
-                                    level1Count: currentLevel1 + 1,
-                                    totalReferrals: currentLevel1 + 1,
-                                    withdrawActiveCount: currentWithdrawCount + 1
-                                });
-                            });
-                        }
-                    }
-                }
-            } catch (err) {
-                console.log("Firebase Update Error: ", err);
+                });
             }
         }
 
-        // Save transaction log locally
+        // لوکل سٹوریج اپڈیٹ کریں
+        localStorage.setItem("mainBalance", newBalance);
         let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
         transList.unshift({type: "Package Purchase", amount: -price, details: planName, date: new Date().toLocaleString()});
         localStorage.setItem('allTransactions', JSON.stringify(transList));
 
-        alert(planName + " successfully buy ho gaya hai! Rs. " + price + " aapke balance se deduct ho gaye hain.");
+        alert(planName + " successfully buy ho gaya hai! Rs. " + price + " aapke balance سے کٹ گئے ہیں۔");
         window.location.href = "dashboard.html";
-    } else {
-        alert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.");
-        window.location.href = "deposit.html";
+
+    } catch (err) {
+        console.log("Firebase Error:", err);
+        alert("Kuch masla aa gaya hai, dobara koshish karein.");
     }
 }
 </script>
