@@ -43,7 +43,7 @@ button:disabled { background: #555 !important; color: #aaa !important; cursor: n
 </div>
 
 <div class="container">
-    <!-- Username & Password Login Box -->
+    <!-- Login Box -->
     <div id="loginBox" class="card">
         <h3>🔐 Admin Login</h3>
         <div class="admin-input-group">
@@ -54,12 +54,12 @@ button:disabled { background: #555 !important; color: #aaa !important; cursor: n
             <label>Password</label>
             <input type="password" id="adminPass" class="admin-input" placeholder="Enter Password">
         </div>
-        <button class="btn-approve" onclick="verifyAdminLogin()" style="margin-top:10px;">Login to Panel</button>
+        <button class="btn-approve" onclick="verifyAdminLogin()">Login</button>
     </div>
 
-    <!-- Actual Requests Container (Hidden until login) -->
+    <!-- Original Requests Container -->
     <div id="requestsContainer" style="display: none;">
-        <div id="requests">Loading requests...</div>
+        <div id="requests">Loading...</div>
     </div>
 </div>
 
@@ -81,22 +81,18 @@ const db = getFirestore(app);
 
 let box = document.getElementById("requests");
 
-// Check if already logged in during this browser session
+// Check if already logged in during this session
 if(sessionStorage.getItem("adminLoggedIn") === "true") {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("requestsContainer").style.display = "block";
     loadRequests();
 }
 
-// Custom Username & Password Verification Function
 window.verifyAdminLogin = function() {
     let u = document.getElementById("adminUser").value.trim();
     let p = document.getElementById("adminPass").value.trim();
 
-    let correctUser = "Ahmedkhan";
-    let correctPass = "Ahmedkhanasas21";
-
-    if(u === correctUser && p === correctPass) {
+    if(u === "Ahmedkhan" && p === "Ahmedkhanasas21") {
         sessionStorage.setItem("adminLoggedIn", "true");
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("requestsContainer").style.display = "block";
@@ -184,6 +180,7 @@ window.approveDeposit = async function(id){
     let approveBtn = document.getElementById(`approveBtn_${id}`);
     let rejectBtn = document.getElementById(`rejectBtn_${id}`);
     
+    // ایک بار کلک होते ही दोनों बटन ڈس ایبل کر دیں
     approveBtn.disabled = true;
     rejectBtn.disabled = true;
     approveBtn.innerText = "Processing...";
