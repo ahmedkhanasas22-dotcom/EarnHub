@@ -24,7 +24,7 @@ button:disabled { background: #555 !important; color: #aaa !important; cursor: n
 .screenshot-preview { width: 100%; max-height: 200px; object-fit: contain; margin-top: 10px; border-radius: 8px; border: 1px solid #333; background: #000; }
 .admin-input-group { margin-top: 12px; }
 .admin-input-group label { display: block; font-size: 12px; color: #00ffff; margin-bottom: 5px; }
-.admin-input { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #00ffff; border-radius: 10px; color: white; font-size: 14px; outline: none; }
+.admin-input { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #00ffff; border-radius: 10px; color: white; font-size: 14px; outline: none; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -43,13 +43,29 @@ button:disabled { background: #555 !important; color: #aaa !important; cursor: n
 </div>
 
 <div class="container">
-<div id="requests">Verifying Admin Access...</div>
+    <!-- Username & Password Login Box -->
+    <div id="loginBox" class="card">
+        <h3>🔐 Admin Login</h3>
+        <div class="admin-input-group">
+            <label>Username</label>
+            <input type="text" id="adminUser" class="admin-input" placeholder="Enter Username">
+        </div>
+        <div class="admin-input-group">
+            <label>Password</label>
+            <input type="password" id="adminPass" class="admin-input" placeholder="Enter Password">
+        </div>
+        <button class="btn-approve" onclick="verifyAdminLogin()" style="margin-top:10px;">Login to Panel</button>
+    </div>
+
+    <!-- Actual Requests Container (Hidden until login) -->
+    <div id="requestsContainer" style="display: none;">
+        <div id="requests">Loading requests...</div>
+    </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -61,35 +77,34 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
 let box = document.getElementById("requests");
 
-// Security Check: Verify if the logged in user has admin role in Firestore
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        try {
-            let userDocRef = doc(db, "users", user.uid);
-            let userSnap = await getDoc(userDocRef);
-            
-            if (userSnap.exists() && userSnap.data().role === "admin") {
-                // Access Granted - Load requests
-                loadRequests();
-            } else {
-                alert("Access Denied: You are not authorized as an admin!");
-                window.location.href = "index.html";
-            }
-        } catch (error) {
-            console.error("Error verifying admin:", error);
-            window.location.href = "index.html";
-        }
+// Check if already logged in during this browser session
+if(sessionStorage.getItem("adminLoggedIn") === "true") {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("requestsContainer").style.display = "block";
+    loadRequests();
+}
+
+// Custom Username & Password Verification Function
+window.verifyAdminLogin = function() {
+    let u = document.getElementById("adminUser").value.trim();
+    let p = document.getElementById("adminPass").value.trim();
+
+    let correctUser = "Ahmedkhan";
+    let correctPass = "Ahmedkhanasas21";
+
+    if(u === correctUser && p === correctPass) {
+        sessionStorage.setItem("adminLoggedIn", "true");
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("requestsContainer").style.display = "block";
+        loadRequests();
     } else {
-        // Not logged in
-        alert("Please login first!");
-        window.location.href = "index.html";
+        alert("Ghalat Username ya Password hai!");
     }
-});
+}
 
 async function loadRequests(){
     let snap = await getDocs(collection(db, "requests"));
