@@ -28,6 +28,7 @@ body{ margin:0; max-width:430px; margin:auto; font-family:Arial; background:#050
 .return-value { color: #00ff99 !important; }
 
 button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25px; background:linear-gradient(135deg,#00ffff,#1a73e8); font-weight:bold; font-size:14px; cursor:pointer; color:#000; box-shadow: 0 4px 10px rgba(0,255,255,0.2); }
+button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow: none; }
 .back-btn { display: inline-block; margin-bottom: 10px; color: #00ffff; font-size: 13px; text-decoration: none; font-weight: bold; }
 </style>
 </head>
@@ -56,7 +57,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 440</div></div>
     </div>
-    <button onclick="buyPlan('Plan 01', 220, 14.67)">Invest Now</button>
+    <button id="btn_Plan_01" onclick="buyPlan('Plan 01', 220, 14.67, 'btn_Plan_01')">Invest Now</button>
 </div>
 
 <!-- Plan 02 -->
@@ -68,7 +69,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 900</div></div>
     </div>
-    <button onclick="buyPlan('Plan 02', 450, 30.00)">Invest Now</button>
+    <button id="btn_Plan_02" onclick="buyPlan('Plan 02', 450, 30.00, 'btn_Plan_02')">Invest Now</button>
 </div>
 
 <!-- Plan 03 -->
@@ -80,7 +81,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 1,700</div></div>
     </div>
-    <button onclick="buyPlan('Plan 03', 850, 56.67)">Invest Now</button>
+    <button id="btn_Plan_03" onclick="buyPlan('Plan 03', 850, 56.67, 'btn_Plan_03')">Invest Now</button>
 </div>
 
 <!-- Plan 04 -->
@@ -92,7 +93,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 3,300</div></div>
     </div>
-    <button onclick="buyPlan('Plan 04', 1650, 110.00)">Invest Now</button>
+    <button id="btn_Plan_04" onclick="buyPlan('Plan 04', 1650, 110.00, 'btn_Plan_04')">Invest Now</button>
 </div>
 
 <!-- Plan 05 -->
@@ -104,7 +105,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 6,500</div></div>
     </div>
-    <button onclick="buyPlan('Plan 05', 3250, 216.67)">Invest Now</button>
+    <button id="btn_Plan_05" onclick="buyPlan('Plan 05', 3250, 216.67, 'btn_Plan_05')">Invest Now</button>
 </div>
 
 <!-- Plan 06 -->
@@ -116,7 +117,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 12,900</div></div>
     </div>
-    <button onclick="buyPlan('Plan 06', 6450, 430.00)">Invest Now</button>
+    <button id="btn_Plan_06" onclick="buyPlan('Plan 06', 6450, 430.00, 'btn_Plan_06')">Invest Now</button>
 </div>
 
 </div>
@@ -124,7 +125,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -139,13 +140,15 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-window.buyPlan = async function(planName, price, dailyEarn) {
+window.buyPlan = async function(planName, price, dailyEarn, btnId) {
     let firebaseUser = auth.currentUser;
     if (!firebaseUser) {
         alert("Pehle login karein!");
         window.location.href = "login.html";
         return;
     }
+
+    let actionBtn = document.getElementById(btnId);
 
     try {
         let userDocRef = doc(db, "users", firebaseUser.uid);
@@ -157,19 +160,17 @@ window.buyPlan = async function(planName, price, dailyEarn) {
         }
 
         let userData = userSnap.data();
-
-        // 1. مائی ایکٹیو پیکجز کی لسٹ حاصل کریں (جس میں ایک ساتھ ملٹیپل پیکجز آ سکتے ہیں)
         let activePackages = userData.activePackages || [];
 
-        // چیک کریں کہ کیا یہی مخصوص (Specific) پیکج پہلے سے ایکٹیو ہے یا نہیں
+        // چیک کریں کہ کیا یہی مخصوص پیکج پہلے سے ایکٹیو ہے
         let existingPlan = activePackages.find(p => p.planName === planName && p.status === "active");
 
         if (existingPlan) {
-            alert("Aapka " + planName + " pehle se active hai! Pehle is package ke days complete karein, phir yeh dobara buy hoga.");
+            alert("Aapka " + planName + " pehle سے active hai! Pehle is package ke days complete karein, phir yeh dobara buy hoga.");
             return;
         }
 
-        // 2. بیلنس چیک کریں (فائر بیس اور لوکل سٹوریج میں سے بڑا بیلنس)
+        // بیلنس چیک کریں
         let firestoreBal = Number(userData.mainBalance || 0);
         let localBal = Number(localStorage.getItem("mainBalance") || 0);
         let currentBalance = Math.max(firestoreBal, localBal);
@@ -180,9 +181,14 @@ window.buyPlan = async function(planName, price, dailyEarn) {
             return;
         }
 
+        // کلک ہوتے ہی بٹن کو ڈس ایبل کریں
+        if (actionBtn) {
+            actionBtn.disabled = true;
+            actionBtn.innerText = "Processing...";
+        }
+
         let newBalance = currentBalance - price;
 
-        // 3. نیا پیکج ابجیکٹ بنائیں (جو کلیم باکس میں ڈیز اور کلیم کاؤنٹ سنبھالے گا)
         let newPackageData = {
             planName: planName,
             price: price,
@@ -193,14 +199,11 @@ window.buyPlan = async function(planName, price, dailyEarn) {
             startDate: new Date().toISOString()
         };
 
-        // لسٹ میں نیا پیکج ایڈ کریں
         activePackages.push(newPackageData);
 
-        // 4. چیک کریں کہ کیا اس یوزر نے زندگی میں کبھی پہلے کوئی پیکج بھی خریدا تھا؟
         let hasEverBoughtBefore = userData.hasBoughtAnyPackage || false;
         let myReferralUsed = userData.referral;
 
-        // فائر بیس اپڈیٹ ابجیکٹ
         let updateData = {
             mainBalance: newBalance,
             activePackages: activePackages,
@@ -209,7 +212,7 @@ window.buyPlan = async function(planName, price, dailyEarn) {
 
         await updateDoc(userDocRef, updateData);
 
-        // 5. ریفرل اور ودڈرا کاؤنٹ: صرف اور صرف زندگی کی پہلی خریداری (First Purchase) پر بڑھے گا!
+        // ریفرل کاؤنٹ اپڈیٹ
         if (!hasEverBoughtBefore && myReferralUsed) {
             let q = query(collection(db, "users"), where("myReferralCode", "==", myReferralUsed));
             let querySnapshot = await getDocs(q);
@@ -231,7 +234,7 @@ window.buyPlan = async function(planName, price, dailyEarn) {
             }
         }
 
-        // لوکل سٹوریج اپڈیٹ کریں
+        // لوکل سٹوریج اپڈیٹ
         localStorage.setItem("mainBalance", newBalance);
         let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
         transList.unshift({type: "Package Purchase", amount: -price, details: planName, date: new Date().toLocaleString()});
@@ -243,6 +246,10 @@ window.buyPlan = async function(planName, price, dailyEarn) {
     } catch (err) {
         console.log("Firebase Error:", err);
         alert("Kuch masla aa gaya hai, dobara koshish karein.");
+        if (actionBtn) {
+            actionBtn.disabled = false;
+            actionBtn.innerText = "Invest Now";
+        }
     }
 }
 </script>
