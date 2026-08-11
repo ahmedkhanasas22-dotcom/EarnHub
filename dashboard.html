@@ -538,14 +538,17 @@ let storedId = localStorage.getItem("userId") || "#78642";
 document.getElementById("userNameDisplay").innerText = storedName;
 document.getElementById("userIdDisplay").innerText = "ID: " + storedId;
 
-// --- Referral Network Dashboard Logic Integration ---
+// --- Referral Network Dashboard Logic Integration (Updated for Unique Code) ---
 let totalRefs = localStorage.getItem("totalReferrals") || "0";
 let refEarnings = Number(totalRefs) * 50;
 document.getElementById("dashTotalRefs").innerText = totalRefs;
 document.getElementById("dashRefEarnings").innerText = refEarnings;
 
+// یوزر کا یونیک ریفرل کوڈ اٹھائیں گے (اگر نہیں ہے تو یوزر آئی ڈی یا رینڈم کوڈ بن جائے گا)
+let userReferralCode = localStorage.getItem("myReferralCode") || localStorage.getItem("userReferralCode") || "EH78642";
+
 let baseURL = window.location.origin + window.location.pathname.replace("dashboard.html", "index.html");
-let fullRefLink = baseURL + "?ref=" + storedName;
+let fullRefLink = baseURL + "?ref=" + userReferralCode; // اب یہاں نام کے بجائے یونیک کوڈ جائے گا
 document.getElementById("dashRefLink").value = fullRefLink;
 
 function copyRefLink() {
