@@ -205,7 +205,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// یو آر ایل سے ریفرل پکڑنا[span_1](start_span)[span_1](end_span)
 let urlParams = new URLSearchParams(window.location.search);
 let refUser = urlParams.get("ref");
 if(refUser) {
@@ -228,14 +227,12 @@ window.signup = async function() {
     btn.innerText = "Creating...";
 
     try {
-        // Firebase Authentication se account banana (Duplicate email automatically block hogi)
         let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         let firebaseUser = userCredential.user;
 
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
 
-        // Firestore database mein user data save karna (Role default user rahega)
         await setDoc(doc(db, "users", firebaseUser.uid), {
             username: user,
             email: email,
@@ -244,10 +241,9 @@ window.signup = async function() {
             mainBalance: 0,
             totalReferrals: ref ? 1 : 0,
             userId: userIdVal,
-            role: "user" // Yahan se aap baad mein Firebase mein isay "admin" kar sakenge
+            role: "user"
         });
 
-        // LocalStorage mein bhi save rakhna taaki dashboard ki purani working disturb na ho
         localStorage.setItem("userName", user);
         localStorage.setItem("user", user);
         localStorage.setItem("myReferralCode", myCode);
@@ -282,7 +278,6 @@ window.login = async function() {
     try {
         await signInWithEmailAndPassword(auth, email, pass);
         localStorage.setItem("email", email);
-        // لاگ ان کامیاب ہونے پر سیدھا آپ کا اصل ڈیش بورڈ کھل جائے گا[span_2](start_span)[span_2](end_span)
         window.location.href = "dashboard.html";
     } catch (error) {
         alert("Wrong Email or Password!");
