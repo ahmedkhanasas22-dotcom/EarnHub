@@ -210,7 +210,6 @@ let refUser = urlParams.get("ref");
 if(refUser) {
     let refInput = document.getElementById("sref");
     refInput.value = refUser;
-    // Yeh ensure karega ke referral name completely locked rahe aur koi change na kar sake
     refInput.setAttribute("readonly", true);
 }
 
@@ -218,7 +217,7 @@ window.signup = async function() {
     let user = document.getElementById("suser").value.trim();
     let email = document.getElementById("semail").value.trim();
     let pass = document.getElementById("spass").value.trim();
-    let ref = document.getElementById("sref").value.trim();
+    let ref = document.getElementById("sref").value.trim(); // Yeh ab Unique Referral Code (e.g. EH1234) hoga
     let btn = document.getElementById("signupBtn");
 
     if(user === "" || email === "" || pass === ""){
@@ -236,7 +235,6 @@ window.signup = async function() {
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
 
-        // Naye user ka account ban raha hai, iska apna initial balance aur referrals 0 honge
         await setDoc(doc(db, "users", firebaseUser.uid), {
             username: user,
             email: email,
@@ -249,16 +247,16 @@ window.signup = async function() {
             role: "user"
         });
 
-        // Agar referral code diya gaya hai, toh us Upline (Old Member) ko dhوند کر uska referral count aur commission update karein
+        // Ab hum username ke bajaye unique "myReferralCode" se upline ko talash karenge taake naam milne par bhi koi ghalti na ho
         if(ref) {
-            let q = query(collection(db, "users"), where("username", "==", ref));
+            let q = query(collection(db, "users"), where("myReferralCode", "==", ref));
             let querySnapshot = await getDocs(q);
             if(!querySnapshot.empty) {
                 querySnapshot.forEach(async (uDoc) => {
                     let uplineRef = doc(db, "users", uDoc.id);
                     await updateDoc(uplineRef, {
                         totalReferrals: increment(1),
-                        mainBalance: increment(50) // Rs. 50 referral bonus sirf old member ko milega
+                        mainBalance: increment(50) // Rs. 50 bonus sirf sahi code wale old member ko milega
                     });
                 });
             }
