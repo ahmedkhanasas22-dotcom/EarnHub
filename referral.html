@@ -118,26 +118,68 @@ Copy Referral Link
 <p style="font-size: 11px; color: #aaa; margin-bottom: 15px;">Package purchase ke baad members count honge</p>
 
 <div class="levels-container" id="levelsList">
-    <!-- JavaScript ke zariye 10 levels yahan dynamically generate honge -->
+    <!-- Firebase se data aane ke baad yahan levels dynamically generate honge -->
 </div>
 </div>
 </div>
 
-<script>
-let userName = localStorage.getItem("userName") || localStorage.getItem("user") || "MuhammedAhmed";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ریفرل لنک تیار کرنا[span_1](start_span)[span_1](end_span)
-let currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-let refUrl = window.location.origin + currentPath + "index.html?ref=" + userName;
-document.getElementById("refLink").innerText = refUrl;
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
 
-let totalRefs = Number(localStorage.getItem("totalReferrals") || 0);
-let totalEarnings = totalRefs * 50;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-document.getElementById("refEarnings").innerText = "Rs. " + totalEarnings;
+let globalRefCode = "";
 
-// 10 لیولز کا سسٹم
-function renderLevels() {
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            let userRef = doc(db, "users", user.uid);
+            let userSnap = await getDoc(userRef);
+
+            if (userSnap.exists()) {
+                let data = userSnap.data();
+                globalRefCode = data.myReferralCode || "EarnHub" + user.uid.substring(0, 6);
+                
+                // لیول 1 کا کاؤنٹ فائر بیس سے اٹھائیں گے
+                let level1Count = Number(data.level1Count || data.totalReferrals || 0);
+                let totalEarnings = level1Count * 50;
+
+                document.getElementById("refEarnings").innerText = "Rs. " + totalEarnings;
+                renderLevels(level1Count);
+            }
+        } catch (err) {
+            console.log("Error fetching referral data:", err);
+        }
+    } else {
+        // اگر فائر بیس سے لاگ ان نہ ہو تو لوکل اسٹوریج سے فال بیک
+        let localRefs = Number(localStorage.getItem("totalReferrals") || 0);
+        document.getElementById("refEarnings").innerText = "Rs. " + (localRefs * 50);
+        globalRefCode = localStorage.getItem("userName") || "MuhammedAhmed";
+        renderLevels(localRefs);
+    }
+
+    // ریفرل لنک تیار کرنا
+    let currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    let refUrl = window.location.origin + currentPath + "index.html?ref=" + globalRefCode;
+    document.getElementById("refLink").innerText = refUrl;
+    window.fullRefUrl = refUrl;
+});
+
+// 10 لیولز کا سسٹم رینڈر کرنے کا فنکشن
+function renderLevels(refCount) {
     let levelsContainer = document.getElementById("levelsList");
     levelsContainer.innerHTML = "";
 
@@ -148,7 +190,7 @@ function renderLevels() {
             requiredMembers *= 2;
         }
 
-        let isCompleted = totalRefs >= requiredMembers;
+        let isCompleted = refCount >= requiredMembers;
         let statusClass = isCompleted ? "status-completed" : "status-pending";
         let statusText = isCompleted ? "Completed" : "Locked";
 
@@ -159,7 +201,7 @@ function renderLevels() {
                     <span style="font-size:11px; color:#aaa;">Target: ${requiredMembers} Active Members</span>
                 </div>
                 <div>
-                    <span style="font-size:12px; margin-right:8px;">${Math.min(totalRefs, requiredMembers)}/${requiredMembers}</span>
+                    <span style="font-size:12px; margin-right:8px;">${Math.min(refCount, requiredMembers)}/${requiredMembers}</span>
                     <span class="level-status ${statusClass}">${statusText}</span>
                 </div>
             </div>
@@ -168,11 +210,11 @@ function renderLevels() {
     }
 }
 
-renderLevels();
-
-function copyLink() {
-    navigator.clipboard.writeText(refUrl);
-    alert("Referral link copied to clipboard!");
+window.copyLink = function() {
+    if (window.fullRefUrl) {
+        navigator.clipboard.writeText(window.fullRefUrl);
+        alert("Referral link copied to clipboard!");
+    }
 }
 </script>
 
