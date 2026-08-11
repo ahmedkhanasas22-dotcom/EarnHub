@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EarnHub - Deposit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{ box-sizing:border-box; user-select: none; }
+body{
+margin:0;
+max-width:430px;
+margin:auto;
+font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background:#0b0f19;
+color:white;
+min-height:100vh;
+padding-bottom: 50px;
+transition: background 0.3s, color 0.3s;
+position: relative;
+overflow-x: hidden;
+}
+
+body.light-theme { background: #f4f7f6; color: #111; }
+body.light-theme .bank-card, body.light-theme .payment-box {
+background: #ffffff; color: #111; border-color: #ddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+body.light-theme .unique-text h1 { color: #111; }
+
+.header{ position:relative; text-align:center; padding:15px 10px 5px 10px; }
+
+.unique-logo{ display:flex; align-items:center; justify-content:center; gap:16px; font-family:Arial,sans-serif; margin: 10px 0; }
+.unique-icon{ width:95px; height:95px; border-radius:50%; background: linear-gradient(135deg,#00ffff,#0048ff); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 35px #00ffff; }
+.eh-symbol{ width:68px; height:68px; border-radius:50%; background:#050505; display:flex; align-items:center; justify-content:center; color:#ffd700; font-size:24px; font-weight:900; border:3px solid #ffd700; }
+.unique-text h1{ margin:0; font-size:36px; font-weight:900; color:white; text-align: left; }
+.unique-text h1 span{ color:#00ffff; }
+.unique-text p{ margin:5px 0 0 0; color:#ffd700; font-size:10px; letter-spacing:2px; text-align: left; }
+
+.container{ padding:10px 15px; }
+.section-title { font-size: 15px; font-weight: bold; color: #00ffff; margin: 15px 0 10px 0; }
+
+.payment-methods-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+.method-card {
+background: #161b22; border: 2px solid #30363d; border-radius: 14px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.method-card.active { border-color: #00ffff; background: rgba(0,255,255,0.05); }
+.method-logo-img { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; background: #ffffff; padding: 3px; }
+.method-card h3 { margin: 0; font-size: 14px; color: white; }
+body.light-theme .method-card { background: #ffffff; color: #111; border-color: #ccc; }
+body.light-theme .method-card h3 { color: #111; }
+
+.payment-box {
+background: #161b22; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; display: none; margin-top: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.detail-row { margin-bottom: 12px; }
+.detail-label { font-size: 12px; color: #8b949e; margin-bottom: 4px; }
+.detail-value-box {
+display: flex; justify-content: space-between; align-items: center; background: #0b0f19; padding: 10px 14px; border-radius: 10px; border: 1px solid #30363d; font-size: 14px; font-weight: bold; color: #00ffff;
+}
+body.light-theme .detail-value-box { background: #f0f4f9; color: #111; border-color: #ccc; }
+.copy-btn { background: #1a73e8; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; }
+
+.form-group { margin-top: 12px; }
+.form-group label { display: block; font-size: 12px; color: #8b949e; margin-bottom: 5px; }
+.form-control { width: 100%; padding: 12px 14px; background: #0b0f19; border: 1px solid #30363d; border-radius: 10px; color: white; font-size: 14px; outline: none; }
+body.light-theme .form-control { background: #ffffff; color: #111; border-color: #ccc; }
+
+.upload-box { border: 2px dashed #30363d; border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; background: #0b0f19; margin-top: 5px; color: #8b949e; font-size: 13px; }
+body.light-theme .upload-box { background: #f0f4f9; border-color: #ccc; color: #555; }
+
+.submit-btn {
+width: 100%; background: linear-gradient(135deg, #00ffff, #1a73e8); color: #000; font-weight: bold; border: none; padding: 14px; border-radius: 12px; font-size: 15px; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,255,255,0.3);
+}
+.submit-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; box-shadow: none; }
+
+.alert-msg { padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; text-align: center; display: none; }
+.alert-error { background: rgba(255,0,0,0.2); color: #ff4d4d; border: 1px solid #ff4d4d; }
+.alert-success { background: rgba(0,255,0,0.2); color: #00ff00; border: 1px solid #00ff00; }
+.back-btn { display: inline-block; margin-bottom: 10px; color: #00ffff; font-size: 13px; text-decoration: none; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="unique-logo">
+    <div class="unique-icon"><div class="eh-symbol">E↗H</div></div>
+    <div class="unique-text">
+        <h1>Earn<span>Hub</span></h1>
+        <p>SMART MONEY NETWORK</p>
+    </div>
+</div>
+</div>
+
+<div class="container">
+    <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+    <div class="section-title">Select Payment Method</div>
+    
+    <div class="payment-methods-grid">
+        <div class="method-card" onclick="selectMethod('easypaisa', event)">
+            <img src="images/images (1) (3).jpeg" class="method-logo-img" onerror="this.style.display='none'">
+            <h3>Easypaisa</h3>
+        </div>
+        <div class="method-card" onclick="selectMethod('jazzcash', event)">
+            <img src="images/images (1) (4).jpeg" class="method-logo-img" onerror="this.style.display='none'">
+            <h3>JazzCash</h3>
+        </div>
+    </div>
+
+    <div class="payment-box" id="paymentBox">
+        <div id="alertBox" class="alert-msg"></div>
+        
+        <div class="detail-row">
+            <div class="detail-label" id="accNameLabel">Account Name</div>
+            <div class="detail-value-box">
+                <span id="accountNameText">Muhammad Ahmed Javed</span>
+                <button class="copy-btn" onclick="copyText('accountNameText')">Copy</button>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">IBAN / Account Number</div>
+            <div class="detail-value-box">
+                <span id="ibanText">PK25TMFB0000000057179544</span>
+                <button class="copy-btn" onclick="copyText('ibanText')">Copy</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Enter Amount (PKR)</label>
+            <input type="number" id="depositAmount" class="process-control form-control">
+        </div>
+
+        <div class="form-group">
+            <label>TRX / TID Number</label>
+            <input type="text" id="trxId" class="form-control" placeholder="Enter transaction ID">
+        </div>
+
+        <div class="form-group">
+            <label>Upload Screenshot</label>
+            <div class="upload-box" onclick="document.getElementById('screenshotFile').click()">
+                <span id="fileLabel">📁 Click to select screenshot</span>
+            </div>
+            <input type="file" id="screenshotFile" style="display: none;" accept="image/*" onchange="handleFileSelect(event)">
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitDeposit()">Confirm & Submit</button>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let selectedGateway = "";
+let uploadedImageBase64 = "";
+
+window.selectMethod = function(method, event) {
+    selectedGateway = method;
+    document.querySelectorAll('.method-card').forEach(card => card.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    
+    let box = document.getElementById('paymentBox');
+    box.style.display = 'block';
+    
+    let nameLabel = document.getElementById('accNameLabel');
+    if(method === 'easypaisa') {
+        nameLabel.innerText = "Easypaisa Account Name";
+    } else {
+        nameLabel.innerText = "JazzCash Account Name";
+    }
+}
+
+window.copyText = function(elementId) {
+    let text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text);
+    alert("Copied: " + text);
+}
+
+window.handleFileSelect = function(event) {
+    let file = event.target.files[0];
+    if(file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImageBase64 = e.target.result;
+            document.getElementById('fileLabel').innerText = "Selected: " + file.name;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+window.submitDeposit = async function() {
+    let amountVal = document.getElementById('depositAmount').value.trim();
+    let amount = parseFloat(amountVal);
+    let trx = document.getElementById('trxId').value.trim();
+    let username = localStorage.getItem("userName") || localStorage.getItem("name") || "Muhammed Ahmed";
+    let submitBtn = document.getElementById('submitBtn');
+    
+    if(isNaN(amount) || amount <= 0 || !trx) {
+        showAlert("Barah kar ke theek amount aur TRX/TID mukammal darj karein!", "error");
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+
+    try {
+        await addDoc(collection(db, "requests"), {
+            type: "Deposit",
+            username: username,
+            method: selectedGateway.toUpperCase(),
+            amount: amount,
+            transactionId: trx,
+            screenshot: uploadedImageBase64,
+            status: "pending",
+            date: new Date().toLocaleString()
+        });
+
+        let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
+        transList.unshift({type: "Deposit (Pending)", amount: amount, details: selectedGateway.toUpperCase(), date: new Date().toLocaleString()});
+        localStorage.setItem('allTransactions', JSON.stringify(transList));
+
+        showAlert("✅ Your request has been sent successfully! Admin will review and approve it.", "success");
+        
+        document.getElementById('depositAmount').value = "";
+        document.getElementById('trxId').value = "";
+        document.getElementById('screenshotFile').value = "";
+        document.getElementById('fileLabel').innerText = "📁 Click to select screenshot";
+        uploadedImageBase64 = "";
+
+    } catch (error) {
+        console.error(error);
+        showAlert("Error submitting request. Please try again.", "error");
+    } finally {
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Confirm & Submit";
+        }, 3000);
+    }
+}
+
+function showAlert(message, type) {
+    let alertBox = document.getElementById('alertBox');
+    alertBox.style.display = "block";
+    alertBox.innerText = message;
+    if(type === "error") {
+        alertBox.className = "alert-msg alert-error";
+    } else {
+        alertBox.className = "alert-msg alert-success";
+    }
+}
+</script>
+</body>
+</html>

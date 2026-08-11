@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EarnHub Claim</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #050505;
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            max-width: 430px;
+            margin: auto;
+        }
+        
+        .unique-logo{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:14px;
+            font-family:Arial,sans-serif;
+            margin: 10px 0;
+        }
+
+        .unique-icon{
+            width:60px;
+            height:60px;
+            border-radius:50%;
+            background: linear-gradient(135deg,#00ffff,#0048ff);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .eh-symbol{
+            width:44px;
+            height:44px;
+            border-radius:50%;
+            background:#050505;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#ffd700;
+            font-size:16px;
+            font-weight:900;
+            border:2px solid #ffd700;
+        }
+
+        .unique-text h1{
+            margin:0;
+            font-size:24px;
+            font-weight:900;
+            color:white;
+            text-align: left;
+        }
+
+        .unique-text h1 span{
+            color:#00ffff;
+        }
+
+        .unique-text p{
+            margin:2px 0 0 0;
+            color:#ffd700;
+            font-size:8px;
+            letter-spacing:1.5px;
+            text-align: left;
+        }
+
+        .container {
+            width: 100%;
+            background: #111;
+            border-radius: 15px;
+            padding: 12px;
+            box-shadow: 0 0 12px cyan;
+        }
+        .section-heading {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #00ffff;
+        }
+        .pkg-section {
+            background: #161f2d;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #00ffff;
+        }
+        .day-card {
+            background: #1c2638;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #333;
+        }
+        .day-info h4 {
+            font-size: 14px;
+            color: #fff;
+            margin: 0;
+        }
+        .day-info p {
+            font-size: 12px;
+            color: #00ff99;
+            margin: 2px 0 0 0;
+        }
+        .btn-action{
+            background:#00ffff;
+            color:#000;
+            border:none;
+            padding:6px 12px;
+            border-radius:15px;
+            font-weight:bold;
+            font-size:11px;
+            cursor:pointer;
+        }
+        .status-collected {
+            color: #00ff99;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .status-expired {
+            color: #ff4d4d;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .status-locked {
+            color: #f39c12;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: right;
+        }
+        .notice-box {
+            text-align: center;
+            padding: 15px 10px;
+            color: #00ff99;
+            font-weight: bold;
+            font-size: 13px;
+            background: rgba(0, 255, 153, 0.1);
+            border-radius: 12px;
+            border: 1px dashed #00ff99;
+            margin: 10px 0;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #00ffff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="unique-logo">
+        <div class="unique-icon">
+            <div class="eh-symbol">
+                E↗H
+            </div>
+        </div>
+        <div class="unique-text">
+            <h1>Earn<span>Hub</span></h1>
+            <p>SMART MONEY NETWORK</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section-heading" id="packageTitle">Daily Claim Box</div>
+        <div id="claimBoxContainer"></div>
+    </div>
+
+    <a class="back-link" href="dashboard.html">⬅ Back to Dashboard</a>
+
+<script>
+function getPackageDetails(pkgName){
+    let days = parseInt(localStorage.getItem(pkgName + "_duration")) || 30;
+    let dailyAmount = parseFloat(localStorage.getItem(pkgName + "_daily")) || 14.67;
+
+    return {
+        totalDays: days,
+        daily: dailyAmount
+    };
+}
+
+function getMidnightDate(dateInput) {
+    let d = new Date(dateInput);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+
+function renderClaimBox(){
+    let container = document.getElementById("claimBoxContainer");
+    let titleBox = document.getElementById("packageTitle");
+
+    let activePackage = localStorage.getItem("activePackage");
+
+    if(!activePackage){
+        titleBox.innerText = "No Active Package";
+        let msg = "<div style='text-align:center; padding:20px; color:#aaa;'>Pehle koi investment plan khareedें!</div>";
+        if(container.innerHTML !== msg) container.innerHTML = msg;
+        return;
+    }
+
+    let packages = activePackage.split(/[,+]+/).map(p=>p.trim()).filter(p=>p.length > 0);
+    packages = [...new Set(packages)];
+
+    titleBox.innerText = "Active Packages Box";
+
+    let html = "";
+    let now = new Date();
+    let todayMidnight = getMidnightDate(now);
+
+    let nextMidnightTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    let timeLeftToMidnight = nextMidnightTime - now.getTime();
+
+    let hours = Math.floor((timeLeftToMidnight % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((timeLeftToMidnight % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((timeLeftToMidnight % (1000 * 60)) / 1000);
+    let countdownStr = `${hours}h ${minutes}m ${seconds}s`;
+
+    packages.forEach((pkg)=>{
+        let pkgId = pkg.replace(/%20/g, " ");
+        let info = getPackageDetails(pkgId);
+
+        let startDateStr = localStorage.getItem(pkgId + "_startDate");
+        if(!startDateStr) {
+            startDateStr = new Date().toISOString();
+            localStorage.setItem(pkgId + "_startDate", startDateStr);
+        }
+
+        let startMidnight = getMidnightDate(startDateStr);
+        let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
+        if (daysPassed < 1) daysPassed = 1;
+
+        html += `
+        <div class="pkg-section">
+            <h3 style="color:#00ffff; margin-bottom:8px; border-bottom:1px solid #333; padding-bottom:5px;">
+                ${pkgId}
+            </h3>
+        `;
+
+        for(let d = 1; d <= info.totalDays; d++){
+            let dStatus = localStorage.getItem(pkgId + "_status_" + d);
+
+            if (d < daysPassed) {
+                if (!dStatus) {
+                    localStorage.setItem(pkgId + "_status_" + d, "expired");
+                    dStatus = "expired";
+                }
+            }
+
+            if(dStatus === "collected"){
+                html += `
+                <div class="day-card">
+                    <div class="day-info">
+                        <h4>Day ${d}</h4>
+                        <p>Rs. ${info.daily}</p>
+                    </div>
+                    <span class="status-collected">✔ Collected</span>
+                </div>
+                `;
+            } 
+            else if(dStatus === "expired" || d < daysPassed){
+                html += `
+                <div class="day-card">
+                    <div class="day-info">
+                        <h4>Day ${d}</h4>
+                        <p>Rs. ${info.daily}</p>
+                    </div>
+                    <span class="status-expired">❌ Missed (Expired)</span>
+                </div>
+                `;
+            } 
+            else if(d === daysPassed){
+                if(dStatus === "collected") {
+                    html += `
+                    <div class="day-card">
+                        <div class="day-info">
+                            <h4>Day ${d}</h4>
+                            <p>Rs. ${info.daily}</p>
+                        </div>
+                        <span class="status-collected">✔ Collected</span>
+                    </div>
+                    `;
+                } else {
+                    html += `
+                    <div class="day-card">
+                        <div class="day-info">
+                            <h4>Day ${d}</h4>
+                            <p>Rs. ${info.daily}</p>
+                        </div>
+                        <button class="btn-action" onclick="claimDay('${pkgId}', ${info.totalDays}, ${info.daily}, ${d})">
+                            Claim Rs. ${info.daily}
+                        </button>
+                    </div>
+                    `;
+                }
+            } 
+            else if(d === daysPassed + 1){
+                // صرف اگلے آنے والے دن پر لائیو ٹائمر شو ہوگا
+                html += `
+                <div class="day-card">
+                    <div class="day-info">
+                        <h4>Day ${d}</h4>
+                        <p>Rs. ${info.daily}</p>
+                    </div>
+                    <span class="status-locked">🔒 ${countdownStr}</span>
+                </div>
+                `;
+            }
+            else {
+                // باقی اس سے آگے کے تمام دن سادے Locked رہیں گے
+                html += `
+                <div class="day-card">
+                    <div class="day-info">
+                        <h4>Day ${d}</h4>
+                        <p>Rs. ${info.daily}</p>
+                    </div>
+                    <span class="status-locked">Locked</span>
+                </div>
+                `;
+            }
+        }
+
+        if (daysPassed > info.totalDays) {
+            localStorage.setItem(pkgId + "_completed", "true");
+        }
+
+        if (localStorage.getItem(pkgId + "_completed") === "true") {
+            html += `
+                <div class="notice-box" style="margin-top:10px;">
+                    ${pkgId} Package Successful 🎉 Completed! Ab dobara buy karein.
+                </div>
+            `;
+        }
+
+        html += `</div>`;
+    });
+
+    if (container.innerHTML !== html) {
+        container.innerHTML = html;
+    }
+}
+
+function claimDay(pkgId, totalDays, amount, currentDay){
+    let dStatus = localStorage.getItem(pkgId + "_status_" + currentDay);
+    if(dStatus === "collected" || dStatus === "expired") {
+        alert("یہ دن پہلے ہی پروسیس ہو چکا ہے!");
+        return;
+    }
+
+    let balance = parseFloat(localStorage.getItem("mainBalance")) || 0;
+    balance += amount; 
+    localStorage.setItem("mainBalance", balance.toFixed(2));
+
+    localStorage.setItem(pkgId + "_status_" + currentDay, "collected");
+
+    let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
+    transList.unshift({type: "Daily Claim", amount: amount, details: pkgId + " - Day " + currentDay, date: new Date().toLocaleString()});
+    localStorage.setItem('allTransactions', JSON.stringify(transList));
+
+    alert("رقم کامیابی سے کلیم ہو گئی ہے!");
+    renderClaimBox();
+}
+
+window.onload = function(){
+    renderClaimBox();
+};
+
+setInterval(renderClaimBox, 1000);
+</script>
+
+</body>
+</html>

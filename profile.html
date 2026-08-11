@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>EarnHub Profile</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+max-width:430px;
+margin:auto;
+font-family:Arial;
+background:#050505;
+color:white;
+}
+
+
+.header{
+text-align:center;
+padding:25px;
+}
+
+
+.logo{
+width:90px;
+height:90px;
+margin:auto;
+border-radius:50%;
+background:linear-gradient(145deg,#00ffff,#003333);
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 0 25px cyan;
+border:3px solid white;
+}
+
+
+.logo-inner{
+text-align:center;
+color:#000;
+font-weight:bold;
+}
+
+
+.icon{
+font-size:25px;
+}
+
+
+.name{
+font-size:12px;
+}
+
+
+.container{
+padding:15px;
+}
+
+
+.card{
+
+background:#111;
+padding:20px;
+border-radius:20px;
+box-shadow:0 0 15px cyan;
+text-align:center;
+
+}
+
+
+.profile-name{
+
+font-size:22px;
+color:#00ffff;
+font-weight:bold;
+
+}
+
+
+.info{
+
+background:#222;
+padding:12px;
+border-radius:15px;
+margin-top:12px;
+text-align:left;
+
+}
+
+
+.copy{
+
+float:right;
+background:#00ffff;
+color:#000;
+border:none;
+padding:5px 10px;
+border-radius:15px;
+font-size:12px;
+
+}
+
+
+button{
+
+width:100%;
+padding:13px;
+border:none;
+border-radius:25px;
+background:#00ffff;
+font-weight:bold;
+margin-top:20px;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+
+<div class="logo">
+
+<div class="logo-inner">
+
+<div class="icon">
+◆
+</div>
+
+<div class="name">
+EarnHub
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<div class="container">
+
+
+<div class="card">
+
+
+<h2>👤 Account Details</h2>
+
+
+<div class="profile-name" id="username">
+User Name
+</div>
+
+
+
+<div class="info">
+
+📧 Email:
+<span id="email">
+user@gmail.com
+</span>
+
+<button class="copy" onclick="copyText('email')">
+Copy
+</button>
+
+</div>
+
+
+
+
+<div class="info">
+
+🔑 Password:
+<span id="password">
+********
+</span>
+
+<button class="copy" onclick="copyText('password')">
+Copy
+</button>
+
+</div>
+
+
+
+
+<div class="info">
+
+🆔 Account ID:
+<span id="account">
+001
+</span>
+
+</div>
+
+
+
+<button onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+<script>
+
+
+let user = localStorage.getItem("username");
+let email = localStorage.getItem("email");
+let pass = localStorage.getItem("pass");
+
+
+if(user){
+
+document.getElementById("username").innerHTML=user;
+
+}
+
+if(email){
+
+document.getElementById("email").innerHTML=email;
+
+}
+
+if(pass){
+
+document.getElementById("password").innerHTML=pass;
+
+}
+
+
+
+
+function copyText(id){
+
+let text=document.getElementById(id).innerText;
+
+navigator.clipboard.writeText(text);
+
+alert("Copied");
+
+}
+
+
+
+
+function logout(){
+
+localStorage.clear();
+
+window.location.href="Singup.html";
+
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>

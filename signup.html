@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EarnHub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{ box-sizing:border-box; user-select: none; }
+body{
+margin:0;
+max-width:430px;
+margin:auto;
+font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background:#0b0f19;
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+position: relative;
+overflow-x: hidden;
+}
+
+.box{
+width:350px;
+background:#161b22;
+padding:30px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
+border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* یونیک لوگو ڈیزائن */
+.unique-logo{
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    gap:14px; 
+    font-family:Arial,sans-serif; 
+    margin-bottom: 25px;
+}
+.unique-icon{
+    width:50px; 
+    height:50px; 
+    border-radius:50%; 
+    background: linear-gradient(135deg,#00ffff,#0048ff);
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    box-shadow: 0 0 15px #00ffff;
+}
+.eh-symbol{
+    width:36px; 
+    height:36px; 
+    border-radius:50%; 
+    background:#050505; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    color:#ffd700; 
+    font-size:14px; 
+    font-weight:900; 
+    border:2px solid #ffd700;
+}
+.unique-text h1{ 
+    margin:0; 
+    font-size:22px; 
+    font-weight:900; 
+    color:white; 
+    text-align: left; 
+}
+.unique-text h1 span{ 
+    color:#00ffff; 
+}
+.unique-text p{ 
+    margin:2px 0 0 0; 
+    color:#ffd700; 
+    font-size:7px; 
+    letter-spacing:1.5px; 
+    text-align: left; 
+}
+
+h2{
+color:white;
+}
+
+input{
+width:90%;
+padding:13px;
+margin:8px;
+border-radius:10px;
+border:1px solid #30363d;
+outline: none;
+background: #0b0f19;
+color: white;
+font-size: 14px;
+}
+
+button{
+width:90%;
+padding:13px;
+margin:10px 0;
+border:none;
+border-radius:25px;
+background:cyan;
+font-weight:bold;
+cursor: pointer;
+color: #000;
+font-size: 14px;
+}
+
+a{
+color:cyan;
+cursor:pointer;
+text-decoration: underline;
+font-size: 13px;
+}
+
+p{
+color:#8b949e;
+font-size: 13px;
+margin: 8px 0;
+}
+
+#loginBox{
+display:none;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<!-- یونیک لوگو سیکشن -->
+<div class="unique-logo">
+    <div class="unique-icon">
+        <div class="eh-symbol">E↗H</div>
+    </div>
+    <div class="unique-text">
+        <h1>Earn<span>Hub</span></h1>
+        <p>SMART MONEY NETWORK</p>
+    </div>
+</div>
+
+<!-- سائن اپ باکس -->
+<div id="signupBox">
+
+<h2>Sign Up</h2>
+
+<input id="suser" placeholder="Username">
+<input id="semail" type="email" placeholder="Email">
+<input id="spass" type="password" placeholder="Password">
+<input id="sref" placeholder="Referral Code (Optional)">
+
+<button onclick="signup()">Create Account</button>
+
+<p>Already have account?</p>
+<a onclick="showLogin()">Login</a>
+
+</div>
+
+<!-- لاگ ان باکس -->
+<div id="loginBox">
+
+<h2>Login</h2>
+
+<input id="luser" placeholder="Username or Email">
+<input id="lpass" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<p>
+<a onclick="forgotPassword()">Forgot Password?</a>
+</p>
+
+<p>New user?</p>
+<a onclick="showSignup()">Sign Up</a>
+
+</div>
+
+</div>
+
+<script>
+// یو آر ایل سے ریفرل پکڑنا
+let urlParams = new URLSearchParams(window.location.search);
+let refUser = urlParams.get("ref");
+if(refUser) {
+    document.getElementById("sref").value = refUser;
+}
+
+function signup(){
+    let user = document.getElementById("suser").value.trim();
+    let email = document.getElementById("semail").value.trim();
+    let pass = document.getElementById("spass").value.trim();
+    let ref = document.getElementById("sref").value.trim();
+
+    if(user == "" || email == "" || pass == ""){
+        alert("Please fill all required fields!");
+        return;
+    }
+
+    // چیک کریں کہ کیا اس ای میل پر پہلے سے اکاؤنٹ موجود ہے
+    let savedEmail = localStorage.getItem("email");
+    if(savedEmail && savedEmail === email){
+        alert("اس ای میل پر پہلے ہی اکاؤنٹ بن چکا ہے! براہ کرم لاگ ان کریں۔");
+        showLogin();
+        return;
+    }
+
+    // ڈیٹا لوکل اسٹوریج میں محفوظ کرنا
+    localStorage.setItem("userName", user);
+    localStorage.setItem("user", user);
+    let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
+    localStorage.setItem("myReferralCode", myCode);
+    localStorage.setItem("email", email);
+    localStorage.setItem("pass", pass);
+    localStorage.setItem("referral", ref);
+    
+    // نئے اکاؤنٹ کا بیلنس اور ریفرلز سیٹ کرنا (اگر پہلے سے نہیں ہیں)
+    if(!localStorage.getItem("mainBalance")) {
+        localStorage.setItem("mainBalance", "0");
+    }
+    if(!localStorage.getItem("totalReferrals")) {
+        localStorage.setItem("totalReferrals", "0");
+    }
+    localStorage.setItem("userId", "#" + Math.floor(10000 + Math.random() * 90000));
+
+    // اگر ریفرل موجود ہے تو ریفر کرنے والے کو بونس دینا
+    if(ref) {
+        let currentRefs = Number(localStorage.getItem("totalReferrals") || 0) + 1;
+        localStorage.setItem("totalReferrals", currentRefs);
+        let currentBal = Number(localStorage.getItem("mainBalance") || 0);
+        localStorage.setItem("mainBalance", currentBal + 50);
+    }
+
+    alert("Account Created Successfully! Please Login.");
+    showLogin();
+}
+
+function login(){
+    let inputUser = document.getElementById("luser").value.trim();
+    let pass = document.getElementById("lpass").value.trim();
+
+    let savedUser = localStorage.getItem("userName") || localStorage.getItem("user");
+    let savedEmail = localStorage.getItem("email");
+    let savedPass = localStorage.getItem("pass");
+
+    // یوزر نیم یا ای میل دونوں سے لاگ ان ہو سکے گا
+    if((inputUser === savedUser || inputUser === savedEmail) && pass === savedPass){
+        // لاگ ان کامیاب ہونے پر سیدھا آپ کا اصل ڈیش بورڈ کھل جائے گا
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Wrong Username/Email or Password!");
+    }
+}
+
+function forgotPassword(){
+    let email = prompt("Enter your registered email:");
+
+    if(email && email === localStorage.getItem("email")){
+        let savedUser = localStorage.getItem("userName") || localStorage.getItem("user");
+        let savedPass = localStorage.getItem("pass");
+        alert("Your Username is: " + savedUser + "\nYour Password is: " + savedPass);
+    } else {
+        alert("Email not found!");
+    }
+}
+
+function showLogin(){
+    document.getElementById("signupBox").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
+}
+
+function showSignup(){
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("signupBox").style.display = "block";
+}
+</script>
+
+</body>
+</html>

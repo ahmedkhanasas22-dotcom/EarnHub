@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EarnHub Withdraw</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{ box-sizing:border-box; user-select: none; }
+body{
+margin:0; max-width:430px; margin:auto; font-family:Arial, sans-serif; background:#0b0f19; color:white; min-height:100vh; padding-bottom:40px;
+}
+.header{ text-align:center; padding:15px 10px 5px 10px; }
+.unique-logo{
+    display:flex; align-items:center; justify-content:center; gap:14px; font-family:Arial,sans-serif; margin: 10px 0;
+}
+.unique-icon{
+    width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#00ffff,#0048ff);
+    display:flex; align-items:center; justify-content:center; box-shadow: 0 0 20px #00ffff;
+}
+.eh-symbol{
+    width:44px; height:44px; border-radius:50%; background:#050505; display:flex; align-items:center; justify-content:center; color:#ffd700; font-size:16px; font-weight:900; border:2px solid #ffd700;
+}
+.unique-text h1{ margin:0; font-size:24px; font-weight:900; color:white; text-align: left; }
+.unique-text h1 span{ color:#00ffff; }
+.unique-text p{ margin:2px 0 0 0; color:#ffd700; font-size:8px; letter-spacing:1.5px; text-align: left; }
+
+.container { padding: 15px; }
+.section-title { font-size: 14px; font-weight: bold; color: #00ffff; margin-bottom: 10px; }
+
+/* Search Bar */
+.search-box {
+    width: 100%;
+    padding: 12px 15px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 15px;
+    outline: none;
+}
+.search-box:focus { border-color: #00ffff; }
+
+/* Method Selection Grid / List */
+.methods-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+.method-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 12px 15px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.method-item:hover {
+    border-color: #00ffff;
+    background: rgba(0,255,255,0.05);
+}
+.method-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.method-logo {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 3px;
+}
+.method-name-box h4 {
+    margin: 0;
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+}
+.method-name-box span {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    color: #8b949e;
+}
+.arrow-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #21262d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c9d1d9;
+    font-size: 12px;
+}
+
+/* Withdraw Form Card */
+.card{ background:#161b22; padding:20px; border-radius:16px; border:1px solid #30363d; display: none; margin-top: 10px; }
+.back-selection-btn {
+    background: transparent; border: none; color: #00ffff; font-size: 13px; cursor: pointer; padding: 0; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; gap: 5px;
+}
+.selected-method-title { color: #00ffff; font-size: 16px; font-weight: bold; margin-bottom: 15px; text-align: center; }
+
+.form-group { margin-top: 12px; }
+.form-group label { display: block; font-size: 12px; color: #8b949e; margin-bottom: 5px; }
+.form-control{ width:100%; padding:12px 14px; border:1px solid #30363d; border-radius:10px; background:#0b0f19; color:white; outline: none; font-size: 14px; }
+.form-control:focus { border-color: #00ffff; }
+
+button.submit-btn{ width:100%; padding:14px; margin-top:20px; border:none; border-radius:12px; background:linear-gradient(135deg,#00ffff,#1a73e8); font-weight:bold; cursor:pointer; color:#000; font-size: 15px; box-shadow: 0 4px 15px rgba(0,255,255,0.3); }
+button.submit-btn:disabled{ background: #555; color: #aaa; cursor: not-allowed; box-shadow: none; }
+.lock-msg { color: #ff4d4d; font-size: 12px; text-align: center; margin-top: 10px; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="unique-logo">
+    <div class="unique-icon">
+        <div class="eh-symbol">E↗H</div>
+    </div>
+    <div class="unique-text">
+        <h1>Earn<span>Hub</span></h1>
+        <p>SMART MONEY NETWORK</p>
+    </div>
+</div>
+</div>
+
+<div class="container">
+    <!-- Selection View -->
+    <div id="selectionView">
+        <div class="section-title">Choose Method</div>
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search bank or mobile wallet..." onkeyup="filterMethods()">
+        
+        <div class="methods-container" id="methodsList">
+            <!-- JazzCash -->
+            <div class="method-item" onclick="selectMethod('JazzCash')">
+                <div class="method-left">
+                    <img src="images/images (1) (4).jpeg" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>JazzCash</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- EasyPaisa -->
+            <div class="method-item" onclick="selectMethod('EasyPaisa')">
+                <div class="method-left">
+                    <img src="images/images (1) (3).jpeg" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>EasyPaisa</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- Bank of Punjab (BOP) -->
+            <div class="method-item" onclick="selectMethod('Bank of Punjab (BOP)')">
+                <div class="method-left">
+                    <img src="images/images (1).png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>Bank of Punjab (BOP)</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- HBL -->
+            <div class="method-item" onclick="selectMethod('HBL (Habib Bank Limited)')">
+                <div class="method-left">
+                    <img src="images/HBL.PK.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>HBL (Habib Bank Limited)</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- Meezan Bank -->
+            <div class="method-item" onclick="selectMethod('Meezan Bank')">
+                <div class="method-left">
+                    <img src="images/MEBL.PK_BIG.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>Meezan Bank</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- UBL -->
+            <div class="method-item" onclick="selectMethod('UBL (United Bank Limited)')">
+                <div class="method-left">
+                    <img src="images/UBL.PK.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>UBL (United Bank Limited)</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- Bank Alfalah -->
+            <div class="method-item" onclick="selectMethod('Bank Alfalah')">
+                <div class="method-left">
+                    <img src="images/BAFL.PK_BIG.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>Bank Alfalah</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- Allied Bank -->
+            <div class="method-item" onclick="selectMethod('Allied Bank (ABL)')">
+                <div class="method-left">
+                    <img src="images/ABL.PK_BIG.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>Allied Bank (ABL)</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- MCB Bank -->
+            <div class="method-item" onclick="selectMethod('MCB Bank')">
+                <div class="method-left">
+                    <img src="images/MCB.PK.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>MCB Bank</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- Bank Al Habib -->
+            <div class="method-item" onclick="selectMethod('Bank Al Habib')">
+                <div class="method-left">
+                    <img src="images/BAHL.PK_BIG.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>Bank Al Habib</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+
+            <!-- National Bank of Pakistan -->
+            <div class="method-item" onclick="selectMethod('National Bank of Pakistan (NBP)')">
+                <div class="method-left">
+                    <img src="images/NBP.PK_BIG.png" class="method-logo" onerror="this.style.display='none'">
+                    <div class="method-name-box">
+                        <h4>National Bank of Pakistan (NBP)</h4>
+                        <span>Tap to continue</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">➔</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form View -->
+    <div class="card" id="formView">
+        <button class="back-selection-btn" onclick="goBackToSelection()">← Change Method</button>
+        <div class="selected-method-title" id="displayMethodName">JazzCash</div>
+        
+        <div class="form-group">
+            <label>Withdrawal Amount (Min 100)</label>
+            <input id="amount" class="form-control" type="number" placeholder="Enter amount">
+        </div>
+        <div class="form-group">
+            <label>Account Number / IBAN</label>
+            <input id="number" class="form-control" placeholder="Enter account number or IBAN">
+        </div>
+        <div class="form-group">
+            <label>Account Holder Name</label>
+            <input id="name" class="form-control" placeholder="Enter account name">
+        </div>
+
+        <button id="submitBtn" class="submit-btn" onclick="sendWithdraw()">Withdraw Now</button>
+        <div id="lockMsg" class="lock-msg"></div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let selectedMethodName = "JazzCash";
+
+window.selectMethod = function(methodName) {
+    selectedMethodName = methodName;
+    document.getElementById("displayMethodName").innerText = methodName;
+    document.getElementById("selectionView").style.display = "none";
+    document.getElementById("formView").style.display = "block";
+}
+
+window.goBackToSelection = function() {
+    document.getElementById("formView").style.display = "none";
+    document.getElementById("selectionView").style.display = "block";
+}
+
+window.filterMethods = function() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let items = document.getElementsByClassName("method-item");
+    
+    for (let i = 0; i < items.length; i++) {
+        let name = items[i].getElementsByClassName("method-name-box")[0].getElementsByTagName("h4")[0].innerText.toLowerCase();
+        if (name.includes(input)) {
+            items[i].style.display = "flex";
+        } else {
+            items[i].style.display = "none";
+        }
+    }
+}
+
+let submitBtn = document.getElementById("submitBtn");
+let lockMsg = document.getElementById("lockMsg");
+
+submitBtn.disabled = false;
+lockMsg.innerHTML = "🔓 Withdraw Unlocked!";
+lockMsg.style.color = "#00ff99";
+
+window.sendWithdraw = async function(){
+    let name = document.getElementById("name").value.trim();
+    let number = document.getElementById("number").value.trim();
+    let amount = Number(document.getElementById("amount").value);
+
+    let currentBalance = Number(localStorage.getItem("mainBalance") || localStorage.getItem("balance") || 1099);
+
+    if(name == "" || number == "" || !amount){
+        alert("Please Fill All Details");
+        return;
+    }
+
+    if(amount < 100){
+        alert("Minimum withdrawal amount is Rs. 100");
+        return;
+    }
+
+    if(amount > 50000){
+        alert("Maximum withdrawal amount is Rs. 50,000");
+        return;
+    }
+
+    if(amount > currentBalance){
+        alert("Insufficient Balance");
+        return;
+    }
+
+    // یہاں 2 ممبرز والی شرط چیک ہو رہی ہے جو آپ نے کہی تھی
+    let referralCount = Number(localStorage.getItem("totalReferrals") || 0);
+    if(referralCount < 2){
+        alert("پہلے دو ممبر ایڈ کرو پھر اس کے بعد آپ ودڈرا کر سکو گے۔");
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+
+    try {
+        let docRef = await addDoc(collection(db, "requests"), {
+            username: localStorage.getItem("userName") || localStorage.getItem("user") || "Muhammad Ahmad Javed",
+            transactionId: "Withdraw",
+            package: "Withdraw",
+            amount: amount,
+            method: selectedMethodName,
+            accountName: name,
+            accountNumber: number,
+            status: "pending",
+            date: new Date().toLocaleString()
+        });
+
+        let newBalance = currentBalance - amount;
+        localStorage.setItem("mainBalance", newBalance);
+        localStorage.setItem("balance", newBalance);
+
+        let historyList = JSON.parse(localStorage.getItem("withdrawHistoryList") || "[]");
+        
+        let newRequest = {
+            id: docRef.id,
+            amount: amount,
+            method: selectedMethodName,
+            name: name,
+            number: number,
+            status: "Pending",
+            dateTime: new Date().toLocaleString()
+        };
+
+        historyList.unshift(newRequest);
+        localStorage.setItem("withdrawHistoryList", JSON.stringify(historyList));
+
+        alert("Withdraw Request Sent Successfully");
+        window.location.replace("withdraw-history.html");
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong. Please try again.");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Withdraw Now";
+    }
+}
+</script>
+
+</body>
+</html>

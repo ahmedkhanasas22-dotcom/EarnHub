@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EarnHub Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{ box-sizing:border-box; }
+body{ margin:0; max-width:430px; margin:auto; font-family:Arial; background:#050505; color:white; }
+.header{ text-align:center; padding:20px; }
+.unique-logo{ display:flex; align-items:center; justify-content:center; gap:16px; font-family:Arial,sans-serif; margin: 10px 0; }
+.unique-icon{ width:75px; height:75px; border-radius:50%; background: linear-gradient(135deg,#00ffff,#0048ff); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 25px #00ffff; }
+.eh-symbol{ width:54px; height:54px; border-radius:50%; background:#050505; display:flex; align-items:center; justify-content:center; color:#ffd700; font-size:20px; font-weight:900; border:2px solid #ffd700; }
+.unique-text h1{ margin:0; font-size:30px; font-weight:900; color:white; text-align: left; }
+.unique-text h1 span{ color:#00ffff; }
+.unique-text p{ margin:3px 0 0 0; color:#ffd700; font-size:9px; letter-spacing:2px; text-align: left; }
+.container{ padding:15px; }
+.card{ background:#111; padding:20px; margin-bottom:15px; border-radius:20px; box-shadow:0 0 15px cyan; }
+.card h3 { color: #00ffff; margin-top: 0; }
+.btn-group { display: flex; gap: 10px; margin-top: 10px; }
+button{ width:100%; padding:12px; border:0; border-radius:20px; font-weight:bold; cursor:pointer; }
+button:disabled { background: #555 !important; color: #aaa !important; cursor: not-allowed; }
+.btn-approve{ background:#00ffff; color:black; }
+.btn-reject{ background:#ff3333; color:white; }
+.screenshot-preview { width: 100%; max-height: 200px; object-fit: contain; margin-top: 10px; border-radius: 8px; border: 1px solid #333; background: #000; }
+.admin-input-group { margin-top: 12px; }
+.admin-input-group label { display: block; font-size: 12px; color: #00ffff; margin-bottom: 5px; }
+.admin-input { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #00ffff; border-radius: 10px; color: white; font-size: 14px; outline: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="unique-logo">
+    <div class="unique-icon">
+        <div class="eh-symbol">E↗H</div>
+    </div>
+    <div class="unique-text">
+        <h1>Earn<span>Hub</span></h1>
+        <p>SMART MONEY NETWORK</p>
+    </div>
+</div>
+<h2>Admin Panel</h2>
+</div>
+
+<div class="container">
+<div id="requests">Loading...</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let box = document.getElementById("requests");
+
+async function loadRequests(){
+    let snap = await getDocs(collection(db, "requests"));
+    box.innerHTML = "";
+    let hasPending = false;
+
+    snap.forEach((item) => {
+        let data = item.data();
+        
+        if(data.status && data.status !== "pending"){
+            return;
+        }
+        hasPending = true;
+
+        if (data.type === "Deposit") {
+            box.innerHTML += `
+            <div class="card" id="card_${item.id}">
+                <h3>Deposit Request</h3>
+                <p>Username: <strong>${data.username || "N/A"}</strong></p>
+                <p>Method: <strong>${data.method || "N/A"}</strong></p>
+                <p>Entered Amount: Rs. ${data.amount || 0}</p>
+                <p>Transaction ID: <strong>${data.transactionId || "N/A"}</strong></p>
+                ${data.screenshot ? `<p>Screenshot:</p><img src="${data.screenshot}" class="screenshot-preview">` : '<p>Screenshot: <strong>Not Provided</strong></p>'}
+                
+                <div class="admin-input-group">
+                    <label>Set Correct Approved Amount (PKR)</label>
+                    <input type="number" id="approvedAmt_${item.id}" class="admin-input" value="${data.amount || 0}">
+                </div>
+
+                <p>Status: <span>${data.status || 'pending'}</span></p>
+                <div class="btn-group">
+                    <button class="btn-approve" id="approveBtn_${item.id}" onclick="approveDeposit('${item.id}')">Approve</button>
+                    <button class="btn-reject" id="rejectBtn_${item.id}" onclick="reject('${item.id}')">Reject</button>
+                </div>
+            </div>
+            `;
+        } else if (data.package) {
+            box.innerHTML += `
+            <div class="card" id="card_${item.id}">
+                <h3>Package Buy Request</h3>
+                <p>Username: <strong>${data.username || "N/A"}</strong></p>
+                <p>Package: <strong>${data.package}</strong></p>
+                <p>Amount: Rs. ${data.amount || 0}</p>
+                <p>Transaction ID: <strong>${data.transactionId || "N/A"}</strong></p>
+                <p>Status: <span>${data.status || 'pending'}</span></p>
+                <div class="btn-group">
+                    <button class="btn-approve" id="approveBtn_${item.id}" onclick="approvePackage('${item.id}', '${data.package}')">Approve</button>
+                    <button class="btn-reject" id="rejectBtn_${item.id}" onclick="reject('${item.id}')">Reject</button>
+                </div>
+            </div>
+            `;
+        } else {
+            box.innerHTML += `
+            <div class="card" id="card_${item.id}">
+                <h3>Withdraw Request</h3>
+                <p>Username: <strong>${data.username || "N/A"}</strong></p>
+                <p>Method: ${data.method || "N/A"}</p>
+                <p>Account Name: ${data.accountName || "N/A"}</p>
+                <p>Account Number: ${data.accountNumber || "N/A"}</p>
+                <p>Amount: Rs. ${data.amount || 0}</p>
+                <p>Status: <span>${data.status || 'pending'}</span></p>
+                <div class="btn-group">
+                    <button class="btn-approve" id="approveBtn_${item.id}" onclick="approve('${item.id}')">Approve</button>
+                    <button class="btn-reject" id="rejectBtn_${item.id}" onclick="reject('${item.id}')">Reject</button>
+                </div>
+            </div>
+            `;
+        }
+    });
+
+    if(!hasPending){
+        box.innerHTML = "<p style='text-align:center; color:#888;'>No pending requests found.</p>";
+    }
+}
+
+window.approveDeposit = async function(id){
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    // ایک بار کلک ہوتے ہی دونوں بٹن ڈس ایبل کر دیں
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    approveBtn.innerText = "Processing...";
+
+    let inputField = document.getElementById(`approvedAmt_${id}`);
+    let finalAmount = parseFloat(inputField.value);
+
+    if(isNaN(finalAmount) || finalAmount < 0){
+        alert("Barah kar ke theek amount darj karein!");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+        return;
+    }
+
+    try {
+        await updateDoc(doc(db, "requests", id), { 
+            status: "approved",
+            amount: finalAmount 
+        });
+        
+        let currentBalance = parseFloat(localStorage.getItem("mainBalance")) || 0;
+        currentBalance += finalAmount;
+        localStorage.setItem("mainBalance", currentBalance);
+
+        alert("Deposit Request Approved Successfully with Rs. " + finalAmount + " and Balance Added!");
+        loadRequests();
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+    }
+}
+
+window.approvePackage = async function(id, pkgName){
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    approveBtn.innerText = "Processing...";
+
+    try {
+        await updateDoc(doc(db, "requests", id), { 
+            status: "approved",
+            approved: true 
+        });
+
+        localStorage.removeItem(pkgName + "_completed");
+        localStorage.setItem(pkgName + "_currentDay", "1");
+        localStorage.removeItem(pkgName + "_status_1");
+        
+        let existingPkg = localStorage.getItem("activePackage") || "";
+        let packagesArray = existingPkg.split(/[,+]+/).map(p => p.trim()).filter(p => p.length > 0);
+        
+        if(!packagesArray.includes(pkgName)){
+            packagesArray.push(pkgName);
+        }
+        localStorage.setItem("activePackage", packagesArray.join(", "));
+        localStorage.setItem("isAdminApproved", "true");
+
+        alert("Package Request Approved Successfully!");
+        loadRequests();
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+    }
+}
+
+window.approve = async function(id){
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    approveBtn.innerText = "Processing...";
+
+    try {
+        await updateDoc(doc(db, "requests", id), { status: "approved" });
+        alert("Request Approved Successfully!");
+        loadRequests();
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+    }
+}
+
+window.reject = async function(id){
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    rejectBtn.innerText = "Rejecting...";
+
+    try {
+        await updateDoc(doc(db, "requests", id), { status: "rejected" });
+        alert("Request Rejected!");
+        loadRequests();
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        rejectBtn.innerText = "Reject";
+    }
+}
+
+loadRequests();
+</script>
+
+</body>
+</html>

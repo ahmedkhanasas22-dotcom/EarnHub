@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EarnHub Referral</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{ box-sizing:border-box; }
+body{
+margin:0;
+max-width:430px;
+margin:auto;
+font-family:Arial;
+background:#050505;
+color:white;
+padding-bottom: 30px;
+}
+.header{ text-align:center; padding:20px; }
+.logo{
+width:80px;
+height:80px;
+margin:auto;
+border-radius:50%;
+background:linear-gradient(145deg,#00ffff,#003333);
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 0 20px cyan;
+border:3px solid white;
+}
+.logo-inner{ text-align:center; color:#000; font-weight:bold; }
+.icon{ font-size:24px; }
+.name{ font-size:12px; }
+.container{ padding:15px; }
+.card{
+background:#111;
+padding:20px;
+border-radius:20px;
+box-shadow:0 0 15px cyan;
+text-align:center;
+margin-bottom:15px;
+}
+.title{ color:#00ffff; font-size:22px; font-weight:bold; }
+.link{
+background:#222;
+padding:12px;
+border-radius:15px;
+margin:15px 0;
+word-break:break-all;
+font-size: 13px;
+color: #00ffff;
+}
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:25px;
+background:#00ffff;
+font-weight:bold;
+cursor: pointer;
+color: #000;
+}
+
+/* Levels Box Styling */
+.levels-container {
+    text-align: left;
+    margin-top: 15px;
+}
+.level-item {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+.level-info span { color: #00ffff; font-weight: bold; }
+.level-status { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: bold; }
+.status-completed { background: rgba(0,255,153,0.2); color: #00ff99; border: 1px solid #00ff99; }
+.status-pending { background: rgba(255,77,77,0.2); color: #ff4d4d; border: 1px solid #ff4d4d; }
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="logo">
+<div class="logo-inner">
+<div class="icon">◆</div>
+<div class="name">EarnHub</div>
+</div>
+</div>
+</div>
+
+<div class="container">
+<div class="card">
+<div class="title">Referral Program</div>
+<p>Earn Rs. 50 when your referred member buys a package</p>
+
+<div class="link" id="refLink">
+Loading link...
+</div>
+
+<button onclick="copyLink()">
+Copy Referral Link
+</button>
+</div>
+
+<div class="card">
+<h3>Referral Earnings</h3>
+<h1 id="refEarnings" style="color:#00ff99;">Rs. 0</h1>
+</div>
+
+<!-- 10 Levels Section -->
+<div class="card">
+<h3 style="color:#00ffff; margin-bottom: 10px;">10-Level Referral System</h3>
+<p style="font-size: 11px; color: #aaa; margin-bottom: 15px;">Package purchase ke baad members count honge</p>
+
+<div class="levels-container" id="levelsList">
+    <!-- JavaScript ke zariye 10 levels yahan dynamically generate honge -->
+</div>
+</div>
+</div>
+
+<script>
+let userName = localStorage.getItem("userName") || localStorage.getItem("user") || "MuhammedAhmed";
+
+// ریفرل لنک تیار کرنا[span_1](start_span)[span_1](end_span)
+let currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+let refUrl = window.location.origin + currentPath + "index.html?ref=" + userName;
+document.getElementById("refLink").innerText = refUrl;
+
+let totalRefs = Number(localStorage.getItem("totalReferrals") || 0);
+let totalEarnings = totalRefs * 50;
+
+document.getElementById("refEarnings").innerText = "Rs. " + totalEarnings;
+
+// 10 لیولز کا سسٹم
+function renderLevels() {
+    let levelsContainer = document.getElementById("levelsList");
+    levelsContainer.innerHTML = "";
+
+    let requiredMembers = 2; // Level 1 target
+
+    for (let i = 1; i <= 10; i++) {
+        if (i > 1) {
+            requiredMembers *= 2;
+        }
+
+        let isCompleted = totalRefs >= requiredMembers;
+        let statusClass = isCompleted ? "status-completed" : "status-pending";
+        let statusText = isCompleted ? "Completed" : "Locked";
+
+        let itemHTML = `
+            <div class="level-item">
+                <div class="level-info">
+                    <strong>Level ${i}</strong><br>
+                    <span style="font-size:11px; color:#aaa;">Target: ${requiredMembers} Active Members</span>
+                </div>
+                <div>
+                    <span style="font-size:12px; margin-right:8px;">${Math.min(totalRefs, requiredMembers)}/${requiredMembers}</span>
+                    <span class="level-status ${statusClass}">${statusText}</span>
+                </div>
+            </div>
+        `;
+        levelsContainer.innerHTML += itemHTML;
+    }
+}
+
+renderLevels();
+
+function copyLink() {
+    navigator.clipboard.writeText(refUrl);
+    alert("Referral link copied to clipboard!");
+}
+</script>
+
+</body>
+</html>

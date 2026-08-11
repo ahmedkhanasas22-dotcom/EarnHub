@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>EarnHub Withdraw History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{ box-sizing:border-box; margin:0; padding:0; }
+        body{ max-width:430px; margin:auto; font-family:Arial, sans-serif; background:#050505; color:white; padding: 15px; }
+        .header{ text-align:center; padding:15px; }
+        .unique-logo{ display:flex; align-items:center; justify-content:center; gap:14px; font-family:Arial,sans-serif; margin: 5px 0 15px 0; }
+        .unique-icon{ width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#00ffff,#0048ff); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 20px #00ffff; }
+        .eh-symbol{ width:44px; height:44px; border-radius:50%; background:#050505; display:flex; align-items:center; justify-content:center; color:#ffd700; font-size:16px; font-weight:900; border:2px solid #ffd700; }
+        .unique-text h1{ margin:0; font-size:24px; font-weight:900; color:white; text-align: left; }
+        .unique-text h1 span{ color:#00ffff; }
+        .unique-text p{ margin:2px 0 0 0; color:#ffd700; font-size:8px; letter-spacing:1.5px; text-align: left; }
+        
+        .receipt-card{ background:#111; padding:20px; margin-top:15px; border-radius:20px; box-shadow:0 0 15px cyan; border: 1px solid #00ffff; }
+        .receipt-title { text-align: center; font-size: 15px; color: #00ffff; margin-bottom: 15px; border-bottom: 1px dashed #444; padding-bottom: 10px; font-weight: bold; }
+        .info{ background:#1c2638; padding:10px 14px; border-radius:10px; margin-top:8px; display: flex; justify-content: space-between; font-size: 13px; }
+        .info span { color: #00ff99; font-weight: bold; }
+        
+        .status-box { text-align: center; margin-top: 15px; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; }
+        .status-pending { background: rgba(243, 156, 18, 0.2); color: #f39c12; border: 1px solid #f39c12; }
+        .status-approved { background: rgba(0, 255, 153, 0.2); color: #00ff99; border: 1px solid #00ff99; }
+        .status-rejected { background: rgba(255, 51, 51, 0.2); color: #ff3333; border: 1px solid #ff3333; }
+        .status-none { background: #222; color: #aaa; text-align: center; padding: 20px; border-radius: 10px; margin-top: 20px;}
+        
+        .back{ display:block; text-align:center; margin:25px 0; color:#00ffff; text-decoration:none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="unique-logo">
+        <div class="unique-icon">
+            <div class="eh-symbol">E↗H</div>
+        </div>
+        <div class="unique-text">
+            <h1>Earn<span>Hub</span></h1>
+            <p>SMART MONEY NETWORK</p>
+        </div>
+    </div>
+</div>
+
+<div id="historyContainer"></div>
+
+<a class="back" href="Dashboard.HTML">⬅ Back to Dashboard</a>
+
+<script>
+    let container = document.getElementById("historyContainer");
+    let historyList = JSON.parse(localStorage.getItem("withdrawHistoryList") || "[]");
+
+    if(historyList.length === 0) {
+        container.innerHTML = `<div class="status-none">Status: No Active Request Found</div>`;
+    } else {
+        container.innerHTML = "";
+        historyList.forEach(item => {
+            let statusClass = "status-pending";
+            let statusText = "⏳ Status: Pending (Waiting for Admin Approval)";
+
+            if(item.status === "Approved") {
+                statusClass = "status-approved";
+                statusText = "✔ Status: Approved (Payment Successful)";
+            } else if(item.status === "Rejected") {
+                statusClass = "status-rejected";
+                statusText = "❌ Status: Rejected by Admin";
+            }
+
+            container.innerHTML += `
+            <div class="receipt-card">
+                <div class="receipt-title">📜 Bank Withdrawal Receipt</div>
+                <div class="info">Withdraw Amount: <span>Rs. ${item.amount}</span></div>
+                <div class="info">Payment Method: <span>${item.method}</span></div>
+                <div class="info">Account Name: <span>${item.name}</span></div>
+                <div class="info">Account Number: <span>${item.number}</span></div>
+                <div class="info">Date & Time: <span>${item.dateTime}</span></div>
+                <div class="status-box ${statusClass}">${statusText}</div>
+            </div>
+            `;
+        });
+    }
+</script>
+
+</body>
+</html>

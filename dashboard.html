@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EarnHub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{ box-sizing:border-box; user-select: none; }
+body{
+margin:0;
+max-width:430px;
+margin:auto;
+font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background:#0b0f19;
+color:white;
+min-height:100vh;
+padding-bottom: 80px;
+position: relative;
+overflow-x: hidden;
+}
+
+.header{
+position:relative;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 15px 15px 5px 15px;
+}
+
+.hamburger {
+font-size: 24px;
+cursor: pointer;
+color: #fff;
+z-index: 100;
+background: rgba(255,255,255,0.05);
+padding: 6px 12px;
+border-radius: 10px;
+border: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-overlay {
+display: none;
+position: fixed;
+top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0,0,0,0.7);
+z-index: 998;
+}
+
+.sidebar {
+position: fixed;
+top: 0; left: -280px;
+width: 280px; height: 100%;
+background: #161b22;
+z-index: 999;
+transition: left 0.3s ease;
+overflow-y: auto;
+padding: 20px 15px;
+border-right: 1px solid #333;
+box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+}
+
+.sidebar.active { left: 0; }
+
+.sidebar-profile {
+display: flex;
+align-items: center;
+gap: 12px;
+padding-bottom: 15px;
+margin-bottom: 15px;
+border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-avatar {
+width: 45px; height: 45px;
+border-radius: 50%;
+background: linear-gradient(135deg, #00ffff, #0048ff);
+display: flex; align-items: center; justify-content: center;
+font-weight: bold; font-size: 18px; color: #000;
+border: 2px solid #00ffff;
+overflow: hidden;
+}
+.sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.sidebar-user-info span { display: block; }
+.sidebar-name { font-weight: bold; font-size: 14px; color: #fff; }
+.sidebar-email { font-size: 10px; color: #8b949e; }
+
+.sidebar-section-title {
+font-size: 11px;
+letter-spacing: 1.5px;
+color: #00ffff;
+margin: 15px 0 8px 5px;
+font-weight: bold;
+text-transform: uppercase;
+}
+
+.sidebar-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 10px 12px;
+margin-bottom: 5px;
+border-radius: 10px;
+cursor: pointer;
+font-size: 13px;
+color: #fff;
+transition: background 0.2s;
+text-decoration: none;
+border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.sidebar-item:hover { background: rgba(0,255,255,0.1); color: #00ffff; }
+
+.unique-logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    font-family:Arial,sans-serif;
+    margin: 5px auto;
+}
+
+.unique-icon{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background: linear-gradient(135deg,#00ffff,#0048ff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 0 20px #00ffff;
+}
+
+.eh-symbol{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#050505;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#ffd700;
+    font-size:14px;
+    font-weight:900;
+    border:2px solid #ffd700;
+}
+
+.unique-text h1{
+    margin:0;
+    font-size:24px;
+    font-weight:900;
+    color:white;
+    text-align: left;
+}
+
+.unique-text h1 span{ color:#00ffff; }
+.unique-text p{ margin:2px 0 0 0; color:#ffd700; font-size:8px; letter-spacing:1.5px; text-align: left; }
+
+.container{ padding:10px 15px; }
+
+.bank-card {
+background: linear-gradient(135deg, #161b22, #1f2937);
+padding: 18px 20px;
+border-radius: 16px;
+border: 1px solid rgba(255,255,255,0.1);
+box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+margin-bottom: 15px;
+}
+.bank-card-top {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 12px;
+padding-bottom: 10px;
+border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.user-profile-flex { display: flex; align-items: center; gap: 12px; }
+
+.card-avatar-wrapper { position: relative; cursor: pointer; }
+.card-avatar {
+width: 48px; height: 48px;
+border-radius: 50%;
+background: linear-gradient(135deg, #00ffff, #0048ff);
+display: flex; align-items: center; justify-content: center;
+font-size: 20px; font-weight: bold; color: #000;
+border: 2px solid rgba(0,255,255,0.5);
+box-shadow: 0 0 10px rgba(0,255,255,0.3);
+overflow: hidden;
+}
+.card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-edit-badge {
+position: absolute; bottom: 0; right: 0;
+background: #00ffff; color: #000; font-size: 9px;
+width: 16px; height: 16px; border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-weight: bold; border: 1px solid #111;
+}
+
+.acc-info .u-name { font-weight: bold; font-size: 14px; color: #fff; display: block; }
+.acc-info .u-id { color: #8b949e; font-size: 11px; }
+.acc-badge { background: rgba(0,255,255,0.1); color: #00ffff; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; border: 1px solid rgba(0,255,255,0.2); }
+
+.balance-section .acc-title { color: #8b949e; font-size: 12px; margin-bottom: 2px; }
+.balance-section .amount { font-size: 26px; font-weight: 800; color: #00ffff; letter-spacing: 0.5px; }
+
+/* Dashboard Grid */
+.dashboard-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 12px;
+padding: 0 15px;
+margin-bottom: 15px;
+}
+.card {
+padding: 15px 10px;
+border-radius: 14px;
+text-align: center;
+border: 1px solid rgba(255, 255, 255, 0.15);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 95px;
+cursor: pointer;
+transition: transform 0.2s;
+}
+.card:active { transform: scale(0.97); }
+
+.box-spin { background: linear-gradient(135deg, #8a2be2, #4b0082); }
+.box-support { background: linear-gradient(135deg, #20b2aa, #005555); }
+.box-claim { background: linear-gradient(135deg, #ff2a75, #c71585); }
+.box-deposit { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.box-withdraw { background: linear-gradient(135deg, #00bfff, #0044cc); }
+.box-packages { background: linear-gradient(135deg, #00ced1, #006666); }
+.box-referral { background: linear-gradient(135deg, #32cd32, #006600); }
+.box-history { background: linear-gradient(135deg, #ff8c00, #cc4400); }
+
+.card h2{ font-size: 24px; margin: 0 0 6px 0; }
+.card p{ font-size: 13px; margin: 0; color: #fff; font-weight: bold; }
+
+.dark-mode-box {
+background: #161b22;
+padding: 12px 18px;
+border-radius: 12px;
+margin: 0 15px 15px 15px;
+border: 1px solid rgba(255,255,255,0.1);
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.dark-mode-box span { font-weight: bold; font-size: 13px; }
+
+.switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+background-color: #333; transition: .4s; border-radius: 34px; border: 1px solid #555;
+}
+.slider:before {
+position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+background-color: white; transition: .4s; border-radius: 50%;
+}
+input:checked + .slider { background-color: #00ffff; }
+input:checked + .slider:before { transform: translateX(22px); background-color: #000; }
+
+a{ text-decoration:none; color:white; }
+
+.page-modal {
+display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 15px;
+}
+.modal-box {
+background: #161b22; width: 100%; max-width: 380px; max-height: 85vh;
+border-radius: 20px; border: 2px solid #00ffff; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 25px rgba(0,255,255,0.2);
+}
+.modal-header {
+background: #1f2937; padding: 15px; display: flex; justify-content: space-between; align-items: center;
+border-bottom: 1px solid #333; color: #00ffff; font-weight: bold; font-size: 15px;
+}
+.ai-close-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+.modal-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+
+.notification-item {
+background: #0b0f19;
+padding: 12px;
+border-radius: 10px;
+border: 1px solid rgba(0,255,255,0.15);
+margin-bottom: 8px;
+}
+.notification-title { font-weight: bold; font-size: 13px; color: #00ffff; margin-bottom: 4px; }
+.notification-desc { font-size: 12px; color: #8b949e; line-height: 1.3; }
+.notification-time { font-size: 10px; color: #555; margin-top: 6px; text-align: right; }
+
+.acc-detail-row {
+background: #0b0f19;
+padding: 12px 15px;
+border-radius: 10px;
+border: 1px solid rgba(255,255,255,0.08);
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.acc-detail-label { font-size: 12px; color: #8b949e; }
+.acc-detail-value { font-size: 13px; color: #fff; font-weight: bold; }
+
+.whatsapp-float {
+position: fixed; bottom: 20px; left: 15px; width: 50px; height: 50px; background: #25d366; border-radius: 50%;
+display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 1000; cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
+}
+.whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+
+.ai-float {
+position: fixed; bottom: 20px; right: 15px; width: 50px; height: 50px; background: linear-gradient(135deg, #00ffff, #0048ff); border-radius: 50%;
+display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4); z-index: 1000; cursor: pointer; animation: aiFloatBounce 2s infinite ease-in-out; border: 2px solid rgba(255,255,255,0.3);
+}
+.ai-float svg { width: 26px; height: 26px; fill: white; }
+
+@keyframes aiFloatBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.ai-chat-box {
+background: #161b22; width: 100%; max-width: 380px; height: 480px; border-radius: 20px; border: 2px solid #00ffff; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 25px rgba(0,255,255,0.2);
+}
+.ai-chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0b0f19; }
+.ai-msg { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
+.ai-msg.bot { background: #1f2937; color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid rgba(0,255,255,0.2); }
+.ai-msg.user { background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; font-weight: 600; align-self: flex-end; border-bottom-right-radius: 2px; }
+.ai-chat-input-area { padding: 10px; background: #161b22; display: flex; gap: 8px; border-top: 1px solid #333; }
+.ai-chat-input { flex: 1; background: #0b0f19; border: 1px solid #333; color: white; padding: 10px 12px; border-radius: 8px; font-size: 13px; outline: none; }
+.ai-send-btn { background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="appSidebar">
+<div class="sidebar-profile">
+<div class="sidebar-avatar" id="sidebarAvatarIcon">👤</div>
+<div class="sidebar-user-info">
+<span class="sidebar-name" id="sidebarUserName">Muhammed Ahmed</span>
+<span class="sidebar-email" id="sidebarUserId">ID: #78642</span>
+</div>
+</div>
+
+<div class="sidebar-section-title">Overview</div>
+<div class="sidebar-item" onclick="toggleSidebar(); location.href='dashboard.html'">🏠 Dashboard</div>
+<div class="sidebar-item" onclick="toggleSidebar(); openNotificationModal()">🔔 Notifications</div>
+
+<div class="sidebar-section-title">Wallet</div>
+<div class="sidebar-item" onclick="toggleSidebar(); location.href='deposit.html'">💳 Deposit</div>
+<div class="sidebar-item" onclick="toggleSidebar(); location.href='withdraw.html'">💸 Withdraw</div>
+
+<div class="sidebar-section-title">Growth</div>
+<div class="sidebar-item" onclick="toggleSidebar(); location.href='referral.html'">👥 Referral</div>
+
+<div class="sidebar-section-title">Account</div>
+<div class="sidebar-item" onclick="toggleSidebar(); openAccountDetailsModal()">👤 Account Details</div>
+<div class="sidebar-item" onclick="logout()" style="color: #ff4d4d;">🚪 Logout</div>
+</div>
+
+<div class="header">
+<div class="hamburger" onclick="toggleSidebar()">☰</div>
+<div class="unique-logo">
+    <div class="unique-icon"><div class="eh-symbol">E↗H</div></div>
+    <div class="unique-text">
+        <h1>Earn<span>Hub</span></h1>
+        <p>SMART MONEY NETWORK</p>
+    </div>
+</div>
+<div style="width: 35px;"></div>
+</div>
+
+<div class="container">
+<div class="bank-card">
+<div class="bank-card-top">
+<div class="user-profile-flex">
+<div class="card-avatar-wrapper" onclick="triggerProfilePictureUpload()" title="Tap to change profile picture">
+<div class="card-avatar" id="cardAvatarIcon">👤</div>
+<div class="avatar-edit-badge">+</div>
+</div>
+<input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="handleProfilePictureChange(event)">
+<div class="acc-info">
+<span class="u-name" id="userNameDisplay">Muhammed Ahmed</span>
+<span class="u-id" id="userIdDisplay">ID: #78642</span>
+</div>
+</div>
+<div class="acc-badge" id="userRankingBadge">Elite Member</div>
+</div>
+<div class="balance-section">
+<div class="acc-title">Total Balance</div>
+<div class="amount" id="mainBalance">Rs. 0</div>
+</div>
+</div>
+
+</div>
+
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+<a href="spin.html"><div class="card box-spin"><h2>🎡</h2><p>Daily Spin</p></div></a>
+<div class="card box-support" onclick="openComplaintModal()"><h2>📝</h2><p>Complaint Box</p></div>
+<a href="claim.html"><div class="card box-claim"><h2>🎁</h2><p>Claim</p></div></a>
+<a href="deposit.html"><div class="card box-deposit"><h2>💳</h2><p>Deposit</p></div></a>
+<div class="card box-withdraw" onclick="checkWithdraw()"><h2>💸</h2><p>Withdraw</p></div>
+<a href="packages.html"><div class="card box-packages"><h2>📦</h2><p>Packages</p></div></a>
+<a href="referral.html"><div class="card box-referral"><h2>👥</h2><p>Referral</p></div></a>
+<a href="withdraw-history.html"><div class="card box-history"><h2>📜</h2><p>Withdraw History</p></div></a>
+</div>
+
+<!-- Referral Network Tracking Card Shifted to the Very Bottom -->
+<div class="bank-card" style="margin: 0 15px 15px 15px; padding: 15px;">
+<div style="font-size: 14px; font-weight: bold; color: #00ffff; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">👥 Referral Network</div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+    <span style="color: #8b949e;">Total Referrals:</span>
+    <span id="dashTotalRefs" style="color: #00ff99; font-weight: bold;">0</span>
+</div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+    <span style="color: #8b949e;">Commission Earned:</span>
+    <span style="color: #00ffff; font-weight: bold;">Rs. <span id="dashRefEarnings">0</span></span>
+</div>
+<div>
+    <input type="text" id="dashRefLink" readonly style="width: 100%; padding: 10px; background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; font-size: 12px; margin-bottom: 8px;">
+    <button onclick="copyRefLink()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #32cd32, #006600); color: white; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px;">Copy Referral Link</button>
+</div>
+</div>
+
+<div class="dark-mode-box">
+<span>🌙 Dark Mode</span>
+<label class="switch">
+<input type="checkbox" id="darkModeToggle" checked onchange="toggleTheme()">
+<span class="slider"></span>
+</label>
+</div>
+
+<!-- Floating Action Buttons -->
+<div class="whatsapp-float" onclick="openWhatsApp()" title="Contact WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2zM12.04 20.14c-1.42 0-2.81-.38-4.02-1.11l-.29-.17-3.03.8.81-2.95-.19-.31c-.81-1.31-1.24-2.83-1.24-4.38 0-4.57 3.72-8.29 8.29-8.29 2.22 0 4.31.86 5.88 2.43 1.57 1.57 2.43 3.66 2.43 5.88 0 4.57-3.72 8.29-8.29 8.29zm4.55-6.23c-.25-.13-1.48-.73-1.71-.82-.23-.09-.4-.13-.57.13-.17.25-.66.82-.81.99-.15.17-.3.19-.55.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.73-.15-.25-.02-.39.11-.52.11-.11.25-.3.37-.45.12-.15.16-.25.24-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.38-.78-1.89-.2-.48-.41-.42-.57-.43h-.49c-.17 0-.45.06-.68.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.32 3.81.6.26 1.07.42 1.44.54.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/></svg>
+</div>
+
+<div class="ai-float" onclick="openAIAssistant()" title="AI Assistant">
+    <svg viewBox="0 0 24 24"><path d="M12 2l2.4 6.8L21 11.2l-6.6 2.4L12 20.4 9.6 13.6 3 11.2l6.6-2.4zM5 18l1.2 3.2L9.4 22l-3.2 1.2L5 26.4 3.8 23.2 0.6 22l3.2-1.2zM19 3l1 2.5L22.5 6.5 20 7.5 19 10l-1-2.5L15.5 6.5 18 5.5z"/></svg>
+</div>
+
+<!-- Notification Modal -->
+<div class="page-modal" id="notificationModal">
+<div class="modal-box">
+<div class="modal-header"><span>🔔 Latest Updates & Notifications</span><button class="ai-close-btn" onclick="closeNotificationModal()">✕</button></div>
+<div class="modal-body">
+    <div class="notification-item">
+        <div class="notification-title">🎉 Welcome to EarnHub!</div>
+        <div class="notification-desc">Aapka account kamyabi se ban gaya hai. Daily spin aur referral bonus se faida uthayein.</div>
+        <div class="notification-time">Today, 12:00 PM</div>
+    </div>
+    <div class="notification-item">
+        <div class="notification-title">⚡ Fast Withdrawals Active</div>
+        <div class="notification-desc">Ab aapke withdraw requests sirf kuch hi minutes mein process kiye ja rahay hain.</div>
+        <div class="notification-time">Yesterday</div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Account Details Modal -->
+<div class="page-modal" id="accountDetailsModal">
+<div class="modal-box">
+<div class="modal-header"><span>👤 Account Details</span><button class="ai-close-btn" onclick="closeAccountDetailsModal()">✕</button></div>
+<div class="modal-body">
+    <div class="acc-detail-row">
+        <span class="acc-detail-label">Account Holder Name</span>
+        <span class="acc-detail-value" id="modalAccName">Muhammed Ahmed</span>
+    </div>
+    <div class="acc-detail-row">
+        <span class="acc-detail-label">User ID</span>
+        <span class="acc-detail-value" id="modalAccId">#78642</span>
+    </div>
+    <div class="acc-detail-row">
+        <span class="acc-detail-label">Current Balance</span>
+        <span class="acc-detail-value" id="modalAccBalance" style="color:#00ffff;">Rs. 0</span>
+    </div>
+    <div class="acc-detail-row">
+        <span class="acc-detail-label">Account Status</span>
+        <span class="acc-detail-value" style="color:#20b2aa;">Active (Elite Member)</span>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- AI Chat Modal -->
+<div class="page-modal" id="aiChatModal">
+<div class="ai-chat-box">
+<div class="modal-header"><span>🤖 EarnHub AI Assistant</span><button class="ai-close-btn" onclick="closeAIAssistant()">✕</button></div>
+<div class="ai-chat-messages" id="aiChatMessages">
+<div class="ai-msg bot">Assalam-o-Alaikum! Main EarnHub AI Assistant hoon. Aap mujhse deposit, withdraw, packages ya kisi bhi cheez ke baray mein pooch saktay hain!</div>
+</div>
+<div class="ai-chat-input-area">
+<input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Yahan apna sawal likhein..." onkeypress="handleAiKeyPress(event)">
+<button class="ai-send-btn" onclick="sendAiMessage()">Send</button>
+</div>
+</div>
+</div>
+
+<!-- Complaint Modal -->
+<div class="page-modal" id="complaintModal">
+<div class="modal-box">
+<div class="modal-header"><span>📝 Complaint Box</span><button class="ai-close-btn" onclick="closeComplaintModal()">✕</button></div>
+<div class="modal-body">
+<p style="font-size: 12px; color: #8b949e; margin: 0;">Apni complaint ya masla yahan tafseel se likhein:</p>
+<textarea id="complaintText" style="width:100%; height:110px; background:#0b0f19; border:1px solid #333; color:white; padding:10px; border-radius:8px; resize:none;" placeholder="Yahan apni complaint likhein..."></textarea>
+<button onclick="submitComplaint()" style="background:linear-gradient(135deg, #20b2aa, #005555); color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Submit Complaint</button>
+</div>
+</div>
+</div>
+
+<script>
+function toggleSidebar(){
+let sidebar = document.getElementById("appSidebar");
+let overlay = document.getElementById("sidebarOverlay");
+if(sidebar.classList.contains("active")){
+sidebar.classList.remove("active");
+overlay.style.display = "none";
+} else {
+sidebar.classList.add("active");
+overlay.style.display = "block";
+}
+}
+
+function logout(){
+    if(confirm("Kya aap waqai account se logout karna chahtay hain?")) {
+        localStorage.clear();
+        window.location.href = "signup.html"; 
+    }
+}
+
+let balance = parseFloat(localStorage.getItem("mainBalance")) || 0;
+document.getElementById("mainBalance").innerText = "Rs. " + balance;
+
+let storedName = localStorage.getItem("userName") || localStorage.getItem("user") || "Muhammed Ahmed";
+let storedId = localStorage.getItem("userId") || "#78642";
+document.getElementById("userNameDisplay").innerText = storedName;
+document.getElementById("userIdDisplay").innerText = "ID: " + storedId;
+
+// --- Referral Network Dashboard Logic Integration ---
+let totalRefs = localStorage.getItem("totalReferrals") || "0";
+let refEarnings = Number(totalRefs) * 50;
+document.getElementById("dashTotalRefs").innerText = totalRefs;
+document.getElementById("dashRefEarnings").innerText = refEarnings;
+
+let baseURL = window.location.origin + window.location.pathname.replace("dashboard.html", "signup.html");
+let fullRefLink = baseURL + "?ref=" + storedName;
+document.getElementById("dashRefLink").value = fullRefLink;
+
+function copyRefLink() {
+    let copyText = document.getElementById("dashRefLink");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert("Referral Link Copied Successfully!");
+}
+// --------------------------------------------------
+
+function triggerProfilePictureUpload() { document.getElementById("profilePicInput").click(); }
+function handleProfilePictureChange(event) {
+    let file = event.target.files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            localStorage.setItem("userProfilePic", e.target.result);
+            document.getElementById("cardAvatarIcon").innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+            alert("Profile picture update ho gayi hai!");
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+let savedPic = localStorage.getItem("userProfilePic");
+if(savedPic) { document.getElementById("cardAvatarIcon").innerHTML = `<img src="${savedPic}" alt="Profile">`; }
+
+function checkWithdraw(){ window.location.href="withdraw.html"; }
+
+function openWhatsApp() {
+    window.open("https://wa.me/", "_blank");
+}
+
+function openNotificationModal() { document.getElementById("notificationModal").style.display = "flex"; }
+function closeNotificationModal() { document.getElementById("notificationModal").style.display = "none"; }
+
+function openAccountDetailsModal() {
+    document.getElementById("modalAccName").innerText = storedName;
+    document.getElementById("modalAccId").innerText = storedId;
+    document.getElementById("modalAccBalance").innerText = "Rs. " + balance;
+    document.getElementById("accountDetailsModal").style.display = "flex";
+}
+function closeAccountDetailsModal() { document.getElementById("accountDetailsModal").style.display = "none"; }
+
+function openAIAssistant() { document.getElementById("aiChatModal").style.display = "flex"; }
+function closeAIAssistant() { document.getElementById("aiChatModal").style.display = "none"; }
+
+function handleAiKeyPress(e) {
+    if (e.key === 'Enter') { sendAiMessage(); }
+}
+
+function sendAiMessage() {
+    let inputField = document.getElementById("aiChatInput");
+    let text = inputField.value.trim();
+    if(text === "") return;
+
+    let chatMessages = document.getElementById("aiChatMessages");
+    let userMsg = document.createElement("div");
+    userMsg.className = "ai-msg user";
+    userMsg.innerText = text;
+    chatMessages.appendChild(userMsg);
+
+    inputField.value = "";
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    setTimeout(() => {
+        let botMsg = document.createElement("div");
+        botMsg.className = "ai-msg bot";
+        let lower = text.toLowerCase();
+        
+        if(lower.includes("deposit") || lower.includes("jama") || lower.includes("add money")) {
+            botMsg.innerText = "Deposit karne ke liye dashboard par 'Deposit' wale button par click karein aur apni raqam jama karein.";
+        } else if(lower.includes("withdraw") || lower.includes("paisa") || lower.includes("nikal") || lower.includes("cash")) {
+            botMsg.innerText = "Pese nikalwane ke liye dashboard par 'Withdraw' button par click karein.";
+        } else if(lower.includes("pkg") || lower.includes("package") || lower.includes("plan") || lower.includes("investment")) {
+            botMsg.innerText = "Aap 'Packages' section mein ja kar tamam active investment plans aur unki tafseel check kar saktay hain.";
+        } else if(lower.includes("spin") || lower.includes("lucky") || lower.includes("wheel")) {
+            botMsg.innerText = "Daily Spin section mein ja kar aap rozana muft rewards aur bonus jeet saktay hain!";
+        } else if(lower.includes("referral") || lower.includes("friend") || lower.includes("dost") || lower.includes("invite")) {
+            botMsg.innerText = "Referral section se apna unique link doston ke sath share karein aur har invite par bonus hasil karein.";
+        } else if(lower.includes("balance") || lower.includes("amount") || lower.includes("pise")) {
+            botMsg.innerText = "Aapka current total balance upar card mein show ho raha hai: Rs. " + balance;
+        } else if(lower.includes("complaint") || lower.includes("issue") || lower.includes("problem") || lower.includes("masla")) {
+            botMsg.innerText = "Complaint درج karne ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
+        } else if(lower.includes("din") || lower.includes("date") || lower.includes("aaj") || lower.includes("today")) {
+            let d = new Date();
+            let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let dayName = days[d.getDay()];
+            botMsg.innerText = "Aaj ka din " + dayName + " hai aur date " + d.toLocaleDateString() + " hai.";
+        } else if(lower.includes("hello") || lower.includes("salam") || lower.includes("hi")) {
+            botMsg.innerText = "Walaikum Assalam! Main EarnHub AI hoon. Bataiye aapki kya madad kar sakta hoon?";
+        } else if(lower.includes("ok") || lower.includes("thek") || lower.includes("acha") || lower.includes("shukriya") || lower.includes("thanks")) {
+            botMsg.innerText = "Most welcome! Agar koi aur sawal ho toh zaroor poochiyega.";
+        } else {
+            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat (Deposit, Withdraw, Packages, aur Daily Spin) dashboard par mil jayengi. Mazeed rehnumai ke liye aap WhatsApp support ya Complaint Box use kar saktay hain.";
+        }
+
+        chatMessages.appendChild(botMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 500);
+}
+
+function openComplaintModal() { document.getElementById("complaintModal").style.display = "flex"; }
+function closeComplaintModal() { document.getElementById("complaintModal").style.display = "none"; }
+function submitComplaint() {
+    let text = document.getElementById("complaintText").value.trim();
+    if(text === "") { alert("Pehle apni complaint likhein!"); return; }
+    alert("Aapki complaint admin ko bhej di gayi hai!");
+    document.getElementById("complaintText").value = "";
+    closeComplaintModal();
+}
+
+function toggleTheme() {
+    if (document.getElementById("darkModeToggle").checked) {
+        document.body.style.background = "#0b0f19";
+        localStorage.setItem("theme", "dark");
+    } else {
+        document.body.style.background = "#f4f7f6";
+        localStorage.setItem("theme", "light");
+    }
+}
+</script>
+</body>
+</html>
