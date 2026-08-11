@@ -182,207 +182,243 @@
 
     <div class="container">
         <div class="section-heading" id="packageTitle">Daily Claim Box</div>
-        <div id="claimBoxContainer"></div>
+        <div id="claimBoxContainer">Loading active packages...</div>
     </div>
 
     <a class="back-link" href="dashboard.html">⬅ Back to Dashboard</a>
 
-<script>
-function getPackageDetails(pkgName){
-    let days = parseInt(localStorage.getItem(pkgName + "_duration")) || 30;
-    let dailyAmount = parseFloat(localStorage.getItem(pkgName + "_daily")) || 14.67;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    return {
-        totalDays: days,
-        daily: dailyAmount
-    };
-}
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUserData = null;
+let currentUserRef = null;
 
 function getMidnightDate(dateInput) {
     let d = new Date(dateInput);
     return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
-function renderClaimBox(){
+async function fetchAndRenderClaim() {
     let container = document.getElementById("claimBoxContainer");
     let titleBox = document.getElementById("packageTitle");
 
-    let activePackage = localStorage.getItem("activePackage");
-
-    if(!activePackage){
-        titleBox.innerText = "No Active Package";
-        let msg = "<div style='text-align:center; padding:20px; color:#aaa;'>Pehle koi investment plan khareedें!</div>";
-        if(container.innerHTML !== msg) container.innerHTML = msg;
+    let firebaseUser = auth.currentUser;
+    if (!firebaseUser) {
+        titleBox.innerText = "Please Login";
+        container.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>Pehle login karein!</div>";
         return;
     }
 
-    let packages = activePackage.split(/[,+]+/).map(p=>p.trim()).filter(p=>p.length > 0);
-    packages = [...new Set(packages)];
+    try {
+        currentUserRef = doc(db, "users", firebaseUser.uid);
+        let userSnap = await getDoc(currentUserRef);
 
-    titleBox.innerText = "Active Packages Box";
-
-    let html = "";
-    let now = new Date();
-    let todayMidnight = getMidnightDate(now);
-
-    let nextMidnightTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-    let timeLeftToMidnight = nextMidnightTime - now.getTime();
-
-    let hours = Math.floor((timeLeftToMidnight % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let minutes = Math.floor((timeLeftToMidnight % (1000 * 60 * 60)) / (1000 * 60));
-    let seconds = Math.floor((timeLeftToMidnight % (1000 * 60)) / 1000);
-    let countdownStr = `${hours}h ${minutes}m ${seconds}s`;
-
-    packages.forEach((pkg)=>{
-        let pkgId = pkg.replace(/%20/g, " ");
-        let info = getPackageDetails(pkgId);
-
-        let startDateStr = localStorage.getItem(pkgId + "_startDate");
-        if(!startDateStr) {
-            startDateStr = new Date().toISOString();
-            localStorage.setItem(pkgId + "_startDate", startDateStr);
+        if (!userSnap.exists()) {
+            titleBox.innerText = "User Not Found";
+            container.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>User data nahi mila!</div>";
+            return;
         }
 
-        let startMidnight = getMidnightDate(startDateStr);
-        let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
-        if (daysPassed < 1) daysPassed = 1;
+        currentUserData = userSnap.data();
+        let activePackages = currentUserData.activePackages || [];
 
-        html += `
-        <div class="pkg-section">
-            <h3 style="color:#00ffff; margin-bottom:8px; border-bottom:1px solid #333; padding-bottom:5px;">
-                ${pkgId}
-            </h3>
-        `;
+        if (activePackages.length === 0) {
+            titleBox.innerText = "No Active Package";
+            container.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>Pehle koi investment plan khareedain!</div>";
+            return;
+        }
 
-        for(let d = 1; d <= info.totalDays; d++){
-            let dStatus = localStorage.getItem(pkgId + "_status_" + d);
+        titleBox.innerText = "Active Packages Box";
 
-            if (d < daysPassed) {
-                if (!dStatus) {
-                    localStorage.setItem(pkgId + "_status_" + d, "expired");
+        let html = "";
+        let now = new Date();
+        let todayMidnight = getMidnightDate(now);
+
+        let nextMidnightTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+        let timeLeftToMidnight = nextMidnightTime - now.getTime();
+
+        let hours = Math.floor((timeLeftToMidnight % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((timeLeftToMidnight % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((timeLeftToMidnight % (1000 * 60)) / 1000);
+        let countdownStr = `${hours}h ${minutes}m ${seconds}s`;
+
+        activePackages.forEach((pkg, pkgIndex) => {
+            if (pkg.status !== "active") return;
+
+            let startDateStr = pkg.startDate || new Date().toISOString();
+            let startMidnight = getMidnightDate(startDateStr);
+            let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
+            if (daysPassed < 1) daysPassed = 1;
+
+            html += `
+            <div class="pkg-section">
+                <h3 style="color:#00ffff; margin-bottom:8px; border-bottom:1px solid #333; padding-bottom:5px;">
+                    ${pkg.planName}
+                </h3>
+            `;
+
+            let history = pkg.claimHistory || {};
+
+            for (let d = 1; d <= pkg.totalDays; d++) {
+                let dStatus = history[d];
+
+                if (d < daysPassed && !dStatus) {
+                    history[d] = "expired";
                     dStatus = "expired";
                 }
-            }
 
-            if(dStatus === "collected"){
-                html += `
-                <div class="day-card">
-                    <div class="day-info">
-                        <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
-                    </div>
-                    <span class="status-collected">✔ Collected</span>
-                </div>
-                `;
-            } 
-            else if(dStatus === "expired" || d < daysPassed){
-                html += `
-                <div class="day-card">
-                    <div class="day-info">
-                        <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
-                    </div>
-                    <span class="status-expired">❌ Missed (Expired)</span>
-                </div>
-                `;
-            } 
-            else if(d === daysPassed){
-                if(dStatus === "collected") {
+                if (dStatus === "collected") {
                     html += `
                     <div class="day-card">
                         <div class="day-info">
                             <h4>Day ${d}</h4>
-                            <p>Rs. ${info.daily}</p>
+                            <p>Rs. ${pkg.dailyEarn}</p>
                         </div>
                         <span class="status-collected">✔ Collected</span>
                     </div>
                     `;
-                } else {
+                } 
+                else if (dStatus === "expired" || (d < daysPassed && !dStatus)) {
                     html += `
                     <div class="day-card">
                         <div class="day-info">
                             <h4>Day ${d}</h4>
-                            <p>Rs. ${info.daily}</p>
+                            <p>Rs. ${pkg.dailyEarn}</p>
                         </div>
-                        <button class="btn-action" onclick="claimDay('${pkgId}', ${info.totalDays}, ${info.daily}, ${d})">
-                            Claim Rs. ${info.daily}
+                        <span class="status-expired">❌ Missed (Expired)</span>
+                    </div>
+                    `;
+                } 
+                else if (d === daysPassed) {
+                    html += `
+                    <div class="day-card">
+                        <div class="day-info">
+                            <h4>Day ${d}</h4>
+                            <p>Rs. ${pkg.dailyEarn}</p>
+                        </div>
+                        <button class="btn-action" onclick="window.claimDayAction(${pkgIndex}, ${d}, ${pkg.dailyEarn})">
+                            Claim Rs. ${pkg.dailyEarn}
                         </button>
                     </div>
                     `;
+                } 
+                else if (d === daysPassed + 1) {
+                    html += `
+                    <div class="day-card">
+                        <div class="day-info">
+                            <h4>Day ${d}</h4>
+                            <p>Rs. ${pkg.dailyEarn}</p>
+                        </div>
+                        <span class="status-locked">🔒 ${countdownStr}</span>
+                    </div>
+                    `;
+                } 
+                else {
+                    html += `
+                    <div class="day-card">
+                        <div class="day-info">
+                            <h4>Day ${d}</h4>
+                            <p>Rs. ${pkg.dailyEarn}</p>
+                        </div>
+                        <span class="status-locked">Locked</span>
+                    </div>
+                    `;
                 }
-            } 
-            else if(d === daysPassed + 1){
-                // صرف اگلے آنے والے دن پر لائیو ٹائمر شو ہوگا
+            }
+
+            if (daysPassed > pkg.totalDays) {
+                pkg.status = "completed";
                 html += `
-                <div class="day-card">
-                    <div class="day-info">
-                        <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
+                    <div class="notice-box" style="margin-top:10px;">
+                        ${pkg.planName} Package Successful 🎉 Completed! Ab dobara buy karein.
                     </div>
-                    <span class="status-locked">🔒 ${countdownStr}</span>
-                </div>
                 `;
             }
-            else {
-                // باقی اس سے آگے کے تمام دن سادے Locked رہیں گے
-                html += `
-                <div class="day-card">
-                    <div class="day-info">
-                        <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
-                    </div>
-                    <span class="status-locked">Locked</span>
-                </div>
-                `;
-            }
-        }
 
-        if (daysPassed > info.totalDays) {
-            localStorage.setItem(pkgId + "_completed", "true");
-        }
+            html += `</div>`;
+        });
 
-        if (localStorage.getItem(pkgId + "_completed") === "true") {
-            html += `
-                <div class="notice-box" style="margin-top:10px;">
-                    ${pkgId} Package Successful 🎉 Completed! Ab dobara buy karein.
-                </div>
-            `;
-        }
-
-        html += `</div>`;
-    });
-
-    if (container.innerHTML !== html) {
         container.innerHTML = html;
+
+    } catch (err) {
+        console.error("Error loading claim data:", err);
+        container.innerHTML = "<div style='text-align:center; padding:20px; color:#ff4d4d;'>Data load karne mein masla aaya hai.</div>";
     }
 }
 
-function claimDay(pkgId, totalDays, amount, currentDay){
-    let dStatus = localStorage.getItem(pkgId + "_status_" + currentDay);
-    if(dStatus === "collected" || dStatus === "expired") {
+window.claimDayAction = async function(pkgIndex, currentDay, amount) {
+    if (!currentUserData || !currentUserRef) return;
+
+    let activePackages = currentUserData.activePackages || [];
+    let targetPkg = activePackages[pkgIndex];
+
+    if (!targetPkg) {
+        alert("Package nahi mila!");
+        return;
+    }
+
+    if (!targetPkg.claimHistory) targetPkg.claimHistory = {};
+
+    if (targetPkg.claimHistory[currentDay] === "collected" || targetPkg.claimHistory[currentDay] === "expired") {
         alert("یہ دن پہلے ہی پروسیس ہو چکا ہے!");
         return;
     }
 
-    let balance = parseFloat(localStorage.getItem("mainBalance")) || 0;
-    balance += amount; 
-    localStorage.setItem("mainBalance", balance.toFixed(2));
+    let currentBal = Number(currentUserData.mainBalance || 0);
+    let newBal = currentBal + Number(amount);
 
-    localStorage.setItem(pkgId + "_status_" + currentDay, "collected");
+    targetPkg.claimHistory[currentDay] = "collected";
+    targetPkg.claimedDays = (targetPkg.claimedDays || 0) + 1;
 
-    let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
-    transList.unshift({type: "Daily Claim", amount: amount, details: pkgId + " - Day " + currentDay, date: new Date().toLocaleString()});
-    localStorage.setItem('allTransactions', JSON.stringify(transList));
+    try {
+        await updateDoc(currentUserRef, {
+            mainBalance: newBal,
+            activePackages: activePackages
+        });
 
-    alert("رقم کامیابی سے کلیم ہو گئی ہے!");
-    renderClaimBox();
+        localStorage.setItem("mainBalance", newBal);
+        let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
+        transList.unshift({
+            type: "Daily Claim", 
+            amount: Number(amount), 
+            details: targetPkg.planName + " - Day " + currentDay, 
+            date: new Date().toLocaleString()
+        });
+        localStorage.setItem('allTransactions', JSON.stringify(transList));
+
+        alert("رقم کامیابی سے کلیم ہو گئی ہے!");
+        fetchAndRenderClaim();
+
+    } catch (err) {
+        console.error("Claim error:", err);
+        alert("کلیم کرتے وقت خرابی پیش آئی، دوبارہ کوشش کریں۔");
+    }
 }
 
-window.onload = function(){
-    renderClaimBox();
-};
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        fetchAndRenderClaim();
+    } else {
+        window.location.href = "login.html";
+    }
+});
 
-setInterval(renderClaimBox, 1000);
+setInterval(fetchAndRenderClaim, 1000);
 </script>
 
 </body>
