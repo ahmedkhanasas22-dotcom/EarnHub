@@ -278,7 +278,7 @@ button.submit-btn:disabled{ background: #555; color: #aaa; cursor: not-allowed; 
         <div class="selected-method-title" id="displayMethodName">JazzCash</div>
         
         <div class="form-group">
-            <label>Withdrawal Amount (Min 100)</label>
+            <label>Withdrawal Amount (Min 200 - Max 50,000)</label>
             <input id="amount" class="form-control" type="number" placeholder="Enter amount">
         </div>
         <div class="form-group">
@@ -339,27 +339,20 @@ window.filterMethods = function() {
     }
 }
 
-let submitBtn = document.getElementById("submitBtn");
-let lockMsg = document.getElementById("lockMsg");
-
-submitBtn.disabled = false;
-lockMsg.innerHTML = "🔓 Withdraw Unlocked!";
-lockMsg.style.color = "#00ff99";
-
 window.sendWithdraw = async function(){
     let name = document.getElementById("name").value.trim();
     let number = document.getElementById("number").value.trim();
     let amount = Number(document.getElementById("amount").value);
 
-    let currentBalance = Number(localStorage.getItem("mainBalance") || localStorage.getItem("balance") || 1099);
+    let currentBalance = Number(localStorage.getItem("mainBalance") || localStorage.getItem("balance") || 0);
 
-    if(name == "" || number == "" || !amount){
+    if(name === "" || number === "" || !amount){
         alert("Please Fill All Details");
         return;
     }
 
-    if(amount < 100){
-        alert("Minimum withdrawal amount is Rs. 100");
+    if(amount < 200){
+        alert("Minimum withdrawal amount is Rs. 200");
         return;
     }
 
@@ -373,21 +366,21 @@ window.sendWithdraw = async function(){
         return;
     }
 
-    // یہاں 2 ممبرز والی شرط چیک ہو رہی ہے جو آپ نے کہی تھی
-    let referralCount = Number(localStorage.getItem("totalReferrals") || 0);
-    if(referralCount < 2){
-        alert("پہلے دو ممبر ایڈ کرو پھر اس کے بعد آپ ودڈرا کر سکو گے۔");
+    // شرط: جب تک ریفرل ممبر کوئی پیکج بائے نہ کرے، ودڈرا انلاک نہیں ہوگا
+    let eligibleWithdrawRefs = Number(localStorage.getItem("eligibleWithdrawRefs") || 0);
+    if(eligibleWithdrawRefs < 2){
+        alert("پہلے کم از کم دو ممبرز ایڈ کریں جنہوں نے پیکج بائے کیا ہو، پھر آپ ودڈرا کر سکیں گے۔");
         return;
     }
 
+    let submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
     submitBtn.innerText = "Submitting...";
 
     try {
         let docRef = await addDoc(collection(db, "requests"), {
             username: localStorage.getItem("userName") || localStorage.getItem("user") || "Muhammad Ahmad Javed",
-            transactionId: "Withdraw",
-            package: "Withdraw",
+            type: "Withdraw",
             amount: amount,
             method: selectedMethodName,
             accountName: name,
