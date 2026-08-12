@@ -28,6 +28,7 @@ body{ margin:0; max-width:430px; margin:auto; font-family:Arial; background:#050
 .return-value { color: #00ff99 !important; }
 
 button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25px; background:linear-gradient(135deg,#00ffff,#1a73e8); font-weight:bold; font-size:14px; cursor:pointer; color:#000; box-shadow: 0 4px 10px rgba(0,255,255,0.2); }
+button:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow: none; }
 .back-btn { display: inline-block; margin-bottom: 10px; color: #00ffff; font-size: 13px; text-decoration: none; font-weight: bold; }
 </style>
 </head>
@@ -48,7 +49,7 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
 <div class="title">Investment Plans</div>
 
 <!-- Plan 01 -->
-<div class="package">
+<div class="package" id="box-Plan 01">
     <h2>Plan 01</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 220</div></div>
@@ -56,11 +57,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 440</div></div>
     </div>
-    <button onclick="buyPlan('Plan 01', 220)">Invest Now</button>
+    <button id="btn-Plan 01" onclick="buyPlan('Plan 01', 220, 14.67)">Invest Now</button>
 </div>
 
 <!-- Plan 02 -->
-<div class="package">
+<div class="package" id="box-Plan 02">
     <h2>Plan 02</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 450</div></div>
@@ -68,11 +69,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 900</div></div>
     </div>
-    <button onclick="buyPlan('Plan 02', 450)">Invest Now</button>
+    <button id="btn-Plan 02" onclick="buyPlan('Plan 02', 450, 30.00)">Invest Now</button>
 </div>
 
 <!-- Plan 03 -->
-<div class="package">
+<div class="package" id="box-Plan 03">
     <h2>Plan 03</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 850</div></div>
@@ -80,11 +81,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 1,700</div></div>
     </div>
-    <button onclick="buyPlan('Plan 03', 850)">Invest Now</button>
+    <button id="btn-Plan 03" onclick="buyPlan('Plan 03', 850, 56.67)">Invest Now</button>
 </div>
 
 <!-- Plan 04 -->
-<div class="package">
+<div class="package" id="box-Plan 04">
     <h2>Plan 04</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 1,650</div></div>
@@ -92,11 +93,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 3,300</div></div>
     </div>
-    <button onclick="buyPlan('Plan 04', 1650)">Invest Now</button>
+    <button id="btn-Plan 04" onclick="buyPlan('Plan 04', 1650, 110.00)">Invest Now</button>
 </div>
 
 <!-- Plan 05 -->
-<div class="package">
+<div class="package" id="box-Plan 05">
     <h2>Plan 05</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 3,250</div></div>
@@ -104,11 +105,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 6,500</div></div>
     </div>
-    <button onclick="buyPlan('Plan 05', 3250)">Invest Now</button>
+    <button id="btn-Plan 05" onclick="buyPlan('Plan 05', 3250, 216.67)">Invest Now</button>
 </div>
 
 <!-- Plan 06 -->
-<div class="package">
+<div class="package" id="box-Plan 06">
     <h2>Plan 06</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 6,450</div></div>
@@ -116,11 +117,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 12,900</div></div>
     </div>
-    <button onclick="buyPlan('Plan 06', 6450)">Invest Now</button>
+    <button id="btn-Plan 06" onclick="buyPlan('Plan 06', 6450, 430.00)">Invest Now</button>
 </div>
 
 <!-- Plan 07 -->
-<div class="package">
+<div class="package" id="box-Plan 07">
     <h2>Plan 07</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 12,850</div></div>
@@ -128,11 +129,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 25,700</div></div>
     </div>
-    <button onclick="buyPlan('Plan 07', 12850)">Invest Now</button>
+    <button id="btn-Plan 07" onclick="buyPlan('Plan 07', 12850, 856.67)">Invest Now</button>
 </div>
 
 <!-- Plan 08 -->
-<div class="package">
+<div class="package" id="box-Plan 08">
     <h2>Plan 08</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 25,650</div></div>
@@ -140,11 +141,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 51,300</div></div>
     </div>
-    <button onclick="buyPlan('Plan 08', 25650)">Invest Now</button>
+    <button id="btn-Plan 08" onclick="buyPlan('Plan 08', 25650, 1710.00)">Invest Now</button>
 </div>
 
 <!-- Plan 09 -->
-<div class="package">
+<div class="package" id="box-Plan 09">
     <h2>Plan 09</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 51,250</div></div>
@@ -152,11 +153,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 102,500</div></div>
     </div>
-    <button onclick="buyPlan('Plan 09', 51250)">Invest Now</button>
+    <button id="btn-Plan 09" onclick="buyPlan('Plan 09', 51250, 3416.67)">Invest Now</button>
 </div>
 
 <!-- Plan 10 -->
-<div class="package">
+<div class="package" id="box-Plan 10">
     <h2>Plan 10</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 102,450</div></div>
@@ -164,11 +165,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 204,900</div></div>
     </div>
-    <button onclick="buyPlan('Plan 10', 102450)">Invest Now</button>
+    <button id="btn-Plan 10" onclick="buyPlan('Plan 10', 102450, 6830.00)">Invest Now</button>
 </div>
 
 <!-- Plan 11 -->
-<div class="package">
+<div class="package" id="box-Plan 11">
     <h2>Plan 11</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 204,850</div></div>
@@ -176,11 +177,11 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 409,700</div></div>
     </div>
-    <button onclick="buyPlan('Plan 11', 204850)">Invest Now</button>
+    <button id="btn-Plan 11" onclick="buyPlan('Plan 11', 204850, 13656.67)">Invest Now</button>
 </div>
 
 <!-- Plan 12 -->
-<div class="package">
+<div class="package" id="box-Plan 12">
     <h2>Plan 12</h2>
     <div class="plan-grid">
         <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 409,650</div></div>
@@ -188,25 +189,75 @@ button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 819,300</div></div>
     </div>
-    <button onclick="buyPlan('Plan 12', 409650)">Invest Now</button>
+    <button id="btn-Plan 12" onclick="buyPlan('Plan 12', 409650, 27310.00)">Invest Now</button>
 </div>
 
 </div>
 
 <script>
-function buyPlan(planName, price) {
+document.addEventListener("DOMContentLoaded", () => {
+    checkActivePlans();
+});
+
+function checkActivePlans() {
+    let activePlans = JSON.parse(localStorage.getItem("activePackages") || "[]");
+    activePlans.forEach(plan => {
+        let btn = document.getElementById("btn-" + plan.name);
+        if (btn) {
+            btn.disabled = true;
+            btn.innerText = "Already Active / Running";
+        }
+    });
+}
+
+function buyPlan(planName, price, dailyEarn) {
     let currentBalance = parseFloat(localStorage.getItem("mainBalance")) || 0;
+    let activePlans = JSON.parse(localStorage.getItem("activePackages") || "[]");
+
+    // Check if plan is already active
+    let isAlreadyActive = activePlans.some(p => p.name === planName);
+    if (isAlreadyActive) {
+        alert("Yeh plan pehle se active hai! Jab tak yeh complete nahi hota aap dobara nahi khareed sakte.");
+        return;
+    }
+
     if (currentBalance >= price) {
+        let btn = document.getElementById("btn-" + planName);
+        if(btn) {
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+        }
+
         currentBalance -= price;
         localStorage.setItem("mainBalance", currentBalance);
+
+        // Add to active packages with calendar timer tracking
+        let newActivePlan = {
+            name: planName,
+            price: price,
+            dailyEarn: dailyEarn,
+            startDate: new Date().toISOString(),
+            currentDay: 1,
+            totalDays: 30,
+            lastClaimDate: ""
+        };
+
+        activePlans.push(newActivePlan);
+        localStorage.setItem("activePackages", JSON.stringify(activePlans));
 
         // Save transaction log
         let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
         transList.unshift({type: "Package Purchase", amount: -price, details: planName, date: new Date().toLocaleString()});
         localStorage.setItem('allTransactions', JSON.stringify(transList));
 
-        alert(planName + " successfully buy ho gaya hai! Rs. " + price + " aapke balance se deduct ho gaye hain.");
-        window.location.href = "dashboard.html";
+        // Unlock withdrawal criteria marker if configured via package purchase
+        localStorage.setItem("hasPurchasedPackage", "true");
+
+        setTimeout(() => {
+            alert("✅ Your Plan has been purchased successfully! Your Package is active now.");
+            window.location.href = "dashboard.html";
+        }, 1000);
+
     } else {
         alert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.");
         window.location.href = "deposit.html";
