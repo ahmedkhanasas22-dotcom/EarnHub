@@ -151,8 +151,8 @@ onAuthStateChanged(auth, async (user) => {
 
             if (userSnap.exists()) {
                 let data = userSnap.data();
-                // اب یہ بالکل وہی کوڈ اٹھائے گا جو ڈیش بورڈ استعمال کر رہا ہے
-                globalRefCode = data.myReferralCode || localStorage.getItem("myReferralCode") || "EarnHub" + user.uid.substring(0, 6);
+                // نام کی بجائے فائر بیس کی اصل UID استعمال ہوگی
+                globalRefCode = user.uid;
                 
                 let level1Count = Number(data.level1Count || data.totalReferrals || 0);
                 let totalEarnings = level1Count * 50;
@@ -164,13 +164,13 @@ onAuthStateChanged(auth, async (user) => {
             console.log("Error fetching referral data:", err);
         }
     } else {
-        globalRefCode = localStorage.getItem("myReferralCode") || localStorage.getItem("userName") || "MuhammedAhmed";
+        globalRefCode = localStorage.getItem("myUid") || localStorage.getItem("myReferralCode") || "EarnHubUser";
         let localRefs = Number(localStorage.getItem("totalReferrals") || 0);
         document.getElementById("refEarnings").innerText = "Rs. " + (localRefs * 50);
         renderLevels(localRefs);
     }
 
-    // اب ڈیش بورڈ اور ریفرل پیج دونوں کا لنک بالکل ایک جیسا بنے گا
+    // ریفرل لنک میں UID سیٹ کی جا رہی ہے
     let currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
     let refUrl = window.location.origin + currentPath + "index.html?ref=" + globalRefCode;
     document.getElementById("refLink").innerText = refUrl;
