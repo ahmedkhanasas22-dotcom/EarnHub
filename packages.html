@@ -28,7 +28,6 @@ body{ margin:0; max-width:430px; margin:auto; font-family:Arial; background:#050
 .return-value { color: #00ff99 !important; }
 
 button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25px; background:linear-gradient(135deg,#00ffff,#1a73e8); font-weight:bold; font-size:14px; cursor:pointer; color:#000; box-shadow: 0 4px 10px rgba(0,255,255,0.2); }
-button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow: none; }
 .back-btn { display: inline-block; margin-bottom: 10px; color: #00ffff; font-size: 13px; text-decoration: none; font-weight: bold; }
 </style>
 </head>
@@ -57,7 +56,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 440</div></div>
     </div>
-    <button id="btn_1" onclick="buyPlan('Plan 01', 220, 'btn_1')">Invest Now</button>
+    <button onclick="buyPlan('Plan 01', 220)">Invest Now</button>
 </div>
 
 <!-- Plan 02 -->
@@ -69,7 +68,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 900</div></div>
     </div>
-    <button id="btn_2" onclick="buyPlan('Plan 02', 450, 'btn_2')">Invest Now</button>
+    <button onclick="buyPlan('Plan 02', 450)">Invest Now</button>
 </div>
 
 <!-- Plan 03 -->
@@ -81,7 +80,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 1,700</div></div>
     </div>
-    <button id="btn_3" onclick="buyPlan('Plan 03', 850, 'btn_3')">Invest Now</button>
+    <button onclick="buyPlan('Plan 03', 850)">Invest Now</button>
 </div>
 
 <!-- Plan 04 -->
@@ -93,7 +92,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 3,300</div></div>
     </div>
-    <button id="btn_4" onclick="buyPlan('Plan 04', 1650, 'btn_4')">Invest Now</button>
+    <button onclick="buyPlan('Plan 04', 1650)">Invest Now</button>
 </div>
 
 <!-- Plan 05 -->
@@ -105,7 +104,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 6,500</div></div>
     </div>
-    <button id="btn_5" onclick="buyPlan('Plan 05', 3250, 'btn_5')">Invest Now</button>
+    <button onclick="buyPlan('Plan 05', 3250)">Invest Now</button>
 </div>
 
 <!-- Plan 06 -->
@@ -117,7 +116,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 12,900</div></div>
     </div>
-    <button id="btn_6" onclick="buyPlan('Plan 06', 6450, 'btn_6')">Invest Now</button>
+    <button onclick="buyPlan('Plan 06', 6450)">Invest Now</button>
 </div>
 
 <!-- Plan 07 -->
@@ -129,7 +128,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 25,700</div></div>
     </div>
-    <button id="btn_7" onclick="buyPlan('Plan 07', 12850, 'btn_7')">Invest Now</button>
+    <button onclick="buyPlan('Plan 07', 12850)">Invest Now</button>
 </div>
 
 <!-- Plan 08 -->
@@ -141,7 +140,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 51,300</div></div>
     </div>
-    <button id="btn_8" onclick="buyPlan('Plan 08', 25650, 'btn_8')">Invest Now</button>
+    <button onclick="buyPlan('Plan 08', 25650)">Invest Now</button>
 </div>
 
 <!-- Plan 09 -->
@@ -153,7 +152,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 102,500</div></div>
     </div>
-    <button id="btn_9" onclick="buyPlan('Plan 09', 51250, 'btn_9')">Invest Now</button>
+    <button onclick="buyPlan('Plan 09', 51250)">Invest Now</button>
 </div>
 
 <!-- Plan 10 -->
@@ -165,7 +164,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 204,900</div></div>
     </div>
-    <button id="btn_10" onclick="buyPlan('Plan 10', 102450, 'btn_10')">Invest Now</button>
+    <button onclick="buyPlan('Plan 10', 102450)">Invest Now</button>
 </div>
 
 <!-- Plan 11 -->
@@ -177,7 +176,7 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 409,700</div></div>
     </div>
-    <button id="btn_11" onclick="buyPlan('Plan 11', 204850, 'btn_11')">Invest Now</button>
+    <button onclick="buyPlan('Plan 11', 204850)">Invest Now</button>
 </div>
 
 <!-- Plan 12 -->
@@ -189,22 +188,15 @@ button:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow
         <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
         <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 819,300</div></div>
     </div>
-    <button id="btn_12" onclick="buyPlan('Plan 12', 409650, 'btn_12')">Invest Now</button>
+    <button onclick="buyPlan('Plan 12', 409650)">Invest Now</button>
 </div>
 
 </div>
 
 <script>
-function buyPlan(planName, price, btnId) {
+function buyPlan(planName, price) {
     let currentBalance = parseFloat(localStorage.getItem("mainBalance")) || 0;
-    
     if (currentBalance >= price) {
-        let btn = document.getElementById(btnId);
-        if (btn) {
-            btn.disabled = true;
-            btn.innerText = "Processing...";
-        }
-
         currentBalance -= price;
         localStorage.setItem("mainBalance", currentBalance);
 
@@ -213,7 +205,7 @@ function buyPlan(planName, price, btnId) {
         transList.unshift({type: "Package Purchase", amount: -price, details: planName, date: new Date().toLocaleString()});
         localStorage.setItem('allTransactions', JSON.stringify(transList));
 
-        alert(planName + " successfully buy ho gaya hai! Rs. " + price + " aapke balance سے deduct ho gaye hain.");
+        alert(planName + " successfully buy ho gaya hai! Rs. " + price + " aapke balance se deduct ho gaye hain.");
         window.location.href = "dashboard.html";
     } else {
         alert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.");
