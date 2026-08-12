@@ -1,390 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="ur" dir="rtl">
 <head>
-<title>EarnHub</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-*{ box-sizing:border-box; user-select: none; }
-body{
-margin:0;
-max-width:430px;
-margin:auto;
-font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-background:#0b0f19;
-color:white;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-position: relative;
-overflow-x: hidden;
-}
-
-.box{
-width:350px;
-background:#161b22;
-padding:30px;
-border-radius:20px;
-text-align:center;
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
-border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* یونیک لوگو ڈیزائن */
-.unique-logo{
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    gap:14px; 
-    font-family:Arial,sans-serif; 
-    margin-bottom: 25px;
-}
-.unique-icon{
-    width:50px; 
-    height:50px; 
-    border-radius:50%; 
-    background: linear-gradient(135deg,#00ffff,#0048ff);
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    box-shadow: 0 0 15px #00ffff;
-}
-.eh-symbol{
-    width:36px; 
-    height:36px; 
-    border-radius:50%; 
-    background:#050505; 
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    color:#ffd700; 
-    font-size:14px; 
-    font-weight:900; 
-    border:2px solid #ffd700;
-}
-.unique-text h1{ 
-    margin:0; 
-    font-size:22px; 
-    font-weight:900; 
-    color:white; 
-    text-align: left; 
-}
-.unique-text h1 span{ 
-    color:#00ffff; 
-}
-.unique-text p{ 
-    margin:2px 0 0 0; 
-    color:#ffd700; 
-    font-size:7px; 
-    letter-spacing:1.5px; 
-    text-align: left; 
-}
-
-h2{
-color:white;
-}
-
-input{
-width:90%;
-padding:13px;
-margin:8px;
-border-radius:10px;
-border:1px solid #30363d;
-outline: none;
-background: #0b0f19;
-color: white;
-font-size: 14px;
-}
-
-button{
-width:90%;
-padding:13px;
-margin:10px 0;
-border:none;
-border-radius:25px;
-background:cyan;
-font-weight:bold;
-cursor: pointer;
-color: #000;
-font-size: 14px;
-}
-
-button:disabled {
-background: #555 !important;
-cursor: not-allowed;
-}
-
-a{
-color:cyan;
-cursor:pointer;
-text-decoration: underline;
-font-size: 13px;
-}
-
-p{
-color:#8b949e;
-font-size: 13px;
-margin: 8px 0;
-}
-
-#loginBox{
-display:none;
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EarnHub - سائن اپ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .signup-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="box">
-
-<!-- یونیک لوگو سیکشن -->
-<div class="unique-logo">
-    <div class="unique-icon">
-        <div class="eh-symbol">E↗H</div>
+    <div class="signup-container">
+        <h2>EarnHub اکاؤنٹ بنائیں</h2>
+        <form id="signupForm" onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label for="fullname">پورا نام</label>
+                <input type="text" id="fullname" required placeholder="اپنا نام درج کریں">
+            </div>
+            <div class="form-group">
+                <label for="email">ای میل ایڈریس</label>
+                <input type="email" id="email" required placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+                <label for="phone">فون نمبر (موبائل)</label>
+                <input type="text" id="phone" required placeholder="03XXXXXXXXX">
+            </div>
+            <div class="form-group">
+                <label for="password">پاسورڈ</label>
+                <input type="password" id="password" required placeholder="پاسورڈ درج کریں">
+            </div>
+            <div class="form-group">
+                <label for="refCode">ریفرل کوڈ (اختیاری)</label>
+                <input type="text" id="refCode" placeholder="اگر ہے تو درج کریں">
+            </div>
+            <button type="submit">سائن اپ کریں</button>
+        </form>
+        <div class="login-link">
+            پہلے سے اکاؤنٹ موجود ہے؟ <a href="login.html">لاگ ان کریں</a>
+        </div>
     </div>
-    <div class="unique-text">
-        <h1>Earn<span>Hub</span></h1>
-        <p>SMART MONEY NETWORK</p>
-    </div>
-</div>
 
-<!-- سائن اپ باکس -->
-<div id="signupBox">
+    <script>
+        function handleSignup(event) {
+            event.preventDefault();
 
-<h2>Sign Up</h2>
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const refCode = document.getElementById('refCode').value;
 
-<input id="suser" placeholder="Username">
-<input id="semail" type="email" placeholder="Email">
-<input id="spass" type="password" placeholder="Password">
-<input id="sref" placeholder="Referral Code (Optional)" readonly style="background: #111; color: #aaa; cursor: not-allowed;">
+            // یونیک یوزر آئی ڈی (UUID) جنریٹ کرنا
+            const userId = 'EH-' + Math.floor(100000 + Math.random() * 900000);
 
-<button id="signupBtn" onclick="signup()">Create Account</button>
-
-<p>Already have account?</p>
-<a onclick="showLogin()">Login</a>
-
-</div>
-
-<!-- لاگ ان باکس -->
-<div id="loginBox">
-
-<h2>Login</h2>
-
-<input id="lemail" type="email" placeholder="Email">
-<input id="lpass" type="password" placeholder="Password">
-
-<button id="loginBtn" onclick="login()">Login</button>
-
-<p>
-<a onclick="forgotPassword()">Forgot Password?</a>
-</p>
-
-<p>New user?</p>
-<a onclick="showSignup()">Sign Up</a>
-
-</div>
-
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
-    authDomain: "earnhub-55c59.firebaseapp.com",
-    projectId: "earnhub-55c59",
-    storageBucket: "earnhub-55c59.firebasestorage.app",
-    messagingSenderId: "636270810711",
-    appId: "1:636270810711:web:da2bb0625524bcddc27512"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let urlParams = new URLSearchParams(window.location.search);
-let refUser = urlParams.get("ref");
-if(refUser) {
-    let refInput = document.getElementById("sref");
-    refInput.value = refUser;
-    refInput.setAttribute("readonly", true);
-}
-
-window.signup = async function() {
-    let user = document.getElementById("suser").value.trim();
-    let email = document.getElementById("semail").value.trim();
-    let pass = document.getElementById("spass").value.trim();
-    let ref = document.getElementById("sref").value.trim(); 
-    let btn = document.getElementById("signupBtn");
-
-    if(user === "" || email === "" || pass === ""){
-        alert("Please fill all required fields!");
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = "Creating...";
-
-    try {
-        // نیا اکاؤنٹ بنانے سے پہلے لوکل سٹوریج کلیئر کر دیں تاکہ پرانا ڈیٹا مٹ جائے
-        localStorage.clear();
-
-        let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-        let firebaseUser = userCredential.user;
-
-        let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
-        let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
-
-        // نئے اکاؤنٹ کا بیلنس بالکل 0 سے شروع ہوگا
-        await setDoc(doc(db, "users", firebaseUser.uid), {
-            username: user,
-            email: email,
-            password: pass,
-            myReferralCode: myCode,
-            referral: ref,
-            mainBalance: 0,
-            totalReferrals: 0,
-            packageActive: false,
-            userId: userIdVal,
-            role: "user"
-        });
-
-        // Upline (Old Member) ke main balance mein 50 Rs aur totalReferrals mein +1 update karna
-        if(ref) {
-            let q = query(collection(db, "users"), where("myReferralCode", "==", ref));
-            let querySnapshot = await getDocs(q);
-            if(!querySnapshot.empty) {
-                querySnapshot.forEach(async (uDoc) => {
-                    let uplineData = uDoc.data();
-                    let uplineRef = doc(db, "users", uDoc.id);
-                    
-                    let currentBalance = Number(uplineData.mainBalance || 0);
-                    let currentReferrals = Number(uplineData.totalReferrals || 0);
-
-                    await updateDoc(uplineRef, {
-                        totalReferrals: currentReferrals + 1,
-                        mainBalance: currentBalance + 50
-                    });
-                });
-            }
-        }
-
-        alert("Account Created Successfully! Please Login.");
-        showLogin();
-    } catch (error) {
-        if (error.code === 'auth/email-already-in-use') {
-            alert("This email is already registered! Please login.");
-            showLogin();
-        } else if (error.code === 'auth/invalid-email') {
-            alert("Please enter a valid email address!");
-        } else if (error.code === 'auth/weak-password') {
-            alert("Password should be at least 6 characters!");
-        } else {
-            alert("Error: " + error.message);
-        }
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Create Account";
-    }
-}
-
-window.login = async function() {
-    let email = document.getElementById("lemail").value.trim();
-    let pass = document.getElementById("lpass").value.trim();
-    let btn = document.getElementById("loginBtn");
-
-    if(email === "" || pass === ""){
-        alert("Please enter email and password!");
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = "Logging in...";
-
-    try {
-        let userCredential = await signInWithEmailAndPassword(auth, email, pass);
-        let firebaseUser = userCredential.user;
-
-        let userDocRef = doc(db, "users", firebaseUser.uid);
-        let userDoc = await getDoc(userDocRef);
-
-        let userName = email.split('@')[0];
-        let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
-        let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
-        let userBalance = 0;
-
-        if (!userDoc.exists()) {
-            await setDoc(userDocRef, {
-                username: userName,
+            // نیا یوزر ابجیکٹ (بنیادی بیلنس بالکل زیرو رکھا گیا ہے)
+            const newUser = {
+                userId: userId,
+                fullname: fullname,
                 email: email,
-                password: pass,
-                myReferralCode: myCode,
-                referral: "",
-                mainBalance: 0,
-                totalReferrals: 0,
-                packageActive: false,
-                userId: userIdVal,
-                role: "user"
-            });
-        } else {
-            let data = userDoc.data();
-            userName = data.username || userName;
-            myCode = data.myReferralCode || myCode;
-            userIdVal = data.userId || userIdVal;
-            userBalance = Number(data.mainBalance || 0);
+                phone: phone,
+                password: password,
+                balance: 0,          // زیرو بیلنس شرط کے مطابق
+                totalDeposit: 0,
+                totalWithdraw: 0,
+                activePlan: null,
+                referredBy: refCode || 'None',
+                createdAt: new Date().toISOString()
+            };
+
+            // لوکل اسٹوریج یا ڈیٹا بیس میں محفوظ کرنا
+            let users = JSON.parse(localStorage.getItem('earnhub_users')) || [];
+            
+            // چیک کریں کہ ای میل پہلے سے موجود تو نہیں
+            const existingUser = users.find(u => u.email === email);
+            if (existingUser) {
+                alert('یہ ای میل پہلے سے رجسٹرڈ ہے!');
+                return;
+            }
+
+            users.push(newUser);
+            localStorage.setItem('earnhub_users', JSON.stringify(users));
+            
+            // کرنٹ سیشن سیٹ کرنا
+            localStorage.setItem('current_user', JSON.stringify(newUser));
+
+            alert('اکاؤنٹ کامیابی سے بن گیا ہے! اب آپ کو ڈیش بورڈ پر ری ڈائریکٹ کیا جا رہا ہے۔');
+            window.location.href = 'dashboard.html';
         }
-
-        // لاگ ان پر یوزر کا اصل ڈیٹا اور بیلنس لوکل سٹوریج میں سیو ہو جائے گا
-        localStorage.setItem("userName", userName);
-        localStorage.setItem("user", userName);
-        localStorage.setItem("myReferralCode", myCode);
-        localStorage.setItem("email", email);
-        localStorage.setItem("userId", userIdVal);
-        localStorage.setItem("mainBalance", userBalance);
-
-        window.location.href = "dashboard.html";
-    } catch (error) {
-        alert("Wrong Email or Password!");
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Login";
-    }
-}
-
-window.forgotPassword = async function() {
-    let email = prompt("Enter your registered email:");
-    if(!email) return;
-
-    try {
-        let q = query(collection(db, "users"), where("email", "==", email.trim()));
-        let querySnapshot = await getDocs(q);
-
-        if(querySnapshot.empty){
-            alert("Account exists in Auth but database record is missing. Please try logging in with your password, or sign up with a new email.");
-        } else {
-            querySnapshot.forEach((docSnap) => {
-                let data = docSnap.data();
-                alert("Account Details Found!\n\nUsername: " + data.username + "\nPassword: " + data.password);
-            });
-        }
-    } catch (error) {
-        alert("Error: " + error.message);
-    }
-}
-
-window.showLogin = function(){
-    document.getElementById("signupBox").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
-}
-
-window.showSignup = function(){
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("signupBox").style.display = "block";
-}
-</script>
+    </script>
 
 </body>
 </html>
