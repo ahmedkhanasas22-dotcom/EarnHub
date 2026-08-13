@@ -180,6 +180,7 @@ window.approveDeposit = async function(id, userId){
     let approveBtn = document.getElementById(`approveBtn_${id}`);
     let rejectBtn = document.getElementById(`rejectBtn_${id}`);
     
+    // ایک بار کلک ہوتے ہی دونوں بٹن ڈس ایبل کر دیں
     approveBtn.disabled = true;
     rejectBtn.disabled = true;
     approveBtn.innerText = "Processing...";
@@ -196,7 +197,7 @@ window.approveDeposit = async function(id, userId){
     }
 
     try {
-        // فائر بیس سے یوزر کے اصل اکاؤنٹ میں بیلنس پلس کرنے کا طریقہ
+        // فائر بیس سے یوزر کا اصل اکاؤنٹ تلاش کر کے اس کے mainBalance میں پیسے ایڈ کرنا
         if(userId) {
             let userDocRef = doc(db, "users", userId);
             let userDocSnap = await getDoc(userDocRef);
@@ -243,6 +244,19 @@ window.approvePackage = async function(id, pkgName){
             approved: true 
         });
 
+        localStorage.removeItem(pkgName + "_completed");
+        localStorage.setItem(pkgName + "_currentDay", "1");
+        localStorage.removeItem(pkgName + "_status_1");
+        
+        let existingPkg = localStorage.getItem("activePackage") || "";
+        let packagesArray = existingPkg.split(/[,+]+/).map(p => p.trim()).filter(p => p.length > 0);
+        
+        if(!packagesArray.includes(pkgName)){
+            packagesArray.push(pkgName);
+        }
+        localStorage.setItem("activePackage", packagesArray.join(", "));
+        localStorage.setItem("isAdminApproved", "true");
+
         alert("Package Request Approved Successfully!");
         loadRequests();
     } catch (error) {
@@ -284,9 +298,8 @@ window.reject = async function(id){
     approveBtn.innerText = "Rejecting...";
 
     try {
-        // ریجیکٹ کرنے پر بیلنس ہرگز ایڈ نہیں ہوگا، صرف اسٹیٹس اپڈیٹ ہوگا
         await updateDoc(doc(db, "requests", id), { status: "rejected" });
-        alert("Request Rejected! No balance added.");
+        alert("Request Rejected!");
         loadRequests();
     } catch (error) {
         console.error(error);
