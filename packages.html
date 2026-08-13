@@ -194,7 +194,24 @@ button:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
 document.addEventListener("DOMContentLoaded", () => {
     checkActivePlans();
 });
@@ -210,57 +227,89 @@ function checkActivePlans() {
     });
 }
 
-function buyPlan(planName, price, dailyEarn) {
-    let currentBalance = parseFloat(localStorage.getItem("mainBalance")) || 0;
+window.buyPlan = async function(planName, price, dailyEarn) {
     let activePlans = JSON.parse(localStorage.getItem("activePackages") || "[]");
 
     // Check if plan is already active
     let isAlreadyActive = activePlans.some(p => p.name === planName);
     if (isAlreadyActive) {
-        alert("Yeh plan pehle se active hai! Jab tak yeh complete nahi hota aap dobara nahi khareed sakte.");
+        alert("Yeh plan pehle se active hai! Jab तक yeh complete nahi hota aap dobara nahi khareed sakte.");
         return;
     }
 
-    if (currentBalance >= price) {
-        let btn = document.getElementById("btn-" + planName);
-        if(btn) {
-            btn.disabled = true;
-            btn.innerText = "Processing...";
+    let btn = document.getElementById("btn-" + planName);
+    if(btn) {
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+    }
+
+    try {
+        let currentBalance = parseFloat(localStorage.getItem("mainBalance")) || 0;
+        let userId = auth.currentUser ? auth.currentUser.uid : localStorage.getItem("userId");
+
+        // اگر فائر بیس سے یوزر لاگ ان ہے تو وہاں سے اصل بیلنس چیک کریں
+        if(userId) {
+            let userDocRef = doc(db, "users", userId);
+            let userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {
+                currentBalance = parseFloat(userDocSnap.data().mainBalance) || 0;
+            }
         }
 
-        currentBalance -= price;
-        localStorage.setItem("mainBalance", currentBalance);
+        if (currentBalance >= price) {
+            let newBalance = currentBalance - price;
+            
+            // لوکل سٹوریج اپڈیٹ کریں
+            localStorage.setItem("mainBalance", newBalance);
 
-        // Add to active packages with calendar timer tracking
-        let newActivePlan = {
-            name: planName,
-            price: price,
-            dailyEarn: dailyEarn,
-            startDate: new Date().toISOString(),
-            currentDay: 1,
-            totalDays: 30,
-            lastClaimDate: ""
-        };
+            // اگر فائر بیس پر یوزر موجود ہے تو وہاں بھی بیلنس کم کریں
+            if(userId) {
+                await updateDoc(doc(db, "users", userId), {
+                    mainBalance: newBalance
+                });
+            }
 
-        activePlans.push(newActivePlan);
-        localStorage.setItem("activePackages", JSON.stringify(activePlans));
+            // Add to active packages with calendar timer tracking (کلیم پیج کے لیے ضروری ڈیٹا)
+            let newActivePlan = {
+                name: planName,
+                price: price,
+                dailyEarn: dailyEarn,
+                startDate: new Date().toISOString(),
+                currentDay: 1,
+                totalDays: 30,
+                lastClaimDate: ""
+            };
 
-        // Save transaction log
-        let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
-        transList.unshift({type: "Package Purchase", amount: -price, details: planName, date: new Date().toLocaleString()});
-        localStorage.setItem('allTransactions', JSON.stringify(transList));
+            activePlans.push(newActivePlan);
+            localStorage.setItem("activePackages", JSON.stringify(activePlans));
+            localStorage.setItem("activePackage", planName); // کلیم پیج کی مطابقت کے لیے
 
-        // Unlock withdrawal criteria marker if configured via package purchase
-        localStorage.setItem("hasPurchasedPackage", "true");
+            // Save transaction log
+            let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
+            transList.unshift({type: "Package Purchase", amount: -price, details: planName, date: new Date().toLocaleString()});
+            localStorage.setItem('allTransactions', JSON.stringify(transList));
 
-        setTimeout(() => {
+            localStorage.setItem("hasPurchasedPackage", "true");
+
             alert("✅ Your Plan has been purchased successfully! Your Package is active now.");
             window.location.href = "dashboard.html";
-        }, 1000);
 
-    } else {
-        alert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.");
-        window.location.href = "deposit.html";
+        } else {
+            alert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.");
+            if(btn) {
+                btn.disabled = false;
+                btn.innerText = "Invest Now";
+            }
+            window.location.href = "deposit.html";
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Kuch masla ho gaya hai, dobara koshish karein!");
+        if(btn) {
+            btn.disabled = false;
+            btn.innerText = "Invest Now";
+        }
     }
 }
 </script>
