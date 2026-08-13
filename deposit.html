@@ -148,6 +148,7 @@ width: 100%; background: linear-gradient(135deg, #00ffff, #1a73e8); color: #000;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -160,6 +161,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 let selectedGateway = "";
 let uploadedImageBase64 = "";
@@ -216,6 +218,7 @@ window.submitDeposit = async function() {
     try {
         await addDoc(collection(db, "requests"), {
             type: "Deposit",
+            userId: auth.currentUser ? auth.currentUser.uid : "",
             username: username,
             method: selectedGateway.toUpperCase(),
             amount: amount,
