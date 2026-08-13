@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>EarnHub Admin Panel</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; max-width: 430px; margin: auto; font-family: Arial; background: #050505; color: white; }
-        .header { text-align: center; padding: 20px; }
-        .unique-logo { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 10px 0; }
-        .unique-icon { width: 75px; height: 75px; border-radius: 50%; background: linear-gradient(135deg,#00ffff,#0048ff); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px #00ffff; }
-        .eh-symbol { width: 54px; height: 54px; border-radius: 50%; background: #050505; display: flex; align-items: center; justify-content: center; color: #ffd700; font-size: 20px; font-weight: 900; border: 2px solid #ffd700; }
-        .unique-text h1 { margin: 0; font-size: 30px; font-weight: 900; color: white; text-align: left; }
-        .unique-text h1 span { color: #00ffff; }
-        .unique-text p { margin: 3px 0 0 0; color: #ffd700; font-size: 9px; letter-spacing: 2px; text-align: left; }
-        .container { padding: 15px; }
-        .card { background: #111; padding: 20px; margin-bottom: 15px; border-radius: 20px; box-shadow: 0 0 15px cyan; }
-        .card h3 { color: #00ffff; margin-top: 0; }
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        button { width: 100%; padding: 12px; border: 0; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .btn-approve { background: #00ffff; color: black; }
-        .btn-reject { background: #ff3333; color: white; }
-        .admin-input-group { margin-top: 12px; }
-        .admin-input-group label { display: block; font-size: 12px; color: #00ffff; margin-bottom: 5px; }
-        .admin-input { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #00ffff; border-radius: 10px; color: white; font-size: 14px; outline: none; margin-bottom: 10px; }
-    </style>
+<title>EarnHub Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{ box-sizing:border-box; }
+body{ margin:0; max-width:430px; margin:auto; font-family:Arial; background:#050505; color:white; }
+.header{ text-align:center; padding:20px; }
+.unique-logo{ display:flex; align-items:center; justify-content:center; gap:16px; font-family:Arial,sans-serif; margin: 10px 0; }
+.unique-icon{ width:75px; height:75px; border-radius:50%; background: linear-gradient(135deg,#00ffff,#0048ff); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 25px #00ffff; }
+.eh-symbol{ width:54px; height:54px; border-radius:50%; background:#050505; display:flex; align-items:center; justify-content:center; color:#ffd700; font-size:20px; font-weight:900; border:2px solid #ffd700; }
+.unique-text h1{ margin:0; font-size:30px; font-weight:900; color:white; text-align: left; }
+.unique-text h1 span{ color:#00ffff; }
+.unique-text p{ margin:3px 0 0 0; color:#ffd700; font-size:9px; letter-spacing:2px; text-align: left; }
+.container{ padding:15px; }
+.card{ background:#111; padding:20px; margin-bottom:15px; border-radius:20px; box-shadow:0 0 15px cyan; }
+.card h3 { color: #00ffff; margin-top: 0; }
+.btn-group { display: flex; gap: 10px; margin-top: 10px; }
+button{ width:100%; padding:12px; border:0; border-radius:20px; font-weight:bold; cursor:pointer; }
+button:disabled { background: #555 !important; color: #aaa !important; cursor: not-allowed; }
+.btn-approve{ background:#00ffff; color:black; }
+.btn-reject{ background:#ff3333; color:white; }
+.screenshot-preview { width: 100%; max-height: 200px; object-fit: contain; margin-top: 10px; border-radius: 8px; border: 1px solid #333; background: #000; }
+.admin-input-group { margin-top: 12px; }
+.admin-input-group label { display: block; font-size: 12px; color: #00ffff; margin-bottom: 5px; }
+.admin-input { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #00ffff; border-radius: 10px; color: white; font-size: 14px; outline: none; margin-bottom: 10px; }
+</style>
 </head>
 <body>
 
 <div class="header">
-    <div class="unique-logo">
-        <div class="unique-icon"><div class="eh-symbol">E↗H</div></div>
-        <div class="unique-text"><h1>Earn<span>Hub</span></h1><p>SMART MONEY NETWORK</p></div>
-    </div>
-    <h2>Admin Panel</h2>
+<div class="unique-logo">
+    <div class="unique-icon"><div class="eh-symbol">E↗H</div></div>
+    <div class="unique-text"><h1>Earn<span>Hub</span></h1><p>SMART MONEY NETWORK</p></div>
+</div>
+<h2>Admin Panel</h2>
 </div>
 
 <div class="container">
@@ -55,89 +57,96 @@
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
-        authDomain: "earnhub-55c59.firebaseapp.com",
-        projectId: "earnhub-55c59",
-        storageBucket: "earnhub-55c59.firebasestorage.app",
-        messagingSenderId: "636270810711",
-        appId: "1:636270810711:web:da2bb0625524bcddc27512"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    let box = document.getElementById("requests");
+let box = document.getElementById("requests");
 
-    if(sessionStorage.getItem("adminLoggedIn") === "true") {
+if(sessionStorage.getItem("adminLoggedIn") === "true") {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("requestsContainer").style.display = "block";
+    loadRequests();
+}
+
+window.verifyAdminLogin = function() {
+    let u = document.getElementById("adminUser").value.trim();
+    let p = document.getElementById("adminPass").value.trim();
+    if(u === "Ahmedkhan" && p === "Ahmedkhanasas21") {
+        sessionStorage.setItem("adminLoggedIn", "true");
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("requestsContainer").style.display = "block";
         loadRequests();
-    }
+    } else { alert("Ghalat Username ya Password!"); }
+}
 
-    window.verifyAdminLogin = function() {
-        if(document.getElementById("adminUser").value === "Ahmedkhan" && document.getElementById("adminPass").value === "Ahmedkhanasas21") {
-            sessionStorage.setItem("adminLoggedIn", "true");
-            document.getElementById("loginBox").style.display = "none";
-            document.getElementById("requestsContainer").style.display = "block";
-            loadRequests();
-        } else {
-            alert("Ghalat Username ya Password!");
+async function loadRequests(){
+    let snap = await getDocs(collection(db, "requests"));
+    box.innerHTML = "";
+    snap.forEach((item) => {
+        let data = item.data();
+        if(data.status && data.status !== "pending") return;
+
+        if (data.type === "Deposit") {
+            box.innerHTML += `
+            <div class="card">
+                <h3>Deposit Request</h3>
+                <p>Username: <strong>${data.username || "N/A"}</strong></p>
+                <p>Method: <strong>${data.method || "N/A"}</strong></p>
+                <p>Amount: Rs. ${data.amount || 0}</p>
+                <p>Transaction ID: <strong>${data.transactionId || "N/A"}</strong></p>
+                ${data.screenshot ? `<p>Screenshot:</p><img src="${data.screenshot}" class="screenshot-preview">` : ''}
+                <div class="admin-input-group">
+                    <label>Approved Amount (PKR)</label>
+                    <input type="number" id="amt_${item.id}" class="admin-input" value="${data.amount || 0}">
+                </div>
+                <div class="btn-group">
+                    <button class="btn-approve" id="approveBtn_${item.id}" onclick="approveDeposit('${item.id}', '${data.userId || ''}')">Approve</button>
+                    <button class="btn-reject" id="rejectBtn_${item.id}" onclick="reject('${item.id}')">Reject</button>
+                </div>
+            </div>`;
         }
-    }
+    });
+}
 
-    async function loadRequests(){
-        let snap = await getDocs(collection(db, "requests"));
-        box.innerHTML = "";
-        snap.forEach((item) => {
-            let data = item.data();
-            if(data.status !== "pending") return;
+window.approveDeposit = async function(id, userId){
+    let btn = document.getElementById(`approveBtn_${id}`);
+    btn.disabled = true; btn.innerText = "Processing...";
+    let finalAmount = parseFloat(document.getElementById(`amt_${id}`).value);
 
-            if (data.type === "Deposit") {
-                box.innerHTML += `
-                <div class="card">
-                    <h3>Deposit Request</h3>
-                    <p>User: ${data.username || "N/A"}</p>
-                    <p>Amount: Rs. ${data.amount || 0}</p>
-                    <div class="admin-input-group">
-                        <label>Confirm Amount</label>
-                        <input type="number" id="amt_${item.id}" class="admin-input" value="${data.amount || 0}">
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn-approve" onclick="approveDeposit('${item.id}', '${data.userId || ''}')">Approve</button>
-                        <button class="btn-reject" onclick="reject('${item.id}')">Reject</button>
-                    </div>
-                </div>`;
-            }
-        });
-    }
-
-    window.approveDeposit = async function(id, userId){
-        if(!userId) { alert("Error: User ID not found in request!"); return; }
-        
-        let finalAmount = parseFloat(document.getElementById(`amt_${id}`).value);
-        try {
+    try {
+        if(userId) {
             let userRef = doc(db, "users", userId);
-            let userSnap = await getDoc(userRef);
-            let currentBal = userSnap.exists() ? Number(userSnap.data().mainBalance || 0) : 0;
-            
-            await updateDoc(userRef, { mainBalance: currentBal + finalAmount });
-            await updateDoc(doc(db, "requests", id), { status: "approved", amount: finalAmount });
-            
-            alert("Success! Balance Added.");
-            loadRequests();
-        } catch (e) { alert("Error: " + e.message); }
-    }
-
-    window.reject = async function(id){
-        await updateDoc(doc(db, "requests", id), { status: "rejected" });
-        alert("Rejected!");
+            let snap = await getDoc(userRef);
+            let curBal = snap.exists() ? Number(snap.data().mainBalance || 0) : 0;
+            await updateDoc(userRef, { mainBalance: curBal + finalAmount });
+        }
+        await updateDoc(doc(db, "requests", id), { status: "approved", amount: finalAmount });
+        alert("Approved & Balance Added!");
         loadRequests();
-    }
-</script>
+    } catch (e) { alert("Error: " + e.message); btn.disabled = false; btn.innerText = "Approve"; }
+}
 
+window.reject = async function(id){
+    let btn = document.getElementById(`rejectBtn_${id}`);
+    btn.disabled = true; btn.innerText = "Rejecting...";
+    try {
+        await updateDoc(doc(db, "requests", id), { status: "rejected" });
+        alert("Rejected! No balance added.");
+        loadRequests();
+    } catch (e) { alert("Error: " + e.message); btn.disabled = false; btn.innerText = "Reject"; }
+}
+</script>
 </body>
 </html>
