@@ -82,7 +82,7 @@ box-shadow: 0 4px 15px rgba(255,255,255,0.2);
 <div class="title-box">
 <h3>Try your Luck</h3>
 <h1>Spin The Wheel</h1>
-<div class="balance-display" id="balanceDisplay">Main Balance: Rs. 630</div>
+<div class="balance-display" id="balanceDisplay">Main Balance: Rs. 0</div>
 </div>
 <div>
 <a href="withdraw-history.html" class="history-btn">🕒</a>
@@ -131,11 +131,12 @@ const allowedPrizes = [
 {text: "Rs. 10", angle: 157.5, amount: 10}
 ];
 
+// ڈیش بورڈ کے مین بیلنس (totalBalance) کو فیچ کرنے کا فنکشن
 function getBalance() {
-    let bal = localStorage.getItem("mainBalance");
-    if (bal === null || isNaN(bal) || Number(bal) <= 0) {
-        bal = 630;
-        localStorage.setItem("mainBalance", bal);
+    let bal = localStorage.getItem("totalBalance");
+    if (bal === null || isNaN(bal)) {
+        bal = 0;
+        localStorage.setItem("totalBalance", bal);
     }
     return parseFloat(bal);
 }
@@ -193,14 +194,15 @@ function startSpin() {
     }
 
     let balance = getBalance();
+    // چیک کرے گا کہ آیا ڈیش بورڈ میں 1 روپے یا اس سے زیادہ بیلنس ہے یا نہیں
     if (balance < 1) {
-        alert("Aapka main balance Rs. 1 se kam hai! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
+        alert("Aapke main dashboard balance mein Rs. 1 nahi hai! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
         return;
     }
 
-    // Deduct Rs. 1 spin fee from main balance
+    // ڈیش بورڈ کے بیلنس سے Rs. 1 فیس کاٹ لی جائے گی
     balance -= 1;
-    localStorage.setItem("mainBalance", balance);
+    localStorage.setItem("totalBalance", balance);
     updateUI();
 
     let spinBtn = document.getElementById("spinBtn");
@@ -217,8 +219,9 @@ function startSpin() {
 
     setTimeout(() => {
         let currentBal = getBalance();
+        // جیتنے والی رقم سیدھی ڈیش بورڈ کے بیلنس میں جمع ہو جائے گی
         currentBal = currentBal + Number(randomPrize.amount);
-        localStorage.setItem("mainBalance", currentBal);
+        localStorage.setItem("totalBalance", currentBal);
         localStorage.setItem("lastSpinDate", new Date().toDateString());
 
         updateUI();
