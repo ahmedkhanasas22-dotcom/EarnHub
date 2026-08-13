@@ -31,13 +31,19 @@ button:disabled { background: #555 !important; color: #aaa !important; cursor: n
 
 <div class="header">
 <div class="unique-logo">
-    <div class="unique-icon"><div class="eh-symbol">E↗H</div></div>
-    <div class="unique-text"><h1>Earn<span>Hub</span></h1><p>SMART MONEY NETWORK</p></div>
+    <div class="unique-icon">
+        <div class="eh-symbol">E↗H</div>
+    </div>
+    <div class="unique-text">
+        <h1>Earn<span>Hub</span></h1>
+        <p>SMART MONEY NETWORK</p>
+    </div>
 </div>
 <h2>Admin Panel</h2>
 </div>
 
 <div class="container">
+    <!-- Login Box -->
     <div id="loginBox" class="card">
         <h3>🔐 Admin Login</h3>
         <div class="admin-input-group">
@@ -51,6 +57,7 @@ button:disabled { background: #555 !important; color: #aaa !important; cursor: n
         <button class="btn-approve" onclick="verifyAdminLogin()">Login</button>
     </div>
 
+    <!-- Original Requests Container -->
     <div id="requestsContainer" style="display: none;">
         <div id="requests">Loading...</div>
     </div>
@@ -74,6 +81,7 @@ const db = getFirestore(app);
 
 let box = document.getElementById("requests");
 
+// Check if already logged in during this session
 if(sessionStorage.getItem("adminLoggedIn") === "true") {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("requestsContainer").style.display = "block";
@@ -83,70 +91,212 @@ if(sessionStorage.getItem("adminLoggedIn") === "true") {
 window.verifyAdminLogin = function() {
     let u = document.getElementById("adminUser").value.trim();
     let p = document.getElementById("adminPass").value.trim();
+
     if(u === "Ahmedkhan" && p === "Ahmedkhanasas21") {
         sessionStorage.setItem("adminLoggedIn", "true");
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("requestsContainer").style.display = "block";
         loadRequests();
-    } else { alert("Ghalat Username ya Password!"); }
+    } else {
+        alert("Ghalat Username ya Password hai!");
+    }
 }
 
 async function loadRequests(){
     let snap = await getDocs(collection(db, "requests"));
     box.innerHTML = "";
+    let hasPending = false;
+
     snap.forEach((item) => {
         let data = item.data();
-        if(data.status && data.status !== "pending") return;
+        
+        if(data.status && data.status !== "pending"){
+            return;
+        }
+        hasPending = true;
 
         if (data.type === "Deposit") {
             box.innerHTML += `
-            <div class="card">
+            <div class="card" id="card_${item.id}">
                 <h3>Deposit Request</h3>
                 <p>Username: <strong>${data.username || "N/A"}</strong></p>
                 <p>Method: <strong>${data.method || "N/A"}</strong></p>
-                <p>Amount: Rs. ${data.amount || 0}</p>
+                <p>Entered Amount: Rs. ${data.amount || 0}</p>
                 <p>Transaction ID: <strong>${data.transactionId || "N/A"}</strong></p>
-                ${data.screenshot ? `<p>Screenshot:</p><img src="${data.screenshot}" class="screenshot-preview">` : ''}
+                ${data.screenshot ? `<p>Screenshot:</p><img src="${data.screenshot}" class="screenshot-preview">` : '<p>Screenshot: <strong>Not Provided</strong></p>'}
+                
                 <div class="admin-input-group">
-                    <label>Approved Amount (PKR)</label>
-                    <input type="number" id="amt_${item.id}" class="admin-input" value="${data.amount || 0}">
+                    <label>Set Correct Approved Amount (PKR)</label>
+                    <input type="number" id="approvedAmt_${item.id}" class="admin-input" value="${data.amount || 0}">
                 </div>
+
+                <p>Status: <span>${data.status || 'pending'}</span></p>
                 <div class="btn-group">
                     <button class="btn-approve" id="approveBtn_${item.id}" onclick="approveDeposit('${item.id}', '${data.userId || ''}')">Approve</button>
                     <button class="btn-reject" id="rejectBtn_${item.id}" onclick="reject('${item.id}')">Reject</button>
                 </div>
-            </div>`;
+            </div>
+            `;
+        } else if (data.package) {
+            box.innerHTML += `
+            <div class="card" id="card_${item.id}">
+                <h3>Package Buy Request</h3>
+                <p>Username: <strong>${data.username || "N/A"}</strong></p>
+                <p>Package: <strong>${data.package}</strong></p>
+                <p>Amount: Rs. ${data.amount || 0}</p>
+                <p>Transaction ID: <strong>${data.transactionId || "N/A"}</strong></p>
+                <p>Status: <span>${data.status || 'pending'}</span></p>
+                <div class="btn-group">
+                    <button class="btn-approve" id="approveBtn_${item.id}" onclick="approvePackage('${item.id}', '${data.package}')">Approve</button>
+                    <button class="btn-reject" id="rejectBtn_${item.id}" onclick="reject('${item.id}')">Reject</button>
+                </div>
+            </div>
+            `;
+        } else {
+            box.innerHTML += `
+            <div class="card" id="card_${item.id}">
+                <h3>Withdraw Request</h3>
+                <p>Username: <strong>${data.username || "N/A"}</strong></p>
+                <p>Method: ${data.method || "N/A"}</p>
+                <p>Account Name: ${data.accountName || "N/A"}</p>
+                <p>Account Number: ${data.accountNumber || "N/A"}</p>
+                <p>Amount: Rs. ${data.amount || 0}</p>
+                <p>Status: <span>${data.status || 'pending'}</span></p>
+                <div class="btn-group">
+                    <button class="btn-approve" id="approveBtn_${item.id}" onclick="approve('${item.id}')">Approve</button>
+                    <button class="btn-reject" id="rejectBtn_${item.id}" onclick="reject('${item.id}')">Reject</button>
+                </div>
+            </div>
+            `;
         }
     });
+
+    if(!hasPending){
+        box.innerHTML = "<p style='text-align:center; color:#888;'>No pending requests found.</p>";
+    }
 }
 
 window.approveDeposit = async function(id, userId){
-    let btn = document.getElementById(`approveBtn_${id}`);
-    btn.disabled = true; btn.innerText = "Processing...";
-    let finalAmount = parseFloat(document.getElementById(`amt_${id}`).value);
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    approveBtn.innerText = "Processing...";
+
+    let inputField = document.getElementById(`approvedAmt_${id}`);
+    let finalAmount = parseFloat(inputField.value);
+
+    if(isNaN(finalAmount) || finalAmount < 0){
+        alert("Barah kar ke theek amount darj karein!");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+        return;
+    }
 
     try {
+        // فائر بیس سے یوزر کے اصل اکاؤنٹ میں بیلنس پلس کرنے کا طریقہ
         if(userId) {
-            let userRef = doc(db, "users", userId);
-            let snap = await getDoc(userRef);
-            let curBal = snap.exists() ? Number(snap.data().mainBalance || 0) : 0;
-            await updateDoc(userRef, { mainBalance: curBal + finalAmount });
+            let userDocRef = doc(db, "users", userId);
+            let userDocSnap = await getDoc(userDocRef);
+            
+            let currentDbBalance = 0;
+            if(userDocSnap.exists()) {
+                currentDbBalance = Number(userDocSnap.data().mainBalance || 0);
+            }
+            
+            let newBalance = currentDbBalance + finalAmount;
+            
+            await updateDoc(userDocRef, {
+                mainBalance: newBalance
+            });
         }
-        await updateDoc(doc(db, "requests", id), { status: "approved", amount: finalAmount });
-        alert("Approved & Balance Added!");
+
+        await updateDoc(doc(db, "requests", id), { 
+            status: "approved",
+            amount: finalAmount 
+        });
+
+        alert("Deposit Request Approved Successfully with Rs. " + finalAmount + " and Balance Added!");
         loadRequests();
-    } catch (e) { alert("Error: " + e.message); btn.disabled = false; btn.innerText = "Approve"; }
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+    }
+}
+
+window.approvePackage = async function(id, pkgName){
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    approveBtn.innerText = "Processing...";
+
+    try {
+        await updateDoc(doc(db, "requests", id), { 
+            status: "approved",
+            approved: true 
+        });
+
+        alert("Package Request Approved Successfully!");
+        loadRequests();
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+    }
+}
+
+window.approve = async function(id){
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    approveBtn.innerText = "Processing...";
+
+    try {
+        await updateDoc(doc(db, "requests", id), { status: "approved" });
+        alert("Request Approved Successfully!");
+        loadRequests();
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Approve";
+    }
 }
 
 window.reject = async function(id){
-    let btn = document.getElementById(`rejectBtn_${id}`);
-    btn.disabled = true; btn.innerText = "Rejecting...";
+    let approveBtn = document.getElementById(`approveBtn_${id}`);
+    let rejectBtn = document.getElementById(`rejectBtn_${id}`);
+    
+    approveBtn.disabled = true;
+    rejectBtn.disabled = true;
+    approveBtn.innerText = "Rejecting...";
+
     try {
+        // ریجیکٹ کرنے پر بیلنس ہرگز ایڈ نہیں ہوگا، صرف اسٹیٹس اپڈیٹ ہوگا
         await updateDoc(doc(db, "requests", id), { status: "rejected" });
-        alert("Rejected! No balance added.");
+        alert("Request Rejected! No balance added.");
         loadRequests();
-    } catch (e) { alert("Error: " + e.message); btn.disabled = false; btn.innerText = "Reject"; }
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Please try again.");
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
+        approveBtn.innerText = "Reject";
+    }
 }
 </script>
+
 </body>
 </html>
