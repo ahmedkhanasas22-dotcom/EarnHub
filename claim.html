@@ -312,7 +312,6 @@ function renderClaimBox(){
                 }
             } 
             else if(d === daysPassed + 1){
-                // صرف اگلے آنے والے دن پر لائیو ٹائمر شو ہوگا
                 html += `
                 <div class="day-card">
                     <div class="day-info">
@@ -324,7 +323,6 @@ function renderClaimBox(){
                 `;
             }
             else {
-                // باقی اس سے آگے کے تمام دن سادے Locked رہیں گے
                 html += `
                 <div class="day-card">
                     <div class="day-info">
@@ -382,7 +380,8 @@ window.onload = function(){
     renderClaimBox();
 };
 
-setInterval(renderClaimBox, 1000);
+// Timer interval ko 5 seconds (5000ms) kar diya hai
+setInterval(renderClaimBox, 5000);
 </script>
 
 </body>
