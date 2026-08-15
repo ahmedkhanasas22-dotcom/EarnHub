@@ -132,14 +132,9 @@ const allowedPrizes = [
 ];
 
 function getBalance() {
-    let bal = localStorage.getItem("totalBalance") || 
-              localStorage.getItem("balance") || 
-              localStorage.getItem("wallet") || 
-              localStorage.getItem("userBalance");
-              
-    if (bal === null || isNaN(bal) || bal === "") {
-        bal = 10000; // اگر کہیں سے نہ ملے تو ڈیفॉल्ट 10000 سیٹ کر دے گا تاکہ ٹیسٹنگ میں رکاوٹ نہ ہو
-        localStorage.setItem("totalBalance", bal);
+    let bal = localStorage.getItem("mainBalance");
+    if (bal === null || isNaN(bal)) {
+        bal = 0;
     }
     return parseFloat(bal);
 }
@@ -203,7 +198,7 @@ function startSpin() {
     }
 
     balance -= 1;
-    localStorage.setItem("totalBalance", balance);
+    localStorage.setItem("mainBalance", balance);
     updateUI();
 
     let spinBtn = document.getElementById("spinBtn");
@@ -221,7 +216,7 @@ function startSpin() {
     setTimeout(() => {
         let currentBal = getBalance();
         currentBal = currentBal + Number(randomPrize.amount);
-        localStorage.setItem("totalBalance", currentBal);
+        localStorage.setItem("mainBalance", currentBal);
         localStorage.setItem("lastSpinDate", new Date().toDateString());
 
         updateUI();
