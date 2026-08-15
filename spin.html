@@ -130,18 +130,15 @@ const allowedPrizes = [
 ];
 
 function getBalance() {
-    // Check all possible keys used across dashboard/platform to read total balance
-    let bal = localStorage.getItem("balance") || localStorage.getItem("mainBalance");
-    if (bal === null || isNaN(bal)) {
-        bal = 10000; // Default fallback to match your dashboard if empty
-    }
+    // سیدھا ڈ্যাশবোর্ড والی key 'mainBalance' کو ریڈ کرےगा ताकि 10,000 रुपये बिल्कुल सही डिटेक्ट हों
+    let bal = localStorage.getItem("mainBalance") || localStorage.getItem("balance") || "0";
     return parseFloat(bal);
 }
 
 function saveBalance(amount) {
-    // Save to all possible balance keys so dashboard and spin stay completely synchronized
-    localStorage.setItem("balance", amount);
+    // दोनों keys पर एक साथ सेव करेगा ताकि डैशबोर्ड और स्पिन दोनों जगह बैलेंस हमेशा मैच रहे
     localStorage.setItem("mainBalance", amount);
+    localStorage.setItem("balance", amount);
 }
 
 function updateUI() {
@@ -199,7 +196,7 @@ function startSpin() {
         return;
     }
 
-    // Deduct Rs. 1 spin fee from total balance
+    // Spin fee (Rs. 1) deduct करके नया बैलेंस सेव करें
     balance -= 1;
     saveBalance(balance);
     updateUI();
