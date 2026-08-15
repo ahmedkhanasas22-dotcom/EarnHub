@@ -130,12 +130,18 @@ const allowedPrizes = [
 ];
 
 function getBalance() {
-    let bal = localStorage.getItem("balance");
+    // Check all possible keys used across dashboard/platform to read total balance
+    let bal = localStorage.getItem("balance") || localStorage.getItem("mainBalance");
     if (bal === null || isNaN(bal)) {
-        bal = 0;
-        localStorage.setItem("balance", bal);
+        bal = 10000; // Default fallback to match your dashboard if empty
     }
     return parseFloat(bal);
+}
+
+function saveBalance(amount) {
+    // Save to all possible balance keys so dashboard and spin stay completely synchronized
+    localStorage.setItem("balance", amount);
+    localStorage.setItem("mainBalance", amount);
 }
 
 function updateUI() {
@@ -195,7 +201,7 @@ function startSpin() {
 
     // Deduct Rs. 1 spin fee from total balance
     balance -= 1;
-    localStorage.setItem("balance", balance);
+    saveBalance(balance);
     updateUI();
 
     let spinBtn = document.getElementById("spinBtn");
@@ -213,7 +219,7 @@ function startSpin() {
     setTimeout(() => {
         let currentBal = getBalance();
         currentBal = currentBal + Number(randomPrize.amount);
-        localStorage.setItem("balance", currentBal);
+        saveBalance(currentBal);
         localStorage.setItem("lastSpinDate", new Date().toDateString());
 
         updateUI();
