@@ -16,8 +16,7 @@ display: flex; justify-content: space-between; align-items: center; margin-botto
 .back-btn, .history-btn { font-size: 20px; cursor: pointer; color: #00ffff; text-decoration: none; }
 .title-box h3 { color: #aaa; margin: 0; font-size: 13px; }
 .title-box h1 { color: #00ffff; margin: 5px 0 0 0; font-size: 20px; }
-.balance-display { font-size: 14px; color: #1de9b6; font-weight: bold; margin-top: 2px; }
-.timer-display { font-size: 12px; color: #ffeb3b; margin-top: 2px; font-weight: bold; }
+.timer-display { font-size: 12px; color: #ffeb3b; margin-top: 5px; font-weight: bold; }
 
 /* Wheel Wrapper */
 .wheel-container {
@@ -82,7 +81,6 @@ box-shadow: 0 4px 15px rgba(255,255,255,0.2);
 <div class="title-box">
 <h3>Try your Luck</h3>
 <h1>Spin The Wheel</h1>
-<div class="balance-display" id="balanceDisplay">Main Balance: Rs. 0</div>
 </div>
 <div>
 <a href="withdraw-history.html" class="history-btn">🕒</a>
@@ -132,18 +130,15 @@ const allowedPrizes = [
 ];
 
 function getBalance() {
-    let bal = localStorage.getItem("mainBalance");
+    let bal = localStorage.getItem("balance");
     if (bal === null || isNaN(bal)) {
         bal = 0;
-        localStorage.setItem("mainBalance", bal);
+        localStorage.setItem("balance", bal);
     }
     return parseFloat(bal);
 }
 
 function updateUI() {
-    let currentBal = getBalance();
-    document.getElementById("balanceDisplay").innerText = "Main Balance: Rs. " + currentBal;
-
     let lastSpinDate = localStorage.getItem("lastSpinDate") || "";
     let todayDate = new Date().toDateString();
     let spinBtn = document.getElementById("spinBtn");
@@ -194,13 +189,13 @@ function startSpin() {
 
     let balance = getBalance();
     if (balance < 1) {
-        alert("Aapka main balance Rs. 1 से कम है! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
+        alert("Aapka total balance Rs. 1 se kam hai! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
         return;
     }
 
-    // Deduct Rs. 1 spin fee from main balance
+    // Deduct Rs. 1 spin fee from total balance
     balance -= 1;
-    localStorage.setItem("mainBalance", balance);
+    localStorage.setItem("balance", balance);
     updateUI();
 
     let spinBtn = document.getElementById("spinBtn");
@@ -218,7 +213,7 @@ function startSpin() {
     setTimeout(() => {
         let currentBal = getBalance();
         currentBal = currentBal + Number(randomPrize.amount);
-        localStorage.setItem("mainBalance", currentBal);
+        localStorage.setItem("balance", currentBal);
         localStorage.setItem("lastSpinDate", new Date().toDateString());
 
         updateUI();
