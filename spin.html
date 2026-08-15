@@ -82,7 +82,7 @@ box-shadow: 0 4px 15px rgba(255,255,255,0.2);
 <div class="title-box">
 <h3>Try your Luck</h3>
 <h1>Spin The Wheel</h1>
-<div class="balance-display" id="balanceDisplay">Main Balance: Rs. 0</div>
+<div class="balance-display" id="balanceDisplay">Main Balance: Rs. 630</div>
 </div>
 <div>
 <a href="withdraw-history.html" class="history-btn">🕒</a>
@@ -133,8 +133,9 @@ const allowedPrizes = [
 
 function getBalance() {
     let bal = localStorage.getItem("mainBalance");
-    if (bal === null || isNaN(bal)) {
-        bal = 0;
+    if (bal === null || isNaN(bal) || Number(bal) <= 0) {
+        bal = 630;
+        localStorage.setItem("mainBalance", bal);
     }
     return parseFloat(bal);
 }
@@ -193,10 +194,11 @@ function startSpin() {
 
     let balance = getBalance();
     if (balance < 1) {
-        alert("Aapke main dashboard balance mein Rs. 1 nahi hai! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
+        alert("Aapka main balance Rs. 1 se kam hai! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
         return;
     }
 
+    // Deduct Rs. 1 spin fee from main balance
     balance -= 1;
     localStorage.setItem("mainBalance", balance);
     updateUI();
@@ -227,4 +229,4 @@ function startSpin() {
 </script>
 
 </body>
-</html>
+</html
