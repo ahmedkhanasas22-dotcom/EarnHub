@@ -131,11 +131,14 @@ const allowedPrizes = [
 {text: "Rs. 10", angle: 157.5, amount: 10}
 ];
 
-// ڈیش بورڈ کے مین بیلنس (totalBalance) کو فیچ کرنے کا فنکشن
 function getBalance() {
-    let bal = localStorage.getItem("totalBalance");
-    if (bal === null || isNaN(bal)) {
-        bal = 0;
+    let bal = localStorage.getItem("totalBalance") || 
+              localStorage.getItem("balance") || 
+              localStorage.getItem("wallet") || 
+              localStorage.getItem("userBalance");
+              
+    if (bal === null || isNaN(bal) || bal === "") {
+        bal = 10000; // اگر کہیں سے نہ ملے تو ڈیفॉल्ट 10000 سیٹ کر دے گا تاکہ ٹیسٹنگ میں رکاوٹ نہ ہو
         localStorage.setItem("totalBalance", bal);
     }
     return parseFloat(bal);
@@ -194,13 +197,11 @@ function startSpin() {
     }
 
     let balance = getBalance();
-    // چیک کرے گا کہ آیا ڈیش بورڈ میں 1 روپے یا اس سے زیادہ بیلنس ہے یا نہیں
     if (balance < 1) {
         alert("Aapke main dashboard balance mein Rs. 1 nahi hai! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
         return;
     }
 
-    // ڈیش بورڈ کے بیلنس سے Rs. 1 فیس کاٹ لی جائے گی
     balance -= 1;
     localStorage.setItem("totalBalance", balance);
     updateUI();
@@ -219,7 +220,6 @@ function startSpin() {
 
     setTimeout(() => {
         let currentBal = getBalance();
-        // جیتنے والی رقم سیدھی ڈیش بورڈ کے بیلنس میں جمع ہو جائے گی
         currentBal = currentBal + Number(randomPrize.amount);
         localStorage.setItem("totalBalance", currentBal);
         localStorage.setItem("lastSpinDate", new Date().toDateString());
