@@ -128,6 +128,11 @@
             font-size:11px;
             cursor:pointer;
         }
+        .btn-action:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
         .status-collected {
             color: #00ff99;
             font-size: 11px;
@@ -187,12 +192,54 @@
 
     <a class="back-link" href="dashboard.html">⬅ Back to Dashboard</a>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ٹیسٹنگ کے لیے 5 سیکنڈ کا وقت
+const CLAIM_WAIT_TIME = 5000;
+
+document.addEventListener("DOMContentLoaded", async () => {
+    let userId = auth.currentUser ? auth.currentUser.uid : localStorage.getItem("userId");
+    if (userId) {
+        try {
+            let userDocSnap = await getDoc(doc(db, "users", userId));
+            if (userDocSnap.exists()) {
+                let data = userDocSnap.data();
+                if(data.mainBalance !== undefined) {
+                    localStorage.setItem("mainBalance", data.mainBalance);
+                }
+                if(data.activePackages) {
+                    localStorage.setItem("activePackages", JSON.stringify(data.activePackages));
+                    let allNames = data.activePackages.map(p => p.name).join(", ");
+                    localStorage.setItem("activePackage", allNames);
+                }
+            }
+        } catch(e) {
+            console.error(e);
+        }
+    }
+    renderClaimBox();
+});
+
 function getPackageDetails(pkgName){
     let cleanName = pkgName.trim();
     let days = parseInt(localStorage.getItem(cleanName + "_duration")) || 30;
     
-    // Plan ke mutabiq sahi daily amount set karne ka logic
     let defaultDaily = 14.67;
     if (cleanName.includes("02") || cleanName.toLowerCase().includes("plan 02") || cleanName.toLowerCase().includes("plan 2")) {
         defaultDaily = 30.00;
@@ -211,7 +258,7 @@ function getMidnightDate(dateInput) {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
-function renderClaimBox(){
+window.renderClaimBox = function(){
     let container = document.getElementById("claimBoxContainer");
     let titleBox = document.getElementById("packageTitle");
 
@@ -232,14 +279,6 @@ function renderClaimBox(){
     let html = "";
     let now = new Date();
     let todayMidnight = getMidnightDate(now);
-
-    let nextMidnightTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-    let timeLeftToMidnight = nextMidnightTime - now.getTime();
-
-    let hours = Math.floor((timeLeftToMidnight % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let minutes = Math.floor((timeLeftToMidnight % (1000 * 60 * 60)) / (1000 * 60));
-    let seconds = Math.floor((timeLeftToMidnight % (1000 * 60)) / 1000);
-    let countdownStr = `${hours}h ${minutes}m ${seconds}s`;
 
     packages.forEach((pkg)=>{
         let pkgId = pkg.replace(/%20/g, " ").trim();
@@ -312,24 +351,13 @@ function renderClaimBox(){
                             <h4>Day ${d}</h4>
                             <p>Rs. ${info.daily.toFixed(2)}</p>
                         </div>
-                        <button class="btn-action" onclick="claimDay('${pkgId}', ${info.totalDays}, ${info.daily}, ${d})">
+                        <button class="btn-action" id="claim-btn-${pkgId}-${d}" onclick="claimDay('${pkgId}', ${info.totalDays}, ${info.daily}, ${d})">
                             Claim Rs. ${info.daily.toFixed(2)}
                         </button>
                     </div>
                     `;
                 }
             } 
-            else if(d === daysPassed + 1){
-                html += `
-                <div class="day-card">
-                    <div class="day-info">
-                        <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily.toFixed(2)}</p>
-                    </div>
-                    <span class="status-locked">🔒 ${countdownStr}</span>
-                </div>
-                `;
-            }
             else {
                 html += `
                 <div class="day-card">
@@ -363,32 +391,47 @@ function renderClaimBox(){
     }
 }
 
-function claimDay(pkgId, totalDays, amount, currentDay){
+// 5 سیکنڈ ٹائمر کے ساتھ کلیم اور فائر بیس سنک کا فنکشن
+window.claimDay = async function(pkgId, totalDays, amount, currentDay){
     let dStatus = localStorage.getItem(pkgId + "_status_" + currentDay);
     if(dStatus === "collected" || dStatus === "expired") {
         alert("یہ دن پہلے ہی پروسیس ہو چکا ہے!");
         return;
     }
 
+    let btn = document.getElementById(`claim-btn-${pkgId}-${currentDay}`);
+    if(btn) {
+        btn.disabled = true;
+        btn.innerText = "Please wait...";
+    }
+
+    // 5 سیکنڈ کا وقفہ ٹیسٹنگ کے لیے
+    await new Promise(resolve => setTimeout(resolve, CLAIM_WAIT_TIME));
+
     let balance = parseFloat(localStorage.getItem("mainBalance")) || 0;
     balance += amount; 
     localStorage.setItem("mainBalance", balance.toFixed(2));
-
     localStorage.setItem(pkgId + "_status_" + currentDay, "collected");
 
     let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
     transList.unshift({type: "Daily Claim", amount: amount, details: pkgId + " - Day " + currentDay, date: new Date().toLocaleString()});
     localStorage.setItem('allTransactions', JSON.stringify(transList));
 
-    alert("رقم کامیابی سے کلیم हो گئی है!");
+    // فائر بیس پر بیلنس اپ ڈیٹ کریں
+    let userId = auth.currentUser ? auth.currentUser.uid : localStorage.getItem("userId");
+    if(userId) {
+        try {
+            await updateDoc(doc(db, "users", userId), {
+                mainBalance: balance
+            });
+        } catch(err) {
+            console.error("Firebase update error: ", err);
+        }
+    }
+
+    alert("✅ رقم کامیابی سے کلیم ہو گئی ہے!");
     renderClaimBox();
 }
-
-window.onload = function(){
-    renderClaimBox();
-};
-
-setInterval(renderClaimBox, 5000);
 </script>
 
 </body>
