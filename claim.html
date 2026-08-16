@@ -187,7 +187,9 @@
 
     <div class="container">
         <div class="section-heading" id="packageTitle">Daily Claim Box</div>
-        <div id="claimBoxContainer"></div>
+        <div id="claimBoxContainer">
+            <div style="text-align:center; padding:20px; color:#aaa;">Loading from Firebase...</div>
+        </div>
     </div>
 
     <a class="back-link" href="dashboard.html">⬅ Back to Dashboard</a>
@@ -195,7 +197,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -210,47 +212,29 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// ٹیسٹنگ کے لیے 5 سیکنڈ کا وقت
-const CLAIM_WAIT_TIME = 5000;
+let currentUserData = null;
+let currentUserId = null;
 
-document.addEventListener("DOMContentLoaded", async () => {
-    let userId = auth.currentUser ? auth.currentUser.uid : localStorage.getItem("userId");
-    if (userId) {
-        try {
-            let userDocSnap = await getDoc(doc(db, "users", userId));
-            if (userDocSnap.exists()) {
-                let data = userDocSnap.data();
-                if(data.mainBalance !== undefined) {
-                    localStorage.setItem("mainBalance", data.mainBalance);
-                }
-                if(data.activePackages) {
-                    localStorage.setItem("activePackages", JSON.stringify(data.activePackages));
-                    let allNames = data.activePackages.map(p => p.name).join(", ");
-                    localStorage.setItem("activePackage", allNames);
-                }
-            }
-        } catch(e) {
-            console.error(e);
-        }
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUserId = user.uid;
+        await fetchUserData();
+    } else {
+        document.getElementById("claimBoxContainer").innerHTML = "<div style='text-align:center; padding:20px; color:#ff4d4d;'>Pehle Login karein!</div>";
     }
-    renderClaimBox();
 });
 
-function getPackageDetails(pkgName){
-    let cleanName = pkgName.trim();
-    let days = parseInt(localStorage.getItem(cleanName + "_duration")) || 30;
-    
-    let defaultDaily = 14.67;
-    if (cleanName.includes("02") || cleanName.toLowerCase().includes("plan 02") || cleanName.toLowerCase().includes("plan 2")) {
-        defaultDaily = 30.00;
+async function fetchUserData() {
+    if (!currentUserId) return;
+    try {
+        let docSnap = await getDoc(doc(db, "users", currentUserId));
+        if (docSnap.exists()) {
+            currentUserData = docSnap.data();
+            renderClaimBox();
+        }
+    } catch (e) {
+        console.error("Error fetching user data:", e);
     }
-
-    let dailyAmount = parseFloat(localStorage.getItem(cleanName + "_daily")) || defaultDaily;
-
-    return {
-        totalDays: days,
-        daily: dailyAmount
-    };
 }
 
 function getMidnightDate(dateInput) {
@@ -258,112 +242,77 @@ function getMidnightDate(dateInput) {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
-window.renderClaimBox = function(){
+window.renderClaimBox = function() {
     let container = document.getElementById("claimBoxContainer");
     let titleBox = document.getElementById("packageTitle");
 
-    let activePackage = localStorage.getItem("activePackage");
-
-    if(!activePackage){
+    if (!currentUserData || !currentUserData.activePackages || currentUserData.activePackages.length === 0) {
         titleBox.innerText = "No Active Package";
-        let msg = "<div style='text-align:center; padding:20px; color:#aaa;'>Pehle koi investment plan khareedें!</div>";
-        if(container.innerHTML !== msg) container.innerHTML = msg;
+        container.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>Pehle koi investment plan khareedें!</div>";
         return;
     }
 
-    let packages = activePackage.split(/[,+]+/).map(p=>p.trim()).filter(p=>p.length > 0);
-    packages = [...new Set(packages)];
-
     titleBox.innerText = "Active Packages Box";
-
     let html = "";
     let now = new Date();
     let todayMidnight = getMidnightDate(now);
 
-    packages.forEach((pkg)=>{
-        let pkgId = pkg.replace(/%20/g, " ").trim();
-        let info = getPackageDetails(pkgId);
-
-        let startDateStr = localStorage.getItem(pkgId + "_startDate");
-        if(!startDateStr) {
-            startDateStr = new Date().toISOString();
-            localStorage.setItem(pkgId + "_startDate", startDateStr);
-        }
-
-        let startMidnight = getMidnightDate(startDateStr);
+    currentUserData.activePackages.forEach((pkg, pkgIndex) => {
+        let startMidnight = getMidnightDate(pkg.startDate);
         let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
         if (daysPassed < 1) daysPassed = 1;
 
         html += `
         <div class="pkg-section">
             <h3 style="color:#00ffff; margin-bottom:8px; border-bottom:1px solid #333; padding-bottom:5px;">
-                ${pkgId}
+                ${pkg.name}
             </h3>
         `;
 
-        for(let d = 1; d <= info.totalDays; d++){
-            let dStatus = localStorage.getItem(pkgId + "_status_" + d);
+        let claimedDays = pkg.claimedDays || [];
 
-            if (d < daysPassed) {
-                if (!dStatus) {
-                    localStorage.setItem(pkgId + "_status_" + d, "expired");
-                    dStatus = "expired";
-                }
-            }
+        for (let d = 1; d <= pkg.totalDays; d++) {
+            let isCollected = claimedDays.includes(d);
+            let isExpired = d < daysPassed && !isCollected;
 
-            if(dStatus === "collected"){
+            if (isCollected) {
                 html += `
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily.toFixed(2)}</p>
+                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
                     <span class="status-collected">✔ Collected</span>
                 </div>
                 `;
-            } 
-            else if(dStatus === "expired" || d < daysPassed){
+            } else if (isExpired) {
                 html += `
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily.toFixed(2)}</p>
+                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
                     <span class="status-expired">❌ Missed (Expired)</span>
                 </div>
                 `;
-            } 
-            else if(d === daysPassed){
-                if(dStatus === "collected") {
-                    html += `
-                    <div class="day-card">
-                        <div class="day-info">
-                            <h4>Day ${d}</h4>
-                            <p>Rs. ${info.daily.toFixed(2)}</p>
-                        </div>
-                        <span class="status-collected">✔ Collected</span>
-                    </div>
-                    `;
-                } else {
-                    html += `
-                    <div class="day-card">
-                        <div class="day-info">
-                            <h4>Day ${d}</h4>
-                            <p>Rs. ${info.daily.toFixed(2)}</p>
-                        </div>
-                        <button class="btn-action" id="claim-btn-${pkgId}-${d}" onclick="claimDay('${pkgId}', ${info.totalDays}, ${info.daily}, ${d})">
-                            Claim Rs. ${info.daily.toFixed(2)}
-                        </button>
-                    </div>
-                    `;
-                }
-            } 
-            else {
+            } else if (d === daysPassed) {
                 html += `
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily.toFixed(2)}</p>
+                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
+                    </div>
+                    <button class="btn-action" id="claim-btn-${pkgIndex}-${d}" onclick="claimDay(${pkgIndex}, ${d}, ${pkg.dailyEarn})">
+                        Claim Rs. ${pkg.dailyEarn.toFixed(2)}
+                    </button>
+                </div>
+                `;
+            } else {
+                html += `
+                <div class="day-card">
+                    <div class="day-info">
+                        <h4>Day ${d}</h4>
+                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
                     <span class="status-locked">Locked</span>
                 </div>
@@ -371,14 +320,10 @@ window.renderClaimBox = function(){
             }
         }
 
-        if (daysPassed > info.totalDays) {
-            localStorage.setItem(pkgId + "_completed", "true");
-        }
-
-        if (localStorage.getItem(pkgId + "_completed") === "true") {
+        if (daysPassed > pkg.totalDays) {
             html += `
                 <div class="notice-box" style="margin-top:10px;">
-                    ${pkgId} Package Successful 🎉 Completed! Ab dobara buy karein.
+                    ${pkg.name} Package Successful 🎉 Completed! Ab dobara buy kar sakte hain.
                 </div>
             `;
         }
@@ -386,51 +331,59 @@ window.renderClaimBox = function(){
         html += `</div>`;
     });
 
-    if (container.innerHTML !== html) {
-        container.innerHTML = html;
-    }
+    container.innerHTML = html;
 }
 
-// 5 سیکنڈ ٹائمر کے ساتھ کلیم اور فائر بیس سنک کا فنکشن
-window.claimDay = async function(pkgId, totalDays, amount, currentDay){
-    let dStatus = localStorage.getItem(pkgId + "_status_" + currentDay);
-    if(dStatus === "collected" || dStatus === "expired") {
-        alert("یہ دن پہلے ہی پروسیس ہو چکا ہے!");
-        return;
-    }
+// فائر بیس لائیو کلیم فنکشن
+window.claimDay = async function(pkgIndex, currentDay, amount) {
+    if (!currentUserId || !currentUserData) return;
 
-    let btn = document.getElementById(`claim-btn-${pkgId}-${currentDay}`);
-    if(btn) {
+    let btn = document.getElementById(`claim-btn-${pkgIndex}-${currentDay}`);
+    if (btn) {
         btn.disabled = true;
-        btn.innerText = "Please wait...";
+        btn.innerText = "Processing...";
     }
 
-    // 5 سیکنڈ کا وقفہ ٹیسٹنگ کے لیے
-    await new Promise(resolve => setTimeout(resolve, CLAIM_WAIT_TIME));
+    try {
+        let activePackages = currentUserData.activePackages;
+        let targetPkg = activePackages[pkgIndex];
 
-    let balance = parseFloat(localStorage.getItem("mainBalance")) || 0;
-    balance += amount; 
-    localStorage.setItem("mainBalance", balance.toFixed(2));
-    localStorage.setItem(pkgId + "_status_" + currentDay, "collected");
+        if (!targetPkg.claimedDays) {
+            targetPkg.claimedDays = [];
+        }
 
-    let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
-    transList.unshift({type: "Daily Claim", amount: amount, details: pkgId + " - Day " + currentDay, date: new Date().toLocaleString()});
-    localStorage.setItem('allTransactions', JSON.stringify(transList));
+        if (targetPkg.claimedDays.includes(currentDay)) {
+            alert("Yeh din pehle hi claim ho chuka hai!");
+            return;
+        }
 
-    // فائر بیس پر بیلنس اپ ڈیٹ کریں
-    let userId = auth.currentUser ? auth.currentUser.uid : localStorage.getItem("userId");
-    if(userId) {
-        try {
-            await updateDoc(doc(db, "users", userId), {
-                mainBalance: balance
-            });
-        } catch(err) {
-            console.error("Firebase update error: ", err);
+        targetPkg.claimedDays.push(currentDay);
+
+        let currentBalance = parseFloat(currentUserData.mainBalance) || 0;
+        let newBalance = currentBalance + amount;
+
+        // فائر بیس پر بیلنس اور پیکج کا ڈیٹا لائیو اپ ڈیٹ کریں
+        let userDocRef = doc(db, "users", currentUserId);
+        await updateDoc(userDocRef, {
+            mainBalance: newBalance,
+            activePackages: activePackages
+        });
+
+        // لوکل ڈیٹا اپ ڈیٹ کریں اور پیج ری-رینڈر کریں
+        currentUserData.mainBalance = newBalance;
+        currentUserData.activePackages = activePackages;
+
+        alert("✅ رقم کامیابی سے فائر بیس پر کلیم ہو گئی ہے!");
+        renderClaimBox();
+
+    } catch (err) {
+        console.error("Claim error:", err);
+        alert("Claim karne mein masla hua, dobara koshish karein!");
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = `Claim Rs. ${amount.toFixed(2)}`;
         }
     }
-
-    alert("✅ رقم کامیابی سے کلیم ہو گئی ہے!");
-    renderClaimBox();
 }
 </script>
 
