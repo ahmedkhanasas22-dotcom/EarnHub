@@ -151,12 +151,12 @@
         }
         .notice-box {
             text-align: center;
-            padding: 15px 10px;
+            padding: 12px;
             color: #00ff99;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             background: rgba(0, 255, 153, 0.1);
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1px dashed #00ff99;
             margin: 10px 0;
         }
@@ -170,7 +170,6 @@
             font-size: 14px;
         }
 
-        /* خوبصورت لودنگ اینیمیشن */
         .loader-wrapper {
             display: flex;
             flex-direction: column;
@@ -255,11 +254,43 @@ async function fetchUserData() {
         let docSnap = await getDoc(doc(db, "users", currentUserId));
         if (docSnap.exists()) {
             currentUserData = docSnap.data();
-            renderClaimBox();
+            await checkAndCleanCompletedPackages();
         }
     } catch (e) {
         console.error("Error fetching user data:", e);
     }
+}
+
+// یہ فنکشن چیک کرے گا کہ اگر کوئی پیکج 30 دن پورے کر چکا ہے، تو اسے فائر بیس سے آٹو ریمو کر دے گا
+async function checkAndCleanCompletedPackages() {
+    if (!currentUserData || !currentUserData.activePackages) return;
+
+    let nowTime = new Date().getTime();
+    let activePackages = currentUserData.activePackages;
+    
+    // وہ پیکجز جن کے 30 دن ابھی پورے نہیں ہوئے، انہیں رکھ لیں گے
+    let validPackages = activePackages.filter(pkg => {
+        let startTime = new Date(pkg.startDate).getTime();
+        let elapsedSeconds = Math.floor((nowTime - startTime) / 1000);
+        let daysPassed = Math.floor(elapsedSeconds / 5) + 1; // ٹیسٹنگ کے لیے 5 سیکنڈ والا حساب
+        return daysPassed <= pkg.totalDays;
+    });
+
+    // اگر کوئی پیکج ختم ہو چکا ہے اور لسٹ سے نکلا ہے، تو فائر بیس اپڈیٹ کر دیں
+    if (validPackages.length !== activePackages.length) {
+        currentUserData.activePackages = validPackages;
+        try {
+            let userDocRef = doc(db, "users", currentUserId);
+            await updateDoc(userDocRef, {
+                activePackages: validPackages
+            });
+            console.log("Completed packages automatically cleaned from Firebase!");
+        } catch (err) {
+            console.error("Error cleaning completed packages:", err);
+        }
+    }
+
+    renderClaimBox();
 }
 
 window.renderClaimBox = function() {
@@ -268,23 +299,19 @@ window.renderClaimBox = function() {
 
     if (!currentUserData || !currentUserData.activePackages || currentUserData.activePackages.length === 0) {
         titleBox.innerText = "No Active Package";
-        container.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>Pehle koi investment plan khareedें!</div>";
+        container.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>Koi active package nahi hai. Ab aap naya plan buy kar sakte hain!</div>";
         return;
     }
 
     titleBox.innerText = "Active Packages Box";
     let html = "";
-    
-    // ٹیسٹنگ کے لیے: اب دن 24 گھنٹے (ملاقات) کی بجائے صرف ہر 5 سیکنڈ بعد اگلا دن کھلنے کا لاجک لگا دیا ہے!
     let nowTime = new Date().getTime();
 
     currentUserData.activePackages.forEach((pkg, pkgIndex) => {
         let startTime = new Date(pkg.startDate).getTime();
-        
-        // ہر 5 سیکنڈ (5000 ملی سیکنڈ) کا ایک دن بنے گا تاکہ آپ فوراً 30 دن پورے کر کے چیک کر سکیں
         let elapsedSeconds = Math.floor((nowTime - startTime) / 1000);
         let daysPassed = Math.floor(elapsedSeconds / 5) + 1;
-        if (daysPassed < 1) daysPassed = 1;
+        if (daysPassed > pkg.totalDays) daysPassed = pkg.totalDays; // دن 30 سے اوپر نہ جائیں
 
         html += `
         <div class="pkg-section">
@@ -319,7 +346,7 @@ window.renderClaimBox = function() {
                     <span class="status-expired">❌ Missed (Expired)</span>
                 </div>
                 `;
-            } else if (d === daysPassed && daysPassed <= pkg.totalDays) {
+            } else if (d === daysPassed) {
                 html += `
                 <div class="day-card">
                     <div class="day-info">
@@ -344,21 +371,12 @@ window.renderClaimBox = function() {
             }
         }
 
-        if (daysPassed > pkg.totalDays) {
-            html += `
-                <div class="notice-box" style="margin-top:10px;">
-                    🎉 ${pkg.name} Package Successfully Completed! Ab aap yeh dobara buy kar sakte hain.
-                </div>
-            `;
-        }
-
         html += `</div>`;
     });
 
     container.innerHTML = html;
 }
 
-// فائر بیس لائیو کلیم فنکشن
 window.claimDay = async function(pkgIndex, currentDay, amount) {
     if (!currentUserId || !currentUserData) return;
 
@@ -408,10 +426,10 @@ window.claimDay = async function(pkgIndex, currentDay, amount) {
     }
 }
 
-// ہر 1 سیکنڈ بعد خود بخود سکرین ریفرش ہو گی تاکہ 5 سیکنڈ والا دن خود بخود انلاک یا اگے بڑھتا ہوا نظر آئے (ٹیسٹنگ کے لیے بہترین)
+// ہر 1 سیکنڈ بعد سکرین ریفرش ہو گی اور خود بخود چیک کرے گی کہ 30 دن پورے ہو گئے ہیں تو پیکج کو ہٹا دے
 setInterval(() => {
     if (currentUserData && currentUserData.activePackages) {
-        renderClaimBox();
+        checkAndCleanCompletedPackages();
     }
 }, 1000);
 </script>
