@@ -130,13 +130,11 @@ const allowedPrizes = [
 ];
 
 function getBalance() {
-    // سیدھا ڈ্যাশবোর্ড والی key 'mainBalance' کو ریڈ کرےगा ताकि 10,000 रुपये बिल्कुल सही डिटेक्ट हों
     let bal = localStorage.getItem("mainBalance") || localStorage.getItem("balance") || "0";
     return parseFloat(bal);
 }
 
 function saveBalance(amount) {
-    // दोनों keys पर एक साथ सेव करेगा ताकि डैशबोर्ड और स्पिन दोनों जगह बैलेंस हमेशा मैच रहे
     localStorage.setItem("mainBalance", amount);
     localStorage.setItem("balance", amount);
 }
@@ -196,7 +194,7 @@ function startSpin() {
         return;
     }
 
-    // Spin fee (Rs. 1) deduct करके नया बैलेंस सेव करें
+    // Fee deduct karke save karein
     balance -= 1;
     saveBalance(balance);
     updateUI();
@@ -216,7 +214,11 @@ function startSpin() {
     setTimeout(() => {
         let currentBal = getBalance();
         currentBal = currentBal + Number(randomPrize.amount);
+        
+        // Dono jagah save aur force update taaki dashboard par foran show ho
         saveBalance(currentBal);
+        localStorage.setItem("mainBalance", currentBal);
+        
         localStorage.setItem("lastSpinDate", new Date().toDateString());
 
         updateUI();
