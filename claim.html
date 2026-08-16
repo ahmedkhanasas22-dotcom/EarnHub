@@ -189,8 +189,16 @@
 
 <script>
 function getPackageDetails(pkgName){
-    let days = parseInt(localStorage.getItem(pkgName + "_duration")) || 30;
-    let dailyAmount = parseFloat(localStorage.getItem(pkgName + "_daily")) || 14.67;
+    let cleanName = pkgName.trim();
+    let days = parseInt(localStorage.getItem(cleanName + "_duration")) || 30;
+    
+    // Plan ke mutabiq sahi daily amount set karne ka logic
+    let defaultDaily = 14.67;
+    if (cleanName.includes("02") || cleanName.toLowerCase().includes("plan 02") || cleanName.toLowerCase().includes("plan 2")) {
+        defaultDaily = 30.00;
+    }
+
+    let dailyAmount = parseFloat(localStorage.getItem(cleanName + "_daily")) || defaultDaily;
 
     return {
         totalDays: days,
@@ -234,7 +242,7 @@ function renderClaimBox(){
     let countdownStr = `${hours}h ${minutes}m ${seconds}s`;
 
     packages.forEach((pkg)=>{
-        let pkgId = pkg.replace(/%20/g, " ");
+        let pkgId = pkg.replace(/%20/g, " ").trim();
         let info = getPackageDetails(pkgId);
 
         let startDateStr = localStorage.getItem(pkgId + "_startDate");
@@ -269,7 +277,7 @@ function renderClaimBox(){
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
+                        <p>Rs. ${info.daily.toFixed(2)}</p>
                     </div>
                     <span class="status-collected">✔ Collected</span>
                 </div>
@@ -280,7 +288,7 @@ function renderClaimBox(){
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
+                        <p>Rs. ${info.daily.toFixed(2)}</p>
                     </div>
                     <span class="status-expired">❌ Missed (Expired)</span>
                 </div>
@@ -292,7 +300,7 @@ function renderClaimBox(){
                     <div class="day-card">
                         <div class="day-info">
                             <h4>Day ${d}</h4>
-                            <p>Rs. ${info.daily}</p>
+                            <p>Rs. ${info.daily.toFixed(2)}</p>
                         </div>
                         <span class="status-collected">✔ Collected</span>
                     </div>
@@ -302,10 +310,10 @@ function renderClaimBox(){
                     <div class="day-card">
                         <div class="day-info">
                             <h4>Day ${d}</h4>
-                            <p>Rs. ${info.daily}</p>
+                            <p>Rs. ${info.daily.toFixed(2)}</p>
                         </div>
                         <button class="btn-action" onclick="claimDay('${pkgId}', ${info.totalDays}, ${info.daily}, ${d})">
-                            Claim Rs. ${info.daily}
+                            Claim Rs. ${info.daily.toFixed(2)}
                         </button>
                     </div>
                     `;
@@ -316,7 +324,7 @@ function renderClaimBox(){
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
+                        <p>Rs. ${info.daily.toFixed(2)}</p>
                     </div>
                     <span class="status-locked">🔒 ${countdownStr}</span>
                 </div>
@@ -327,7 +335,7 @@ function renderClaimBox(){
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${info.daily}</p>
+                        <p>Rs. ${info.daily.toFixed(2)}</p>
                     </div>
                     <span class="status-locked">Locked</span>
                 </div>
@@ -372,7 +380,7 @@ function claimDay(pkgId, totalDays, amount, currentDay){
     transList.unshift({type: "Daily Claim", amount: amount, details: pkgId + " - Day " + currentDay, date: new Date().toLocaleString()});
     localStorage.setItem('allTransactions', JSON.stringify(transList));
 
-    alert("رقم کامیابی سے کلیم ہو گئی ہے!");
+    alert("رقم کامیابی سے کلیم हो گئی है!");
     renderClaimBox();
 }
 
@@ -380,7 +388,6 @@ window.onload = function(){
     renderClaimBox();
 };
 
-// Timer interval ko 5 seconds (5000ms) kar diya hai
 setInterval(renderClaimBox, 5000);
 </script>
 
