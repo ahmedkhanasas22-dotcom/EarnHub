@@ -233,7 +233,7 @@ window.buyPlan = async function(planName, price, dailyEarn) {
     // Check if plan is already active
     let isAlreadyActive = activePlans.some(p => p.name === planName);
     if (isAlreadyActive) {
-        alert("Yeh plan pehle se active hai! Jab तक yeh complete nahi hota aap dobara nahi khareed sakte.");
+        alert("Yeh plan pehle se active hai! Jab tak yeh complete nahi hota aap dobara nahi khareed sakte.");
         return;
     }
 
@@ -282,7 +282,14 @@ window.buyPlan = async function(planName, price, dailyEarn) {
 
             activePlans.push(newActivePlan);
             localStorage.setItem("activePackages", JSON.stringify(activePlans));
-            localStorage.setItem("activePackage", planName); // کلیم پیج کی مطابقت کے لیے
+            
+            // ⭐ FIX: تمام ایکٹو پیکجز کے ناموں کو کومہ (,) سے جوڑ کر سیव کریں تاکہ کلیم پیج پر سارے شو ہوں
+            let allNames = activePlans.map(p => p.name).join(", ");
+            localStorage.setItem("activePackage", allNames);
+
+            // ہر پیکج کے لیے اس کی ڈوریشن اور ڈیلی ارننگ الگ سے سیٹ کریں
+            localStorage.setItem(planName + "_duration", "30");
+            localStorage.setItem(planName + "_daily", dailyEarn);
 
             // Save transaction log
             let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
@@ -305,7 +312,7 @@ window.buyPlan = async function(planName, price, dailyEarn) {
 
     } catch (error) {
         console.error(error);
-        alert("Kuch masla ho gaya hai, dobara koshish karein!");
+        alert("Kuch masla ہو gaya hai, dobara koshish karein!");
         if(btn) {
             btn.disabled = false;
             btn.innerText = "Invest Now";
