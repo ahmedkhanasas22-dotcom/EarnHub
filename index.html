@@ -190,7 +190,7 @@ display:none;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -229,8 +229,6 @@ window.signup = async function() {
     btn.innerText = "Creating...";
 
     try {
-        localStorage.clear();
-
         let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         let firebaseUser = userCredential.user;
 
@@ -334,12 +332,14 @@ window.login = async function() {
             userBalance = Number(data.mainBalance || 0);
         }
 
+        // ⭐ ڈیٹا محفوظ طریقے سے لوکل اسٹوریج میں سیو کرنا تاکہ ڈیش بورڈ اور پیکجز خراب نہ ہوں
         localStorage.setItem("userName", userName);
         localStorage.setItem("user", userName);
         localStorage.setItem("myReferralCode", myCode);
         localStorage.setItem("email", email);
         localStorage.setItem("userId", userIdVal);
         localStorage.setItem("mainBalance", userBalance);
+        localStorage.setItem("firebaseUid", firebaseUser.uid);
 
         window.location.href = "dashboard.html";
     } catch (error) {
@@ -359,7 +359,7 @@ window.forgotPassword = async function() {
         let querySnapshot = await getDocs(q);
 
         if(querySnapshot.empty){
-            alert("Account exists in Auth but database record is missing. Please try logging in with your password, or sign up with a new email.");
+            alert("No account found with this email!");
         } else {
             querySnapshot.forEach((docSnap) => {
                 let data = docSnap.data();
