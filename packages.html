@@ -197,7 +197,7 @@ button:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -212,40 +212,43 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-document.addEventListener("DOMContentLoaded", async () => {
-    // جیسے ہی پیج لوڈ ہو، فائر بیس سے ایکٹو پیکجز چیک کر کے لوکل سٹوریج میں بھی سیو کریں
-    let userId = auth.currentUser ? auth.currentUser.uid : localStorage.getItem("userId");
-    if (userId) {
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
         try {
-            let userDocSnap = await getDoc(doc(db, "users", userId));
-            if (userDocSnap.exists() && userDocSnap.data().activePackages) {
-                let fbPlans = userDocSnap.data().activePackages;
-                localStorage.setItem("activePackages", JSON.stringify(fbPlans));
+            let userDocRef = doc(db, "users", user.uid);
+            let userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                let data = userDocSnap.data();
+                let activePlans = data.activePackages || [];
+                
+                // چیک کریں کہ کون سے پلانز ابھی بھی ایکٹو (30 دن سے کم) ہیں
+                let now = new Date();
+                let todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+                activePlans.forEach(plan => {
+                    let startMidnight = new Date(new Date(plan.startDate).getFullYear(), new Date(plan.startDate).getMonth(), new Date(plan.startDate).getDate()).getTime();
+                    let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
+
+                    if (daysPassed <= 30) {
+                        let btn = document.getElementById("btn-" + plan.name);
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.innerText = "Already Active / Running";
+                        }
+                    }
+                });
             }
         } catch(e) {
-            console.error(e);
+            console.error("Error loading active plans from Firebase:", e);
         }
     }
-    checkActivePlans();
 });
 
-function checkActivePlans() {
-    let activePlans = JSON.parse(localStorage.getItem("activePackages") || "[]");
-    activePlans.forEach(plan => {
-        let btn = document.getElementById("btn-" + plan.name);
-        if (btn) {
-            btn.disabled = true;
-            btn.innerText = "Already Active / Running";
-        }
-    });
-}
-
 window.buyPlan = async function(planName, price, dailyEarn) {
-    let activePlans = JSON.parse(localStorage.getItem("activePackages") || "[]");
-
-    let isAlreadyActive = activePlans.some(p => p.name === planName);
-    if (isAlreadyActive) {
-        alert("Yeh plan pehle se active hai! Jab tak yeh complete nahi hota aap dobara nahi khareed sakte.");
+    let user = auth.currentUser;
+    if (!user) {
+        alert("Pehle Login karein!");
+        window.location.href = "login.html";
         return;
     }
 
@@ -256,56 +259,65 @@ window.buyPlan = async function(planName, price, dailyEarn) {
     }
 
     try {
-        let currentBalance = parseFloat(localStorage.getItem("mainBalance")) || 0;
-        let userId = auth.currentUser ? auth.currentUser.uid : localStorage.getItem("userId");
+        let userDocRef = doc(db, "users", user.uid);
+        let userDocSnap = await getDoc(userDocRef);
+        
+        if (!userDocSnap.exists()) {
+            alert("User data nahi mila!");
+            return;
+        }
 
-        if(userId) {
-            let userDocRef = doc(db, "users", userId);
-            let userDocSnap = await getDoc(userDocRef);
-            if(userDocSnap.exists()) {
-                currentBalance = parseFloat(userDocSnap.data().mainBalance) || 0;
+        let userData = userDocSnap.data();
+        let currentBalance = parseFloat(userData.mainBalance) || 0;
+        let activePlans = userData.activePackages || [];
+
+        // ڈبل چیک کریں کہ کیا یہ پلان پہلے سے ایکٹو تو نہیں
+        let now = new Date();
+        let todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+        let isAlreadyActive = activePlans.some(p => {
+            let startMidnight = new Date(new Date(p.startDate).getFullYear(), new Date(p.startDate).getMonth(), new Date(p.startDate).getDate()).getTime();
+            let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
+            return p.name === planName && daysPassed <= 30;
+        });
+
+        if (isAlreadyActive) {
+            alert("Yeh plan pehle se active hai! Jab tak yeh 30 din poore nahi karta aap dobara nahi khareed sakte.");
+            if(btn) {
+                btn.disabled = true;
+                btn.innerText = "Already Active / Running";
             }
+            return;
         }
 
         if (currentBalance >= price) {
             let newBalance = currentBalance - price;
-            
-            localStorage.setItem("mainBalance", newBalance);
 
             let newActivePlan = {
                 name: planName,
                 price: price,
                 dailyEarn: dailyEarn,
                 startDate: new Date().toISOString(),
-                currentDay: 1,
                 totalDays: 30,
-                lastClaimDate: ""
+                claimedDays: [] // ان دنوں کی لسٹ جو کلیم ہو چکے ہیں
             };
 
+            // پرانے مکمل شدہ پلانز ہٹا کر نیا پلان ایڈ کریں
+            activePlans = activePlans.filter(p => {
+                let startMidnight = new Date(new Date(p.startDate).getFullYear(), new Date(p.startDate).getMonth(), new Date(p.startDate).getDate()).getTime();
+                let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
+                return p.name !== planName || daysPassed <= 30;
+            });
+
             activePlans.push(newActivePlan);
-            localStorage.setItem("activePackages", JSON.stringify(activePlans));
-            
-            let allNames = activePlans.map(p => p.name).join(", ");
-            localStorage.setItem("activePackage", allNames);
 
-            localStorage.setItem(planName + "_duration", "30");
-            localStorage.setItem(planName + "_daily", dailyEarn);
+            // فائر بیس پر ڈائریکٹ لائیو اپ ڈیٹ کریں
+            await updateDoc(userDocRef, {
+                mainBalance: newBalance,
+                activePackages: activePlans
+            });
 
-            // ⭐ فائر بیس پر بیلنس اور ایکٹو پیکجز دونوں کو پرمیننت سیو کریں
-            if(userId) {
-                await updateDoc(doc(db, "users", userId), {
-                    mainBalance: newBalance,
-                    activePackages: activePlans
-                });
-            }
-
-            let transList = JSON.parse(localStorage.getItem('allTransactions') || "[]");
-            transList.unshift({type: "Package Purchase", amount: -price, details: planName, date: new Date().toLocaleString()});
-            localStorage.setItem('allTransactions', JSON.stringify(transList));
-
-            localStorage.setItem("hasPurchasedPackage", "true");
-
-            alert("✅ Your Plan has been purchased successfully! Your Package is active now.");
+            alert("✅ Your Plan has been purchased successfully from Firebase!");
             window.location.href = "dashboard.html";
 
         } else {
@@ -318,8 +330,8 @@ window.buyPlan = async function(planName, price, dailyEarn) {
         }
 
     } catch (error) {
-        console.error(error);
-        alert("Kuch masla هو gaya hai, dobara koshish karein!");
+        console.error("Purchase error:", error);
+        alert("Kuch masla ho gaya hai, dobara koshish karein!");
         if(btn) {
             btn.disabled = false;
             btn.innerText = "Invest Now";
