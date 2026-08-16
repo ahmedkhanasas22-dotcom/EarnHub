@@ -73,6 +73,12 @@ box-shadow: 0 4px 15px rgba(255,255,255,0.2);
 .terms a { color: #00ffff; text-decoration: none; }
 #message { color: #00ffff; font-weight: bold; min-height: 25px; font-size: 14px; margin-top: 5px;}
 </style>
+
+<!-- Firebase SDKs (Agar aapke dashboard me hain toh ye yahan bhi kaam karenge) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script> <!-- Agar aapki config file alag hai toh path match karlen -->
 </head>
 <body>
 
@@ -129,14 +135,44 @@ const allowedPrizes = [
 {text: "Rs. 10", angle: 157.5, amount: 10}
 ];
 
-function getBalance() {
-    let bal = localStorage.getItem("mainBalance") || localStorage.getItem("balance") || "0";
-    return parseFloat(bal);
+// Firebase se balance fetch karne ka direct function
+async function getAccountBalance() {
+    try {
+        if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
+            let uid = firebase.auth().currentUser.uid;
+            let doc = await firebase.firestore().collection("users").doc(uid).get();
+            if (doc.exists) {
+                let data = doc.data();
+                let bal = data.balance !== undefined ? data.balance : (data.mainBalance || 0);
+                return parseFloat(bal);
+            }
+        }
+    } catch (err) {
+        console.log("Firebase fetch error, using local storage", err);
+    }
+    // Fallback agar firebase load na ho
+    let localBal = localStorage.getItem("mainBalance") || localStorage.getItem("balance") || "0";
+    return parseFloat(localBal);
 }
 
-function saveBalance(amount) {
-    localStorage.setItem("mainBalance", amount);
-    localStorage.setItem("balance", amount);
+// Firebase aur LocalStorage dono me ek sath update karne ka function
+async function saveAccountBalance(newBalance) {
+    // Local storage turant update ho taaki UI block na ho
+    localStorage.setItem("mainBalance", newBalance);
+    localStorage.setItem("balance", newBalance);
+
+    try {
+        if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
+            let uid = firebase.auth().currentUser.uid;
+            // Firestore database me balance save karein
+            await firebase.firestore().collection("users").doc(uid).update({
+                balance: newBalance,
+                mainBalance: newBalance
+            });
+        }
+    } catch (err) {
+        console.log("Firebase save error:", err);
+    }
 }
 
 function updateUI() {
@@ -180,7 +216,7 @@ updateUI();
 setInterval(updateTimer, 1000);
 updateTimer();
 
-function startSpin() {
+async function startSpin() {
     let lastSpinDate = localStorage.getItem("lastSpinDate") || "";
     let todayDate = new Date().toDateString();
 
@@ -188,15 +224,15 @@ function startSpin() {
         return;
     }
 
-    let balance = getBalance();
+    let balance = await getAccountBalance();
     if (balance < 1) {
         alert("Aapka total balance Rs. 1 se kam hai! Spin karne ke liye kam az kam Rs. 1 hona zaroori hai.");
         return;
     }
 
-    // Fee deduct karke save karein
+    // Fee (Rs. 1) deduct karke save karein
     balance -= 1;
-    saveBalance(balance);
+    await saveAccountBalance(balance);
     updateUI();
 
     let spinBtn = document.getElementById("spinBtn");
@@ -211,13 +247,13 @@ function startSpin() {
     let wheel = document.getElementById("wheel");
     wheel.style.transform = "rotate(" + totalRotation + "deg)";
 
-    setTimeout(() => {
-        let currentBal = getBalance();
+    setTimeout(async () => {
+        // Dubara latest balance fetch karke jeeta hua amount add karein
+        let currentBal = await getAccountBalance();
         currentBal = currentBal + Number(randomPrize.amount);
         
-        // Dono jagah save aur force update taaki dashboard par foran show ho
-        saveBalance(currentBal);
-        localStorage.setItem("mainBalance", currentBal);
+        // Firestore aur Local storage dono me permanent save
+        await saveAccountBalance(currentBal);
         
         localStorage.setItem("lastSpinDate", new Date().toDateString());
 
