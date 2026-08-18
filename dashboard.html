@@ -406,23 +406,6 @@ background: #161b22; width: 100%; max-width: 380px; height: 480px; border-radius
 <a href="withdraw-history.html"><div class="card box-history"><h2>📜</h2><p>Withdraw History</p></div></a>
 </div>
 
-<!-- Referral Network Tracking Card -->
-<div class="bank-card" style="margin: 0 15px 15px 15px; padding: 15px;">
-<div style="font-size: 14px; font-weight: bold; color: #00ffff; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">👥 Referral Network</div>
-<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-    <span style="color: #8b949e;">Total Referrals:</span>
-    <span id="dashTotalRefs" style="color: #00ff99; font-weight: bold;">0</span>
-</div>
-<div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
-    <span style="color: #8b949e;">Commission Earned:</span>
-    <span style="color: #00ffff; font-weight: bold;">Rs. <span id="dashRefEarnings">0</span></span>
-</div>
-<div>
-    <input type="text" id="dashRefLink" readonly style="width: 100%; padding: 10px; background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; font-size: 12px; margin-bottom: 8px;">
-    <button onclick="copyRefLink()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #32cd32, #006600); color: white; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px;">Copy Referral Link</button>
-</div>
-</div>
-
 <div class="dark-mode-box">
 <span>🌙 Dark Mode</span>
 <label class="switch">
@@ -538,11 +521,8 @@ onAuthStateChanged(auth, async (user) => {
                 let username = data.username || "User";
                 let userIdVal = data.userId || "#00000";
                 let balance = Number(data.mainBalance || 0);
-                let totalRefs = Number(data.totalReferrals || 0);
                 let myCode = data.myReferralCode || "EH0000";
-                let refEarnings = totalRefs * 50;
 
-                // بیلنس کو .toFixed(2) کے ساتھ فکس کر دیا گیا ہے
                 let formattedBalance = balance.toFixed(2);
 
                 document.getElementById("mainBalance").innerText = "Rs. " + formattedBalance;
@@ -550,17 +530,9 @@ onAuthStateChanged(auth, async (user) => {
                 document.getElementById("userIdDisplay").innerText = "ID: " + userIdVal;
                 document.getElementById("sidebarUserName").innerText = username;
                 document.getElementById("sidebarUserId").innerText = "ID: " + userIdVal;
-                
-                document.getElementById("dashTotalRefs").innerText = totalRefs;
-                document.getElementById("dashRefEarnings").innerText = refEarnings;
-
-                let baseURL = window.location.origin + window.location.pathname.replace("dashboard.html", "index.html");
-                let fullRefLink = baseURL + "?ref=" + myCode;
-                document.getElementById("dashRefLink").value = fullRefLink;
 
                 localStorage.setItem("userName", username);
                 localStorage.setItem("mainBalance", formattedBalance);
-                localStorage.setItem("totalReferrals", totalRefs);
                 localStorage.setItem("myReferralCode", myCode);
                 localStorage.setItem("userId", userIdVal);
                 localStorage.setItem("firebaseUid", user.uid);
@@ -621,7 +593,6 @@ if(savedPic) {
 
 function checkWithdraw(){ window.location.href="withdraw.html"; }
 
-// WhatsApp گروپ کا لنک یہاں سیٹ کر دیا گیا ہے
 function openWhatsApp() {
     window.open("https://chat.whatsapp.com/KDO3mPdDvbqJUPzQSVFkPJ?s=cl&p=a&ilr=1", "_blank");
 }
@@ -704,14 +675,6 @@ function submitComplaint() {
     alert("Aapki complaint admin ko bhej di gayi hai!");
     document.getElementById("complaintText").value = "";
     closeComplaintModal();
-}
-
-function copyRefLink() {
-    let copyText = document.getElementById("dashRefLink");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(copyText.value);
-    alert("Referral Link Copied Successfully!");
 }
 
 function toggleTheme() {
