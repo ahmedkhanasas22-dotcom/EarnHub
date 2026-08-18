@@ -157,7 +157,7 @@ display:none;
 <input id="suser" placeholder="Username">
 <input id="semail" type="email" placeholder="Email">
 <input id="spass" type="password" placeholder="Password">
-<input id="sref" placeholder="Referral Code (Optional)" readonly style="background: #111; color: #aaa; cursor: not-allowed;">
+<input id="sref" placeholder="Referral UID (Optional)" readonly style="background: #111; color: #aaa; cursor: not-allowed;">
 
 <button id="signupBtn" onclick="signup()">Create Account</button>
 
@@ -190,7 +190,7 @@ display:none;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -205,11 +205,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// URL سے فائر بیس UID والا ریفرل پکڑنا (نام کا کوئی مسئلہ نہیں رہے گا)
 let urlParams = new URLSearchParams(window.location.search);
-let refUser = urlParams.get("ref");
-if(refUser) {
+let refUserUid = urlParams.get("ref");
+if(refUserUid) {
     let refInput = document.getElementById("sref");
-    refInput.value = refUser;
+    refInput.value = refUserUid;
     refInput.setAttribute("readonly", true);
 }
 
@@ -217,7 +218,7 @@ window.signup = async function() {
     let user = document.getElementById("suser").value.trim();
     let email = document.getElementById("semail").value.trim();
     let pass = document.getElementById("spass").value.trim();
-    let ref = document.getElementById("sref").value.trim(); 
+    let refUid = document.getElementById("sref").value.trim(); 
     let btn = document.getElementById("signupBtn");
 
     if(user === "" || email === "" || pass === ""){
@@ -235,34 +236,34 @@ window.signup = async function() {
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
 
+        // نیا اکاؤنٹ بناتے وقت فائر بیس میں ریفرل UID سیو کرنا
         await setDoc(doc(db, "users", firebaseUser.uid), {
             username: user,
             email: email,
             password: pass,
             myReferralCode: myCode,
-            referral: ref,
+            referralUid: refUid, // جس نے جوائن کروایا اس کی فائر بیس UID
             mainBalance: 0,
             totalReferrals: 0,
+            withdrawCount: 0, // پیکج بائے کرنے پر ودھড্রاو کے لیے کاؤنٹ
             packageActive: false,
             userId: userIdVal,
             role: "user"
         });
 
-        if(ref) {
-            let q = query(collection(db, "users"), where("myReferralCode", "==", ref));
-            let querySnapshot = await getDocs(q);
-            if(!querySnapshot.empty) {
-                querySnapshot.forEach(async (uDoc) => {
-                    let uplineData = uDoc.data();
-                    let uplineRef = doc(db, "users", uDoc.id);
-                    
-                    let currentBalance = Number(uplineData.mainBalance || 0);
-                    let currentReferrals = Number(uplineData.totalReferrals || 0);
+        // اگر ریفرل UID موجود ہے تو پرانے یوزر کو 50 روپے اور ریفرل کاؤنٹ دینا
+        if(refUid) {
+            let uplineDocRef = doc(db, "users", refUid);
+            let uplineSnap = await getDoc(uplineDocRef);
 
-                    await updateDoc(uplineRef, {
-                        totalReferrals: currentReferrals + 1,
-                        mainBalance: currentBalance + 50
-                    });
+            if(uplineSnap.exists()) {
+                let uplineData = uplineSnap.data();
+                let currentBalance = Number(uplineData.mainBalance || 0);
+                let currentReferrals = Number(uplineData.totalReferrals || 0);
+
+                await updateDoc(uplineDocRef, {
+                    totalReferrals: currentReferrals + 1,
+                    mainBalance: currentBalance + 50
                 });
             }
         }
@@ -317,9 +318,10 @@ window.login = async function() {
                 email: email,
                 password: pass,
                 myReferralCode: myCode,
-                referral: "",
+                referralUid: "",
                 mainBalance: 0,
                 totalReferrals: 0,
+                withdrawCount: 0,
                 packageActive: false,
                 userId: userIdVal,
                 role: "user"
@@ -332,7 +334,6 @@ window.login = async function() {
             userBalance = Number(data.mainBalance || 0);
         }
 
-        // ⭐ ڈیٹا محفوظ طریقے سے لوکل اسٹوریج میں سیو کرنا تاکہ ڈیش بورڈ اور پیکجز خراب نہ ہوں
         localStorage.setItem("userName", userName);
         localStorage.setItem("user", userName);
         localStorage.setItem("myReferralCode", myCode);
