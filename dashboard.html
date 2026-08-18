@@ -503,7 +503,7 @@ background: #161b22; width: 100%; max-width: 380px; height: 480px; border-radius
 <div class="modal-box">
 <div class="modal-header"><span>📝 Complaint Box</span><button class="ai-close-btn" onclick="closeComplaintModal()">✕</button></div>
 <div class="modal-body">
-<p style="font-size: 12px; color: #8b949e; margin: 0;">Apni complaint ya masla yahan tafseel se likhein:</p>
+<p style="font-size: 12px; color: #8b949e; margin: 0;">Apni complaint ya masla yahan tafseel سے likhein:</p>
 <textarea id="complaintText" style="width:100%; height:110px; background:#0b0f19; border:1px solid #333; color:white; padding:10px; border-radius:8px; resize:none;" placeholder="Yahan apni complaint likhein..."></textarea>
 <button onclick="submitComplaint()" style="background:linear-gradient(135deg, #20b2aa, #005555); color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Submit Complaint</button>
 </div>
@@ -528,7 +528,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ⭐ فائر بیس سے لائیو ڈیٹا اور ایکٹو پیکج سنک کرنا تاکہ لاگ آؤٹ پر پیکج نہ اڑے
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         try {
@@ -543,8 +542,10 @@ onAuthStateChanged(auth, async (user) => {
                 let myCode = data.myReferralCode || "EH0000";
                 let refEarnings = totalRefs * 50;
 
-                // UI اپڈیٹ کریں
-                document.getElementById("mainBalance").innerText = "Rs. " + balance;
+                // بیلنس کو .toFixed(2) کے ساتھ فکس کر دیا گیا ہے
+                let formattedBalance = balance.toFixed(2);
+
+                document.getElementById("mainBalance").innerText = "Rs. " + formattedBalance;
                 document.getElementById("userNameDisplay").innerText = username;
                 document.getElementById("userIdDisplay").innerText = "ID: " + userIdVal;
                 document.getElementById("sidebarUserName").innerText = username;
@@ -557,9 +558,8 @@ onAuthStateChanged(auth, async (user) => {
                 let fullRefLink = baseURL + "?ref=" + myCode;
                 document.getElementById("dashRefLink").value = fullRefLink;
 
-                // لوکل سٹوریج میں بھی بیلنس، پیکج اور سٹیٹس سنک کر دیں
                 localStorage.setItem("userName", username);
-                localStorage.setItem("mainBalance", balance);
+                localStorage.setItem("mainBalance", formattedBalance);
                 localStorage.setItem("totalReferrals", totalRefs);
                 localStorage.setItem("myReferralCode", myCode);
                 localStorage.setItem("userId", userIdVal);
@@ -621,8 +621,9 @@ if(savedPic) {
 
 function checkWithdraw(){ window.location.href="withdraw.html"; }
 
+// WhatsApp گروپ کا لنک یہاں سیٹ کر دیا گیا ہے
 function openWhatsApp() {
-    window.open("https://wa.me/", "_blank");
+    window.open("https://chat.whatsapp.com/KDO3mPdDvbqJUPzQSVFkPJ?s=cl&p=a&ilr=1", "_blank");
 }
 
 function openNotificationModal() { document.getElementById("notificationModal").style.display = "flex"; }
