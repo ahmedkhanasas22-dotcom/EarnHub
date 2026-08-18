@@ -297,7 +297,8 @@ button.submit-btn:disabled{ background: #555; color: #aaa; cursor: not-allowed; 
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -309,6 +310,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
 let selectedMethodName = "JazzCash";
@@ -340,11 +342,16 @@ window.filterMethods = function() {
 }
 
 window.sendWithdraw = async function(){
+    let user = auth.currentUser;
+    if(!user){
+        alert("Pehle Login karein!");
+        window.location.href = "login.html";
+        return;
+    }
+
     let name = document.getElementById("name").value.trim();
     let number = document.getElementById("number").value.trim();
     let amount = Number(document.getElementById("amount").value);
-
-    let currentBalance = Number(localStorage.getItem("mainBalance") || localStorage.getItem("balance") || 0);
 
     if(name === "" || number === "" || !amount){
         alert("Please Fill All Details");
@@ -361,25 +368,47 @@ window.sendWithdraw = async function(){
         return;
     }
 
-    if(amount > currentBalance){
-        alert("Insufficient Balance");
-        return;
-    }
-
-    // شرط: جب تک ریفرل ممبر کوئی پیکج بائے نہ کرے، ودڈرا انلاک نہیں ہوگا
-    let eligibleWithdrawRefs = Number(localStorage.getItem("eligibleWithdrawRefs") || 0);
-    if(eligibleWithdrawRefs < 2){
-        alert("پہلے کم از کم دو ممبرز ایڈ کریں جنہوں نے پیکج بائے کیا ہو، پھر آپ ودڈرا کر سکیں گے۔");
-        return;
-    }
-
     let submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
     submitBtn.innerText = "Submitting...";
 
     try {
-        let docRef = await addDoc(collection(db, "requests"), {
-            username: localStorage.getItem("userName") || localStorage.getItem("user") || "Muhammad Ahmad Javed",
+        // فائر بیس سے یوزر کا تازہ ترین ڈیٹا اور بیلنس چیک کریں
+        let userRef = doc(db, "users", user.uid);
+        let userSnap = await getDoc(userRef);
+
+        if(!userSnap.exists()){
+            alert("User data nahi mila!");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Withdraw Now";
+            return;
+        }
+
+        let userData = userSnap.data();
+        let currentBalance = Number(userData.mainBalance || 0);
+        let withdrawCount = Number(userData.withdrawCount || 0);
+        let userName = userData.fullName || userData.name || "User";
+
+        // شرط: کم از کم 2 ریفرلز کا پیکج خریدنا لازمی ہے (withdrawCount >= 2)
+        if(withdrawCount < 2){
+            alert("🔒 Withdraw Locked: پہلے کم از کم دو ایسے ممبرز بنائیں جنہوں نے پیکج خریدا ہو!");
+            document.getElementById("lockMsg").innerText = "Aapke active referral packages 2 se kam hain. Withdraw locked hai!";
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Withdraw Now";
+            return;
+        }
+
+        if(amount > currentBalance){
+            alert("Insufficient Balance in your account!");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Withdraw Now";
+            return;
+        }
+
+        // 1. فائر بیس پر ریکوئسٹ ایڈ کریں
+        await addDoc(collection(db, "requests"), {
+            userId: user.uid,
+            username: userName,
             type: "Withdraw",
             amount: amount,
             method: selectedMethodName,
@@ -389,27 +418,14 @@ window.sendWithdraw = async function(){
             date: new Date().toLocaleString()
         });
 
+        // 2. یوزر کا مین بیلنس فائر بیس پر کم کریں
         let newBalance = currentBalance - amount;
-        localStorage.setItem("mainBalance", newBalance);
-        localStorage.setItem("balance", newBalance);
+        await updateDoc(userRef, {
+            mainBalance: newBalance
+        });
 
-        let historyList = JSON.parse(localStorage.getItem("withdrawHistoryList") || "[]");
-        
-        let newRequest = {
-            id: docRef.id,
-            amount: amount,
-            method: selectedMethodName,
-            name: name,
-            number: number,
-            status: "Pending",
-            dateTime: new Date().toLocaleString()
-        };
-
-        historyList.unshift(newRequest);
-        localStorage.setItem("withdrawHistoryList", JSON.stringify(historyList));
-
-        alert("Withdraw Request Sent Successfully");
-        window.location.replace("withdraw-history.html");
+        alert("✅ Withdraw Request Sent Successfully to Firebase!");
+        window.location.href = "dashboard.html";
 
     } catch (error) {
         console.error("Error:", error);
