@@ -116,7 +116,7 @@ width: 100%; background: linear-gradient(135deg, #00ffff, #1a73e8); color: #000;
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">IBAN / Account Number</div>
+            <div class="detail-label" id="accNumLabel">IBAN / Account Number</div>
             <div class="detail-value-box">
                 <span id="ibanText">PK25TMFB0000000057179544</span>
                 <button class="copy-btn" onclick="copyText('ibanText')">Copy</button>
@@ -125,7 +125,7 @@ width: 100%; background: linear-gradient(135deg, #00ffff, #1a73e8); color: #000;
 
         <div class="form-group">
             <label>Enter Amount (PKR)</label>
-            <input type="number" id="depositAmount" class="process-control form-control">
+            <input type="number" id="depositAmount" class="form-control">
         </div>
 
         <div class="form-group">
@@ -175,10 +175,17 @@ window.selectMethod = function(method, event) {
     box.style.display = 'block';
     
     let nameLabel = document.getElementById('accNameLabel');
+    let numLabel = document.getElementById('accNumLabel');
+    let ibanText = document.getElementById('ibanText');
+
     if(method === 'easypaisa') {
         nameLabel.innerText = "Easypaisa Account Name";
+        numLabel.innerText = "Easypaisa Account Number / IBAN";
+        ibanText.innerText = "PK25TMFB0000000057179544";
     } else {
         nameLabel.innerText = "JazzCash Account Name";
+        numLabel.innerText = "JazzCash Account Number / IBAN";
+        ibanText.innerText = "PK25JCMA2101923166744323";
     }
 }
 
