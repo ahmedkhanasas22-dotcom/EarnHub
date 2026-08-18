@@ -149,17 +149,6 @@
             font-weight: bold;
             text-align: right;
         }
-        .notice-box {
-            text-align: center;
-            padding: 12px;
-            color: #00ff99;
-            font-weight: bold;
-            font-size: 12px;
-            background: rgba(0, 255, 153, 0.1);
-            border-radius: 10px;
-            border: 1px dashed #00ff99;
-            margin: 10px 0;
-        }
         .back-link {
             display: block;
             text-align: center;
@@ -261,22 +250,32 @@ async function fetchUserData() {
     }
 }
 
-// یہ فنکشن چیک کرے گا کہ اگر کوئی پیکج 30 دن پورے کر چکا ہے، تو اسے فائر بیس سے آٹو ریمو کر دے گا
+// کیلنڈر کے دنوں کے حساب سے گزرے ہوئے دن اور ایکسپائری چیک کرنے کا فنکشن
+function calculateDaysPassed(startDateStr) {
+    let startDate = new Date(startDateStr);
+    startDate.setHours(0, 0, 0, 0); // دن کے آغاز کا وقت سیٹ کریں
+
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // آج کا وقت
+
+    let diffTime = currentDate.getTime() - startDate.getTime();
+    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // پہلا دن دن 1 ہوگا
+
+    return diffDays;
+}
+
+// یہ فنکشن چیک کرے گا کہ اگر پیکیج کے تمام دن پورے ہو چکے ہیں، تو اسے ہٹا دے
 async function checkAndCleanCompletedPackages() {
     if (!currentUserData || !currentUserData.activePackages) return;
 
-    let nowTime = new Date().getTime();
     let activePackages = currentUserData.activePackages;
     
-    // وہ پیکجز جن کے 30 دن ابھی پورے نہیں ہوئے، انہیں رکھ لیں گے
+    // وہ پیکجز جن کی معیاد ابھی باقی ہے
     let validPackages = activePackages.filter(pkg => {
-        let startTime = new Date(pkg.startDate).getTime();
-        let elapsedSeconds = Math.floor((nowTime - startTime) / 1000);
-        let daysPassed = Math.floor(elapsedSeconds / 5) + 1; // ٹیسٹنگ کے لیے 5 سیکنڈ والا حساب
+        let daysPassed = calculateDaysPassed(pkg.startDate);
         return daysPassed <= pkg.totalDays;
     });
 
-    // اگر کوئی پیکج ختم ہو چکا ہے اور لسٹ سے نکلا ہے، تو فائر بیس اپڈیٹ کر دیں
     if (validPackages.length !== activePackages.length) {
         currentUserData.activePackages = validPackages;
         try {
@@ -305,13 +304,11 @@ window.renderClaimBox = function() {
 
     titleBox.innerText = "Active Packages Box";
     let html = "";
-    let nowTime = new Date().getTime();
 
     currentUserData.activePackages.forEach((pkg, pkgIndex) => {
-        let startTime = new Date(pkg.startDate).getTime();
-        let elapsedSeconds = Math.floor((nowTime - startTime) / 1000);
-        let daysPassed = Math.floor(elapsedSeconds / 5) + 1;
-        if (daysPassed > pkg.totalDays) daysPassed = pkg.totalDays; // دن 30 سے اوپر نہ جائیں
+        let daysPassed = calculateDaysPassed(pkg.startDate);
+        if (daysPassed > pkg.totalDays) daysPassed = pkg.totalDays;
+        if (daysPassed < 1) daysPassed = 1;
 
         html += `
         <div class="pkg-section">
@@ -324,7 +321,7 @@ window.renderClaimBox = function() {
 
         for (let d = 1; d <= pkg.totalDays; d++) {
             let isCollected = claimedDays.includes(d);
-            let isExpired = d < daysPassed && !isCollected;
+            let isExpired = d < daysPassed && !isCollected; // جو دن گزر گئے اور کلیم نہیں کیے وہ ایکسپائر ہو جائیں گے
 
             if (isCollected) {
                 html += `
@@ -425,13 +422,6 @@ window.claimDay = async function(pkgIndex, currentDay, amount) {
         }
     }
 }
-
-// ہر 1 سیکنڈ بعد سکرین ریفرش ہو گی اور خود بخود چیک کرے گی کہ 30 دن پورے ہو گئے ہیں تو پیکج کو ہٹا دے
-setInterval(() => {
-    if (currentUserData && currentUserData.activePackages) {
-        checkAndCleanCompletedPackages();
-    }
-}, 1000);
 </script>
 
 </body>
