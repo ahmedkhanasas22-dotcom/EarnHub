@@ -115,6 +115,51 @@ margin:0; max-width:430px; margin:auto; font-family:Arial, sans-serif; backgroun
 button.submit-btn{ width:100%; padding:14px; margin-top:20px; border:none; border-radius:12px; background:linear-gradient(135deg,#00ffff,#1a73e8); font-weight:bold; cursor:pointer; color:#000; font-size: 15px; box-shadow: 0 4px 15px rgba(0,255,255,0.3); }
 button.submit-btn:disabled{ background: #555; color: #aaa; cursor: not-allowed; box-shadow: none; }
 .lock-msg { color: #ff4d4d; font-size: 12px; text-align: center; margin-top: 10px; font-weight: bold; }
+
+/* Custom Popup Modal Styles */
+.custom-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.custom-modal-box {
+    background: #161b22;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 16px;
+    border: 1px solid #30363d;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    padding: 20px;
+    text-align: center;
+    animation: modalPop 0.2s ease-in-out;
+}
+@keyframes modalPop {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.custom-modal-text {
+    font-size: 14px;
+    color: #fff;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    word-break: break-word;
+}
+.custom-modal-btn {
+    background: linear-gradient(135deg, #00ffff, #1a73e8);
+    color: #000;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+}
 </style>
 </head>
 <body>
@@ -295,6 +340,30 @@ button.submit-btn:disabled{ background: #555; color: #aaa; cursor: not-allowed; 
     </div>
 </div>
 
+<!-- Custom Alert Modal -->
+<div class="custom-modal-overlay" id="customAlertOverlay">
+    <div class="custom-modal-box">
+        <div class="custom-modal-text" id="customAlertText">Message here</div>
+        <button class="custom-modal-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+</div>
+
+<script>
+function showCustomAlert(message, callback) {
+    document.getElementById("customAlertText").innerText = message;
+    document.getElementById("customAlertOverlay").style.display = "flex";
+    window.customAlertCallback = callback;
+}
+
+function closeCustomAlert() {
+    document.getElementById("customAlertOverlay").style.display = "none";
+    if (typeof window.customAlertCallback === "function") {
+        window.customAlertCallback();
+        window.customAlertCallback = null;
+    }
+}
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -344,8 +413,9 @@ window.filterMethods = function() {
 window.sendWithdraw = async function(){
     let user = auth.currentUser;
     if(!user){
-        alert("Pehle Login karein!");
-        window.location.href = "login.html";
+        showCustomAlert("Pehle Login karein!", () => {
+            window.location.href = "login.html";
+        });
         return;
     }
 
@@ -354,17 +424,17 @@ window.sendWithdraw = async function(){
     let amount = Number(document.getElementById("amount").value);
 
     if(name === "" || number === "" || !amount){
-        alert("Please Fill All Details");
+        showCustomAlert("Please Fill All Details");
         return;
     }
 
     if(amount < 200){
-        alert("Minimum withdrawal amount is Rs. 200");
+        showCustomAlert("Minimum withdrawal amount is Rs. 200");
         return;
     }
 
     if(amount > 50000){
-        alert("Maximum withdrawal amount is Rs. 50,000");
+        showCustomAlert("Maximum withdrawal amount is Rs. 50,000");
         return;
     }
 
@@ -373,12 +443,11 @@ window.sendWithdraw = async function(){
     submitBtn.innerText = "Submitting...";
 
     try {
-        // فائر بیس سے یوزر کا تازہ ترین ڈیٹا اور بیلنس چیک کریں
         let userRef = doc(db, "users", user.uid);
         let userSnap = await getDoc(userRef);
 
         if(!userSnap.exists()){
-            alert("User data nahi mila!");
+            showCustomAlert("User data nahi mila!");
             submitBtn.disabled = false;
             submitBtn.innerText = "Withdraw Now";
             return;
@@ -389,9 +458,8 @@ window.sendWithdraw = async function(){
         let withdrawCount = Number(userData.withdrawCount || 0);
         let userName = userData.fullName || userData.name || "User";
 
-        // شرط: کم از کم 2 ریفرلز کا پیکج خریدنا لازمی ہے (withdrawCount >= 2)
         if(withdrawCount < 2){
-            alert("🔒 Withdraw Locked: پہلے کم از کم دو ایسے ممبرز بنائیں جنہوں نے پیکج خریدا ہو!");
+            showCustomAlert("🔒 Withdraw Locked: پہلے کم از کم دو ایسے ممبرز بنائیں جنہوں نے پیکج خریدا ہو!");
             document.getElementById("lockMsg").innerText = "Aapke active referral packages 2 se kam hain. Withdraw locked hai!";
             submitBtn.disabled = false;
             submitBtn.innerText = "Withdraw Now";
@@ -399,13 +467,12 @@ window.sendWithdraw = async function(){
         }
 
         if(amount > currentBalance){
-            alert("Insufficient Balance in your account!");
+            showCustomAlert("Insufficient Balance in your account!");
             submitBtn.disabled = false;
             submitBtn.innerText = "Withdraw Now";
             return;
         }
 
-        // 1. فائر بیس پر ریکوئسٹ ایڈ کریں
         await addDoc(collection(db, "requests"), {
             userId: user.uid,
             username: userName,
@@ -418,18 +485,18 @@ window.sendWithdraw = async function(){
             date: new Date().toLocaleString()
         });
 
-        // 2. یوزر کا مین بیلنس فائر بیس پر کم کریں
         let newBalance = currentBalance - amount;
         await updateDoc(userRef, {
             mainBalance: newBalance
         });
 
-        alert("✅ Withdraw Request Sent Successfully to Firebase!");
-        window.location.href = "dashboard.html";
+        showCustomAlert("✅ Withdraw Request Sent Successfully to Firebase!", () => {
+            window.location.href = "dashboard.html";
+        });
 
     } catch (error) {
         console.error("Error:", error);
-        alert("Something went wrong. Please try again.");
+        showCustomAlert("Something went wrong. Please try again.");
         submitBtn.disabled = false;
         submitBtn.innerText = "Withdraw Now";
     }
