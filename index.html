@@ -130,6 +130,76 @@ margin: 8px 0;
 #loginBox{
 display:none;
 }
+
+/* کسٹم پاپ اپ ماڈل ڈیزائن */
+.custom-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+.custom-modal-box {
+    background: #161b22;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 16px;
+    border: 2px solid #00ffff;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0,255,255,0.3);
+}
+.custom-modal-text {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+.custom-modal-btn {
+    background: linear-gradient(135deg, #00ffff, #0048ff);
+    color: #000;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0;
+    box-shadow: none;
+}
+.custom-modal-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    background: #0b0f19;
+    color: white;
+    font-size: 14px;
+    outline: none;
+}
+.modal-btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.custom-modal-cancel {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0;
+    box-shadow: none;
+}
 </style>
 
 </head>
@@ -187,10 +257,30 @@ display:none;
 
 </div>
 
+<!-- کسٹم الرٹ ماڈل HTML -->
+<div class="custom-modal" id="customAlertModal">
+    <div class="custom-modal-box">
+        <div class="custom-modal-text" id="customAlertMessage">Alert Message Here</div>
+        <button class="custom-modal-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+</div>
+
+<!-- کسٹم پرامپٹ ماڈل HTML (فارگیٹ پاسورڈ کے لیے) -->
+<div class="custom-modal" id="customPromptModal">
+    <div class="custom-modal-box">
+        <div class="custom-modal-text">Enter your registered email:</div>
+        <input type="email" id="customPromptInput" class="custom-modal-input" placeholder="example@email.com">
+        <div class="modal-btn-group">
+            <button class="custom-modal-cancel" onclick="closeCustomPrompt(false)">Cancel</button>
+            <button class="custom-modal-btn" onclick="closeCustomPrompt(true)">Submit</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
@@ -205,7 +295,46 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// URL سے فائر بیس UID والا ریفرل پکڑنا (نام کا کوئی مسئلہ نہیں رہے گا)
+let pendingRedirectUrl = null;
+let promptCallback = null;
+
+// کسٹم الرٹ فنکشن
+window.showCustomAlert = function(msg, redirectTo = null) {
+    document.getElementById("customAlertMessageinnerText") || (document.getElementById("customAlertMessage").innerText = msg);
+    pendingRedirectUrl = redirectTo;
+    document.getElementById("customAlertModal").style.display = "flex";
+}
+
+window.closeCustomAlert = function() {
+    document.getElementById("customAlertModal").style.display = "none";
+    if (pendingRedirectUrl) {
+        if (pendingRedirectUrl === "login") {
+            showLogin();
+        } else {
+            window.location.href = pendingRedirectUrl;
+        }
+        pendingRedirectUrl = null;
+    }
+}
+
+// کسٹم پرامپٹ فنکشن
+window.showCustomPrompt = function(callback) {
+    promptCallback = callback;
+    document.getElementById("customPromptInput").value = "";
+    document.getElementById("customPromptModal").style.display = "flex";
+}
+
+window.closeCustomPrompt = function(isSubmitted) {
+    document.getElementById("customPromptModal").style.display = "none";
+    let val = document.getElementById("customPromptInput").value;
+    if (promptCallback) {
+        let cb = promptCallback;
+        promptCallback = null;
+        cb(isSubmitted ? val : null);
+    }
+}
+
+// URL سے فائر بیس UID والا ریفرل پکڑنا
 let urlParams = new URLSearchParams(window.location.search);
 let refUserUid = urlParams.get("ref");
 if(refUserUid) {
@@ -222,7 +351,7 @@ window.signup = async function() {
     let btn = document.getElementById("signupBtn");
 
     if(user === "" || email === "" || pass === ""){
-        alert("Please fill all required fields!");
+        showCustomAlert("Please fill all required fields!");
         return;
     }
 
@@ -236,22 +365,20 @@ window.signup = async function() {
         let myCode = "EH" + Math.floor(1000 + Math.random() * 9000);
         let userIdVal = "#" + Math.floor(10000 + Math.random() * 90000);
 
-        // نیا اکاؤنٹ بناتے وقت فائر بیس میں ریفرل UID سیو کرنا
         await setDoc(doc(db, "users", firebaseUser.uid), {
             username: user,
             email: email,
             password: pass,
             myReferralCode: myCode,
-            referralUid: refUid, // جس نے جوائن کروایا اس کی فائر بیس UID
+            referralUid: refUid,
             mainBalance: 0,
             totalReferrals: 0,
-            withdrawCount: 0, // پیکج بائے کرنے پر ودھড্রاو کے لیے کاؤنٹ
+            withdrawCount: 0,
             packageActive: false,
             userId: userIdVal,
             role: "user"
         });
 
-        // اگر ریفرل UID موجود ہے تو پرانے یوزر کو 50 روپے اور ریفرل کاؤنٹ دینا
         if(refUid) {
             let uplineDocRef = doc(db, "users", refUid);
             let uplineSnap = await getDoc(uplineDocRef);
@@ -268,18 +395,16 @@ window.signup = async function() {
             }
         }
 
-        alert("Account Created Successfully! Please Login.");
-        showLogin();
+        showCustomAlert("Account Created Successfully! Please Login.", "login");
     } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
-            alert("This email is already registered! Please login.");
-            showLogin();
+            showCustomAlert("This email is already registered! Please login.", "login");
         } else if (error.code === 'auth/invalid-email') {
-            alert("Please enter a valid email address!");
+            showCustomAlert("Please enter a valid email address!");
         } else if (error.code === 'auth/weak-password') {
-            alert("Password should be at least 6 characters!");
+            showCustomAlert("Password should be at least 6 characters!");
         } else {
-            alert("Error: " + error.message);
+            showCustomAlert("Error: " + error.message);
         }
     } finally {
         btn.disabled = false;
@@ -293,7 +418,7 @@ window.login = async function() {
     let btn = document.getElementById("loginBtn");
 
     if(email === "" || pass === ""){
-        alert("Please enter email and password!");
+        showCustomAlert("Please enter email and password!");
         return;
     }
 
@@ -344,32 +469,33 @@ window.login = async function() {
 
         window.location.href = "dashboard.html";
     } catch (error) {
-        alert("Wrong Email or Password!");
+        showCustomAlert("Wrong Email or Password!");
     } finally {
         btn.disabled = false;
         btn.innerText = "Login";
     }
 }
 
-window.forgotPassword = async function() {
-    let email = prompt("Enter your registered email:");
-    if(!email) return;
+window.forgotPassword = function() {
+    showCustomPrompt(async (email) => {
+        if(!email) return;
 
-    try {
-        let q = query(collection(db, "users"), where("email", "==", email.trim()));
-        let querySnapshot = await getDocs(q);
+        try {
+            let q = query(collection(db, "users"), where("email", "==", email.trim()));
+            let querySnapshot = await getDocs(q);
 
-        if(querySnapshot.empty){
-            alert("No account found with this email!");
-        } else {
-            querySnapshot.forEach((docSnap) => {
-                let data = docSnap.data();
-                alert("Account Details Found!\n\nUsername: " + data.username + "\nPassword: " + data.password);
-            });
+            if(querySnapshot.empty){
+                showCustomAlert("No account found with this email!");
+            } else {
+                querySnapshot.forEach((docSnap) => {
+                    let data = docSnap.data();
+                    showCustomAlert("Account Details Found!\n\nUsername: " + data.username + "\nPassword: " + data.password);
+                });
+            }
+        } catch (error) {
+            showCustomAlert("Error: " + error.message);
         }
-    } catch (error) {
-        alert("Error: " + error.message);
-    }
+    });
 }
 
 window.showLogin = function(){
