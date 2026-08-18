@@ -179,6 +179,44 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* کسٹم پاپ اپ ماڈل ڈیزائن */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .custom-modal-box {
+            background: #161b22;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 16px;
+            border: 2px solid #00ffff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0,255,255,0.3);
+        }
+        .custom-modal-text {
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .custom-modal-btn {
+            background: linear-gradient(135deg, #00ffff, #0048ff);
+            color: #000;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -207,6 +245,14 @@
 
     <a class="back-link" href="dashboard.html">⬅ Back to Dashboard</a>
 
+    <!-- کسٹم الرট ماڈل HTML -->
+    <div class="custom-modal" id="customAlertModal">
+        <div class="custom-modal-box">
+            <div class="custom-modal-text" id="customAlertMessage">Alert Message Here</div>
+            <button class="custom-modal-btn" onclick="closeCustomAlert()">OK</button>
+        </div>
+    </div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -227,6 +273,16 @@ const auth = getAuth(app);
 
 let currentUserData = null;
 let currentUserId = null;
+
+// کسٹم الرٹ شو کرنے کا فنکشن (جو براؤزر کے الرٹ کی جگہ لے گا)
+window.showCustomAlert = function(msg) {
+    document.getElementById("customAlertMessage").innerText = msg;
+    document.getElementById("customAlertModal").style.display = "flex";
+}
+
+window.closeCustomAlert = function() {
+    document.getElementById("customAlertModal").style.display = "none";
+}
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -253,24 +309,22 @@ async function fetchUserData() {
 // کیلنڈر کے دنوں کے حساب سے گزرے ہوئے دن اور ایکسپائری چیک کرنے کا فنکشن
 function calculateDaysPassed(startDateStr) {
     let startDate = new Date(startDateStr);
-    startDate.setHours(0, 0, 0, 0); // دن کے آغاز کا وقت سیٹ کریں
+    startDate.setHours(0, 0, 0, 0);
 
     let currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); // آج کا وقت
+    currentDate.setHours(0, 0, 0, 0);
 
     let diffTime = currentDate.getTime() - startDate.getTime();
-    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // پہلا دن دن 1 ہوگا
+    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
     return diffDays;
 }
 
-// یہ فنکشن چیک کرے گا کہ اگر پیکیج کے تمام دن پورے ہو چکے ہیں، تو اسے ہٹا دے
 async function checkAndCleanCompletedPackages() {
     if (!currentUserData || !currentUserData.activePackages) return;
 
     let activePackages = currentUserData.activePackages;
     
-    // وہ پیکجز جن کی معیاد ابھی باقی ہے
     let validPackages = activePackages.filter(pkg => {
         let daysPassed = calculateDaysPassed(pkg.startDate);
         return daysPassed <= pkg.totalDays;
@@ -321,7 +375,7 @@ window.renderClaimBox = function() {
 
         for (let d = 1; d <= pkg.totalDays; d++) {
             let isCollected = claimedDays.includes(d);
-            let isExpired = d < daysPassed && !isCollected; // جو دن گزر گئے اور کلیم نہیں کیے وہ ایکسپائر ہو جائیں گے
+            let isExpired = d < daysPassed && !isCollected;
 
             if (isCollected) {
                 html += `
@@ -392,7 +446,11 @@ window.claimDay = async function(pkgIndex, currentDay, amount) {
         }
 
         if (targetPkg.claimedDays.includes(currentDay)) {
-            alert("Yeh din pehle hi claim ho chuka hai!");
+            showCustomAlert("Yeh din pehle hi claim ho chuka hai!");
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = `Claim Rs. ${amount.toFixed(2)}`;
+            }
             return;
         }
 
@@ -410,12 +468,12 @@ window.claimDay = async function(pkgIndex, currentDay, amount) {
         currentUserData.mainBalance = newBalance;
         currentUserData.activePackages = activePackages;
 
-        alert("✅ رقم کامیابی سے فائر بیس پر کلیم ہو گئی ہے!");
+        showCustomAlert("✅ رقم کامیابی سے فائر بیس پر کلیم ہو گئی ہے!");
         renderClaimBox();
 
     } catch (err) {
         console.error("Claim error:", err);
-        alert("Claim karne mein masla hua, dobara koshish karein!");
+        showCustomAlert("Claim karne mein masla hua, dobara koshish karein!");
         if (btn) {
             btn.disabled = false;
             btn.innerText = `Claim Rs. ${amount.toFixed(2)}`;
