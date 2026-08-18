@@ -178,29 +178,29 @@ function closeCustomModal() {
     document.getElementById("customModal").style.display = "none";
 }
 
-// فائر بیس سے لائیو بیلنس اور لاسٹ اسپن ڈیٹ لانے کا فنکشن
+// فائر بیس سے لائیو بیلنس لانے کا فنکشن
 async function getAccountData() {
     try {
         if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
             let uid = firebase.auth().currentUser.uid;
-            let doc = await firebase.firestore().collection("users").doc(uid).get();
-            if (doc.exists) {
-                let data = doc.data();
-                let bal = data.mainBalance !== undefined ? data.mainBalance : (data.balance || 0);
+            let docRef = await firebase.firestore().collection("users").doc(uid).get();
+            if (docRef.exists) {
+                let data = docRef.data();
+                let bal = data.mainBalance !== undefined ? Number(data.mainBalance) : Number(data.balance || 0);
                 let lastSpin = data.lastSpinDate || "";
-                return { balance: parseFloat(bal), lastSpinDate: lastSpin };
+                return { balance: bal, lastSpinDate: lastSpin };
             }
         }
     } catch (err) {
-        console.log("Firebase fetch error, using local storage", err);
+        console.log("Firebase fetch error:", err);
     }
     
-    let localBal = localStorage.getItem("mainBalance") || "0";
+    let localBal = Number(localStorage.getItem("mainBalance") || "0");
     let localSpin = localStorage.getItem("lastSpinDate") || "";
-    return { balance: parseFloat(localBal), lastSpinDate: localSpin };
+    return { balance: localBal, lastSpinDate: localSpin };
 }
 
-// فائر بیس اور لوکل سٹوریج میں بیلنس اور اسپن ڈیٹ محفوظ کرنے کا فنکشن
+// فائر بیس اور لوکل سٹوریج میں بیلنس محفوظ کرنے کا فنکشن
 async function saveAccountData(newBalance, spinDate) {
     localStorage.setItem("mainBalance", newBalance);
     if (spinDate) {
@@ -261,7 +261,7 @@ function updateTimer() {
         (seconds < 10 ? "0" + seconds : seconds);
 }
 
-// پیج لوڈ ہونے پر اسٹیٹس چیک کریں
+// پیج لوڈ پر تصدیق
 if (typeof firebase !== 'undefined') {
     firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
@@ -291,16 +291,12 @@ async function startSpin() {
         return;
     }
 
-    // 1 روپیہ فیس کٹ کریں
-    let newBalance = data.balance - 1;
-    await saveAccountData(newBalance, todayDate);
-    updateUI();
-
     let spinBtn = document.getElementById("spinBtn");
     spinBtn.disabled = true;
     spinBtn.style.background = "#444";
     document.getElementById("message").innerText = "Spinning... Please wait!";
 
+    // رینڈم پرائز سلलेक्ट کریں
     let randomPrize = allowedPrizes[Math.floor(Math.random() * allowedPrizes.length)];
     let extraSpins = 360 * 10;
     let totalRotation = extraSpins + (360 - randomPrize.angle);
@@ -308,13 +304,14 @@ async function startSpin() {
     let wheel = document.getElementById("wheel");
     wheel.style.transform = "rotate(" + totalRotation + "deg)";
 
+    // 10 سیکنڈ بعد جب ویل رک جائے گا
     setTimeout(async () => {
-        // تازہ ترین ڈیٹا دوبارہ منگوا کر جیتا ہوا انعام پلس کریں
-        let latestData = await getAccountData();
-        let updatedBalance = latestData.balance + Number(randomPrize.amount);
+        // فیس کٹنے اور انعامی رقم پلس کرنے کا حساب ایک ساتھ لگائیں
+        let freshData = await getAccountData();
+        let finalBalance = freshData.balance - 1 + Number(randomPrize.amount);
         
-        // فائر بیس اور لوکل سٹوریج میں فائنل بیلنس سیو کریں
-        await saveAccountData(updatedBalance, todayDate);
+        // فائر بیس اور لوکل سٹوریج میں محفوظ کریں
+        await saveAccountData(finalBalance, todayDate);
         
         updateUI();
 
