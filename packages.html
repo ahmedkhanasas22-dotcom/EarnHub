@@ -221,7 +221,6 @@ onAuthStateChanged(auth, async (user) => {
                 let data = userDocSnap.data();
                 let activePlans = data.activePackages || [];
                 
-                // چیک کریں کہ کون سے پلانز ابھی بھی ایکٹو (30 دن سے کم) ہیں
                 let now = new Date();
                 let todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
@@ -270,8 +269,8 @@ window.buyPlan = async function(planName, price, dailyEarn) {
         let userData = userDocSnap.data();
         let currentBalance = parseFloat(userData.mainBalance) || 0;
         let activePlans = userData.activePackages || [];
+        let referrerUid = userData.referralUid || ""; // جس نے جوائن کروایا تھا اس کی فائر بیس UID
 
-        // ڈبل چیک کریں کہ کیا یہ پلان پہلے سے ایکٹو تو نہیں
         let now = new Date();
         let todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
@@ -299,10 +298,9 @@ window.buyPlan = async function(planName, price, dailyEarn) {
                 dailyEarn: dailyEarn,
                 startDate: new Date().toISOString(),
                 totalDays: 30,
-                claimedDays: [] // ان دنوں کی لسٹ جو کلیم ہو چکے ہیں
+                claimedDays: []
             };
 
-            // پرانے مکمل شدہ پلانز ہٹا کر نیا پلان ایڈ کریں
             activePlans = activePlans.filter(p => {
                 let startMidnight = new Date(new Date(p.startDate).getFullYear(), new Date(p.startDate).getMonth(), new Date(p.startDate).getDate()).getTime();
                 let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
@@ -311,11 +309,27 @@ window.buyPlan = async function(planName, price, dailyEarn) {
 
             activePlans.push(newActivePlan);
 
-            // فائر بیس پر ڈائریکٹ لائیو اپ ڈیٹ کریں
+            // 1. خریدار یوزر کا بیلنس اور پلانز اپڈیٹ کریں
             await updateDoc(userDocRef, {
                 mainBalance: newBalance,
                 activePackages: activePlans
             });
+
+            // 2. ⭐ اگر اس یوزر کو کسی نے ریفر کیا تھا، تو اس کے رُفرر (Upline) کے withdrawCount میں 1 کا اضافہ کریں
+            if (referrerUid) {
+                let uplineDocRef = doc(db, "users", referrerUid);
+                let uplineSnap = await getDoc(uplineDocRef);
+
+                if (uplineSnap.exists()) {
+                    let uplineData = uplineSnap.data();
+                    let currentWithdrawCount = Number(uplineData.withdrawCount || 0);
+
+                    // صرف پہلی بار یا ہر پیکج پر کاؤنٹ بڑھانے کے لیے (آپ کے اصول کے مطابق)
+                    await updateDoc(uplineDocRef, {
+                        withdrawCount: currentWithdrawCount + 1
+                    });
+                }
+            }
 
             alert("✅ Your Plan has been purchased successfully from Firebase!");
             window.location.href = "dashboard.html";
