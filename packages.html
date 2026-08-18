@@ -30,6 +30,47 @@ body{ margin:0; max-width:430px; margin:auto; font-family:Arial; background:#050
 button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25px; background:linear-gradient(135deg,#00ffff,#1a73e8); font-weight:bold; font-size:14px; cursor:pointer; color:#000; box-shadow: 0 4px 10px rgba(0,255,255,0.2); }
 button:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow: none; }
 .back-btn { display: inline-block; margin-bottom: 10px; color: #00ffff; font-size: 13px; text-decoration: none; font-weight: bold; }
+
+/* کسٹم پاپ اپ ماڈل ڈیزائن */
+.custom-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+.custom-modal-box {
+    background: #161b22;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 16px;
+    border: 2px solid #00ffff;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0,255,255,0.3);
+}
+.custom-modal-text {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+.custom-modal-btn {
+    background: linear-gradient(135deg, #00ffff, #0048ff);
+    color: #000;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0;
+    box-shadow: none;
+}
 </style>
 </head>
 <body>
@@ -194,6 +235,14 @@ button:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow
 
 </div>
 
+<!-- کسٹم الرٹ ماڈل HTML -->
+<div class="custom-modal" id="customAlertModal">
+    <div class="custom-modal-box">
+        <div class="custom-modal-text" id="customAlertMessage">Alert Message Here</div>
+        <button class="custom-modal-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -211,6 +260,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+let pendingRedirectUrl = null;
+
+// کسٹم الرٹ فنکشنز
+window.showCustomAlert = function(msg, redirectTo = null) {
+    document.getElementById("customAlertMessage").innerText = msg;
+    pendingRedirectUrl = redirectTo;
+    document.getElementById("customAlertModal").style.display = "flex";
+}
+
+window.closeCustomAlert = function() {
+    document.getElementById("customAlertModal").style.display = "none";
+    if (pendingRedirectUrl) {
+        let url = pendingRedirectUrl;
+        pendingRedirectUrl = null;
+        window.location.href = url;
+    }
+}
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -246,8 +313,7 @@ onAuthStateChanged(auth, async (user) => {
 window.buyPlan = async function(planName, price, dailyEarn) {
     let user = auth.currentUser;
     if (!user) {
-        alert("Pehle Login karein!");
-        window.location.href = "login.html";
+        showCustomAlert("Pehle Login karein!", "login.html");
         return;
     }
 
@@ -262,14 +328,18 @@ window.buyPlan = async function(planName, price, dailyEarn) {
         let userDocSnap = await getDoc(userDocRef);
         
         if (!userDocSnap.exists()) {
-            alert("User data nahi mila!");
+            showCustomAlert("User data nahi mila!");
+            if(btn) {
+                btn.disabled = false;
+                btn.innerText = "Invest Now";
+            }
             return;
         }
 
         let userData = userDocSnap.data();
         let currentBalance = parseFloat(userData.mainBalance) || 0;
         let activePlans = userData.activePackages || [];
-        let referrerUid = userData.referralUid || ""; // جس نے جوائن کروایا تھا اس کی فائر بیس UID
+        let referrerUid = userData.referralUid || "";
 
         let now = new Date();
         let todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -281,7 +351,7 @@ window.buyPlan = async function(planName, price, dailyEarn) {
         });
 
         if (isAlreadyActive) {
-            alert("Yeh plan pehle se active hai! Jab tak yeh 30 din poore nahi karta aap dobara nahi khareed sakte.");
+            showCustomAlert("Yeh plan pehle سے active hai! Jab tak yeh 30 din poore nahi karta aap dobara nahi khareed sakte.");
             if(btn) {
                 btn.disabled = true;
                 btn.innerText = "Already Active / Running";
@@ -309,13 +379,11 @@ window.buyPlan = async function(planName, price, dailyEarn) {
 
             activePlans.push(newActivePlan);
 
-            // 1. خریدار یوزر کا بیلنس اور پلانز اپڈیٹ کریں
             await updateDoc(userDocRef, {
                 mainBalance: newBalance,
                 activePackages: activePlans
             });
 
-            // 2. ⭐ اگر اس یوزر کو کسی نے ریفر کیا تھا، تو اس کے رُفرر (Upline) کے withdrawCount میں 1 کا اضافہ کریں
             if (referrerUid) {
                 let uplineDocRef = doc(db, "users", referrerUid);
                 let uplineSnap = await getDoc(uplineDocRef);
@@ -324,28 +392,25 @@ window.buyPlan = async function(planName, price, dailyEarn) {
                     let uplineData = uplineSnap.data();
                     let currentWithdrawCount = Number(uplineData.withdrawCount || 0);
 
-                    // صرف پہلی بار یا ہر پیکج پر کاؤنٹ بڑھانے کے لیے (آپ کے اصول کے مطابق)
                     await updateDoc(uplineDocRef, {
                         withdrawCount: currentWithdrawCount + 1
                     });
                 }
             }
 
-            alert("✅ Your Plan has been purchased successfully from Firebase!");
-            window.location.href = "dashboard.html";
+            showCustomAlert("✅ Your Plan has been purchased successfully from Firebase!", "dashboard.html");
 
         } else {
-            alert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.");
+            showCustomAlert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.", "deposit.html");
             if(btn) {
                 btn.disabled = false;
                 btn.innerText = "Invest Now";
             }
-            window.location.href = "deposit.html";
         }
 
     } catch (error) {
         console.error("Purchase error:", error);
-        alert("Kuch masla ho gaya hai, dobara koshish karein!");
+        showCustomAlert("Kuch masla ho gaya hai, dobara koshish karein!");
         if(btn) {
             btn.disabled = false;
             btn.innerText = "Invest Now";
