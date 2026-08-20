@@ -299,19 +299,36 @@ button.claim-btn:disabled{ background: linear-gradient(to bottom, #222, #111); b
             <div class="center-lock-icon">🔒</div>
             <h3 id="lockTitle">UC REWARDS LOCKED</h3>
             <p id="lockDesc">نیا پیکج بائے کریں تاکہ یہ انلاک ہو جائیں!</p>
-            <button class="center-unlock-btn" onclick="onUserBuyPackage('pkg1')">Buy Package</button>
+            <button class="center-unlock-btn" onclick="onUserBuyPackage()">Buy Package</button>
         </div>
     </div>
 
     <div class="days" id="daysContainer"></div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+    authDomain: "earnhub-55c59.firebaseapp.com",
+    projectId: "earnhub-55c59",
+    storageBucket: "earnhub-55c59.firebasestorage.app",
+    messagingSenderId: "636270810711",
+    appId: "1:636270810711:web:da2bb0625524bcddc27512"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
 const TOTAL_DAYS = 30;
 const UC_PER_DAY = 10;
 
-let userData = JSON.parse(localStorage.getItem("earnHubLockedSystem")) || {
-    hasActivePackage: false,
+let firebaseUserData = {
+    hasPubgPackage: false,
     packageStartDate: null,
     claimed: [],
     missed: [],
@@ -319,14 +336,14 @@ let userData = JSON.parse(localStorage.getItem("earnHubLockedSystem")) || {
     isCompleted: false
 };
 
-// کسٹم الرٹ شو کرنے کا فنکشن (گিট ہب کا نام اوپر شو نہیں ہوگا)
-function showCustomAlert(title, message) {
+// کسٹم الرٹ شو کرنے کا فنکشن
+window.showCustomAlert = function(title, message) {
     document.getElementById("modalTitle").innerText = title;
     document.getElementById("modalMessage").innerText = message;
     document.getElementById("customModal").style.display = "flex";
 }
 
-function closeModal() {
+window.closeModal = function() {
     document.getElementById("customModal").style.display = "none";
 }
 
@@ -335,64 +352,63 @@ function getTodayString() {
     return now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
 }
 
-function updateSystemLogic() {
-    if (!userData.hasActivePackage || userData.isCompleted) return;
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            let userDocRef = doc(db, "users", user.uid);
+            let userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                let data = userDocSnap.data();
+                
+                firebaseUserData.hasPubgPackage = data.hasPubgPackage || false;
+                firebaseUserData.packageStartDate = data.pubgStartDate || getTodayString();
+                firebaseUserData.claimed = data.pubgClaimed || [];
+                firebaseUserData.missed = data.pubgMissed || [];
+                firebaseUserData.totalUC = data.pubgTotalUC || 0;
+                firebaseUserData.isCompleted = data.pubgIsCompleted || false;
 
-    const todayStr = getTodayString();
-    const start = new Date(userData.packageStartDate);
-    const current = new Date(todayStr);
-    const diffTime = current - start;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-    if (diffDays > TOTAL_DAYS || userData.claimed.length >= TOTAL_DAYS) {
-        userData.isCompleted = true;
-        userData.hasActivePackage = false;
-        localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
-        return;
-    }
-
-    for (let i = 1; i <= diffDays && i <= TOTAL_DAYS; i++) {
-        if (i < diffDays && !userData.claimed.includes(i) && !userData.missed.includes(i)) {
-            userData.missed.push(i);
+                renderUI();
+            }
+        } catch(e) {
+            console.error("Error loading user data:", e);
         }
+    } else {
+        window.location.href = "login.html";
     }
-    localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
-}
+});
 
 function renderUI() {
-    updateSystemLogic();
-
     const overlay = document.getElementById("lockOverlay");
     const lockTitle = document.getElementById("lockTitle");
     const lockDesc = document.getElementById("lockDesc");
     const container = document.getElementById("daysContainer");
     container.innerHTML = "";
 
-    if (!userData.hasActivePackage) {
+    if (!firebaseUserData.hasPubgPackage) {
         overlay.style.display = "flex";
-        if (userData.isCompleted) {
+        if (firebaseUserData.isCompleted) {
             lockTitle.innerText = "30 DAYS COMPLETED!";
             lockDesc.innerText = "تمام یو سی کلیم ہو چکے ہیں، نیا پیکج لیں۔";
         } else {
             lockTitle.innerText = "UC REWARDS LOCKED";
-            lockDesc.innerText = "نیا پیکج بائے کریں تاکہ یہ انلاک ہو جائیں!";
+            lockDesc.innerText = "پہلے انویسٹمنٹ پلان بائے کریں تاکہ یہ انلاک ہو جائیں!";
         }
     } else {
         overlay.style.display = "none";
     }
 
     let activeDayIndex = 1;
-    if (userData.hasActivePackage && userData.packageStartDate) {
+    if (firebaseUserData.hasPubgPackage && firebaseUserData.packageStartDate) {
         const todayStr = getTodayString();
-        const start = new Date(userData.packageStartDate);
+        const start = new Date(firebaseUserData.packageStartDate);
         const current = new Date(todayStr);
         activeDayIndex = Math.floor((current - start) / (1000 * 60 * 60 * 24)) + 1;
     }
 
     for(let i = 1; i <= TOTAL_DAYS; i++){
-        const claimed = userData.claimed.includes(i);
-        const missed = userData.missed.includes(i) || (userData.hasActivePackage && i < activeDayIndex && !claimed);
-        const isToday = userData.hasActivePackage && (i === activeDayIndex);
+        const claimed = firebaseUserData.claimed.includes(i);
+        const missed = firebaseUserData.missed.includes(i) || (firebaseUserData.hasPubgPackage && i < activeDayIndex && !claimed);
+        const isToday = firebaseUserData.hasPubgPackage && (i === activeDayIndex);
 
         const card = document.createElement("div");
         let cardClasses = "card";
@@ -417,47 +433,68 @@ function renderUI() {
         container.appendChild(card);
     }
 
-    document.getElementById("totalUC").innerText = userData.totalUC;
+    document.getElementById("totalUC").innerText = firebaseUserData.totalUC;
 }
 
-function claimRewardDay(day){
-    if (!userData.hasActivePackage) return;
+// جب یوزر بائے پیکج پر کلک کرے گا تو فائر بیس چیک کرے گا
+window.onUserBuyPackage = async function() {
+    let user = auth.currentUser;
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    let userDocRef = doc(db, "users", user.uid);
+    let userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+        let data = userDocSnap.data();
+        if (data.hasPubgPackage === true) {
+            firebaseUserData.hasPubgPackage = true;
+            renderUI();
+        } else {
+            // اگر پیکج نہیں خریدا تو پلان والے پیج پر بھیج دے گا
+            window.location.href = "plans.html";
+        }
+    } else {
+        window.location.href = "plans.html";
+    }
+}
+
+window.claimRewardDay = async function(day) {
+    let user = auth.currentUser;
+    if (!user || !firebaseUserData.hasPubgPackage) return;
 
     const todayStr = getTodayString();
-    const start = new Date(userData.packageStartDate);
+    const start = new Date(firebaseUserData.packageStartDate);
     const current = new Date(todayStr);
     const activeDayIndex = Math.floor((current - start) / (1000 * 60 * 60 * 24)) + 1;
 
-    if(day === activeDayIndex && !userData.claimed.includes(day)){
-        userData.claimed.push(day);
-        userData.totalUC += UC_PER_DAY;
+    if(day === activeDayIndex && !firebaseUserData.claimed.includes(day)){
+        firebaseUserData.claimed.push(day);
+        firebaseUserData.totalUC += UC_PER_DAY;
 
-        if(userData.claimed.length >= TOTAL_DAYS) {
-            userData.isCompleted = true;
-            userData.hasActivePackage = false;
+        if(firebaseUserData.claimed.length >= TOTAL_DAYS) {
+            firebaseUserData.isCompleted = true;
+            firebaseUserData.hasPubgPackage = false;
         }
 
-        localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
+        let userDocRef = doc(db, "users", user.uid);
+        await updateDoc(userDocRef, {
+            pubgClaimed: firebaseUserData.claimed,
+            pubgTotalUC: firebaseUserData.totalUC,
+            pubgIsCompleted: firebaseUserData.isCompleted,
+            hasPubgPackage: firebaseUserData.hasPubgPackage
+        });
+
         renderUI();
     }
 }
 
-function onUserBuyPackage(packageId) {
-    if (userData.hasActivePackage && !userData.isCompleted) return;
+window.submitUcRequest = async function() {
+    let user = auth.currentUser;
+    if (!user) return;
 
-    userData = {
-        hasActivePackage: true,
-        packageStartDate: getTodayString(),
-        claimed: [],
-        missed: [],
-        totalUC: userData.totalUC,
-        isCompleted: false
-    };
-    localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
-    renderUI();
-}
-
-function submitUcRequest() {
     let name = document.getElementById("pubgUsername").value.trim();
     let pubgId = document.getElementById("pubgUserId").value.trim();
     let amount = Number(document.getElementById("pubgUcAmount").value);
@@ -477,15 +514,19 @@ function submitUcRequest() {
         return;
     }
 
-    if (userData.totalUC < amount) {
-        showCustomAlert("Low Balance", "آپ کے پاس اتنے UC موجود نہیں ہیں جتنا آپ نے درج کیا ہے! آپ کا کل بیلنس: " + userData.totalUC + " UC ہے.");
+    if (firebaseUserData.totalUC < amount) {
+        showCustomAlert("Low Balance", "آپ کے پاس اتنے UC موجود نہیں ہیں جتنا آپ نے درج کیا ہے! آپ کا کل بیلنس: " + firebaseUserData.totalUC + " UC ہے.");
         return;
     }
 
+    firebaseUserData.totalUC -= amount;
+
+    let userDocRef = doc(db, "users", user.uid);
+    await updateDoc(userDocRef, {
+        pubgTotalUC: firebaseUserData.totalUC
+    });
+
     showCustomAlert("Success", "مبارک ہو! آپ کی " + amount + " UC کی ریکوئسٹ کامیابی سے سبمٹ ہو گئی ہے۔");
-    
-    userData.totalUC -= amount;
-    localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
     
     document.getElementById("pubgUsername").value = "";
     document.getElementById("pubgUserId").value = "";
@@ -493,8 +534,6 @@ function submitUcRequest() {
     
     renderUI();
 }
-
-renderUI();
 </script>
 </body>
 </html>
