@@ -379,9 +379,11 @@ window.buyPlan = async function(planName, price, dailyEarn) {
 
             activePlans.push(newActivePlan);
 
+            // یہاں آپ کی پرانی ورکنگ کے ساتھ صرف 'hasPubgPackage: true' کا اضافہ کر دیا گیا ہے
             await updateDoc(userDocRef, {
                 mainBalance: newBalance,
-                activePackages: activePlans
+                activePackages: activePlans,
+                hasPubgPackage: true
             });
 
             if (referrerUid) {
