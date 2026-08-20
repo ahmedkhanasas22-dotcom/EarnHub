@@ -257,9 +257,8 @@ transition: transform 0.2s;
 .card-image-box {
     position: relative;
     width: 100%;
-    height: 85px; /* Box ki height aap kam zyada kar sakte hain */
+    height: 85px;
     background: linear-gradient(135deg, #1e456b, #0d2238);
-    /* Yeh property upper left corner ko tircha (slanted) karti hai */
     clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
     overflow: hidden;
 }
@@ -268,6 +267,7 @@ transition: transform 0.2s;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .card-badge {
@@ -471,18 +471,17 @@ background: #161b22; width: 100%; max-width: 380px; height: 480px; border-radius
 <a href="referral.html"><div class="card box-referral"><h2>👥</h2><p>Referral</p></div></a>
 <a href="withdraw-history.html"><div class="card box-history"><h2>📜</h2><p>Withdraw History</p></div></a>
 
-<!-- New Midasbuy Style PUBG Button Start -->
+<!-- Updated Midasbuy Style PUBG Button -->
 <a href="uc.html" class="midasbuy-card">
     <div class="card-image-box">
-        <!-- Yahan aap apni PNG tasweer ka naam dalenge -->
-        <img src="pubg.png" alt="PUBG">
+        <!-- Yahan aap apni PNG tasweer ka sahi naam verify kar lein -->
+        <img src="pubg.png" alt="PUBG" onerror="this.onerror=null; this.src='pubg.JPG';">
     </div>
     <div class="card-badge">
         👍 RABAIS
     </div>
     <div class="card-title">PUBG MOBILE</div>
 </a>
-<!-- New Midasbuy Style PUBG Button End -->
 
 </div>
 
