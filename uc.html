@@ -3,16 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PUBG UC Daily Rewards - Clean Center Lock</title>
+<title>PUBG UC Daily Rewards - Custom Alert</title>
 <style>
 *{ box-sizing:border-box; margin:0; padding:0; user-select: none; }
 body{ font-family:Arial, sans-serif; background: radial-gradient(circle at top,#173b58,#071521 60%,#02080d); color:white; min-height:100vh; padding:10px 6px 30px; }
 
-.header{ max-width:1000px; margin:auto; text-align:center; margin-bottom:10px; }
-.header h1{ font-size:18px; color:#ffd900; text-shadow:0 0 8px #ffae00; }
+.header{ max-width:1000px; margin:auto; text-align:center; margin-bottom:10px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
+.header h1{ font-size:16px; color:#ffd900; text-shadow:0 0 8px #ffae00; }
+.back-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; text-decoration: none; }
 
 .total-box{ max-width:900px; margin:auto; background:rgba(5,18,28,.9); border:2px solid #e9b400; border-radius:6px; padding:8px; text-align:center; box-shadow:0 0 12px rgba(255,190,0,.2); margin-bottom:12px; }
 .total-uc{ font-size:20px; font-weight:bold; color:#ffd400; margin-top:2px; }
+
+/* PUBG UC Submit Form Section */
+.submit-section {
+    max-width: 900px;
+    margin: 0 auto 15px auto;
+    background: rgba(16, 37, 55, 0.95);
+    border: 1.5px solid #00ffff;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+.submit-section h3 {
+    font-size: 13px;
+    color: #00ffff;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+.form-group {
+    margin-bottom: 8px;
+}
+.form-group label {
+    display: block;
+    font-size: 10px;
+    color: #bbb;
+    margin-bottom: 3px;
+}
+.form-group input {
+    width: 100%;
+    padding: 7px 10px;
+    background: #0b1926;
+    border: 1px solid #333;
+    border-radius: 5px;
+    color: white;
+    font-size: 12px;
+    outline: none;
+}
+.form-group input:focus {
+    border-color: #00ffff;
+}
+.submit-btn {
+    width: 100%;
+    padding: 8px;
+    background: linear-gradient(to bottom, #00ffff, #0088cc);
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 11px;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-top: 4px;
+    box-shadow: 0 2px 8px rgba(0,255,255,0.4);
+}
+.submit-btn:active { transform: scale(0.98); }
+
+/* Custom Popup Modal Styles */
+#customModal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.modal-content {
+    background: #0b1926;
+    border: 2px solid #00ffff;
+    border-radius: 8px;
+    width: 85%;
+    max-width: 320px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    animation: zoomIn 0.3s ease;
+}
+.modal-title {
+    font-size: 14px;
+    color: #ffd900;
+    margin-bottom: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.modal-message {
+    font-size: 11.5px;
+    color: #ddd;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+.modal-btn {
+    background: linear-gradient(to bottom, #00ffff, #0088cc);
+    color: #000;
+    border: none;
+    padding: 6px 18px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+@keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
 
 .reward-wrapper {
     max-width: 1100px;
@@ -20,7 +128,6 @@ body{ font-family:Arial, sans-serif; background: radial-gradient(circle at top,#
     position: relative;
 }
 
-/* 🌟 بالکل سینٹر میں صاف ستھرا بغیر باکس کے ٹیکسٹ اور لاک */
 .lock-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -65,7 +172,6 @@ body{ font-family:Arial, sans-serif; background: radial-gradient(circle at top,#
     line-height: 1.4;
 }
 
-/* ٹیسٹنگ کے لیے چھوٹا سا بٹن */
 .center-unlock-btn {
     margin-top: 8px;
     background: linear-gradient(to bottom, #ffaa00, #cc8400);
@@ -85,7 +191,6 @@ body{ font-family:Arial, sans-serif; background: radial-gradient(circle at top,#
     to { opacity: 1; transform: scale(1); }
 }
 
-/* ایک لائن میں 3 باکس */
 .days{ display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; }
 
 @keyframes pulse {
@@ -138,27 +243,57 @@ body{ font-family:Arial, sans-serif; background: radial-gradient(circle at top,#
     margin-bottom: 3px;
 }
 
-button{ 
+button.claim-btn{ 
     width:100%; padding:4px; border-radius:3px; font-weight:bold; cursor:pointer; 
     background: linear-gradient(to bottom, #114b5f, #082530); color: #fff; border: 1px solid #20a9bd; font-size: 8.5px; text-transform: uppercase;
 }
-button:disabled{ background: linear-gradient(to bottom, #222, #111); border-color: #444; color: #777; }
-.claimed button { border-color: #16824f; color: #4ade80; background: linear-gradient(to bottom, #0d2b1f, #06150e); }
-.missed button { border-color: #a94442; color: #ff6b6b; background: linear-gradient(to bottom, #3a1111, #1a0505); }
+button.claim-btn:disabled{ background: linear-gradient(to bottom, #222, #111); border-color: #444; color: #777; }
+.claimed button.claim-btn { border-color: #16824f; color: #4ade80; background: linear-gradient(to bottom, #0d2b1f, #06150e); }
+.missed button.claim-btn { border-color: #a94442; color: #ff6b6b; background: linear-gradient(to bottom, #3a1111, #1a0505); }
 </style>
 </head>
 
 <body>
 
-<div class="header"><h1>🎮 PUBG UC DAILY REWARDS</h1></div>
+<!-- Custom Alert Modal Box -->
+<div id="customModal">
+    <div class="modal-content">
+        <div class="modal-title" id="modalTitle">EarnHub Notice</div>
+        <div class="modal-message" id="modalMessage">यहाँ मेसेज شو ہوگا</div>
+        <button class="modal-btn" onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+<div class="header">
+    <a href="dashboard.html" class="back-btn">⬅ Dashboard</a>
+    <h1>🎮 PUBG UC REWARDS</h1>
+    <div style="width: 55px;"></div>
+</div>
 
 <div class="total-box">
     <div style="font-size:8px; color:#aaa;">TOTAL UC COLLECTED</div>
     <div class="total-uc"><span id="totalUC">0</span> UC</div>
 </div>
 
+<!-- PUBG UC Submit Form Section -->
+<div class="submit-section">
+    <h3>📥 PUBG UC Submit / Withdraw</h3>
+    <div class="form-group">
+        <label>PUBG Username</label>
+        <input type="text" id="pubgUsername" placeholder="Apna PUBG Name likhein">
+    </div>
+    <div class="form-group">
+        <label>PUBG User ID</label>
+        <input type="text" id="pubgUserId" placeholder="Apni PUBG ID likhein">
+    </div>
+    <div class="form-group">
+        <label>UC Amount (Min. 300 - Max. 50,000 UC)</label>
+        <input type="number" id="pubgUcAmount" placeholder="Min 300 aur Max 50,000 UC likhein">
+    </div>
+    <button class="submit-btn" onclick="submitUcRequest()">Submit UC Request</button>
+</div>
+
 <div class="reward-wrapper">
-    <!-- سینٹر میں صاف ستھرا ٹیکسٹ اور لاک (بغیر کسی بڑے ڈبے کے) -->
     <div id="lockOverlay" class="lock-overlay">
         <div class="center-lock-content">
             <div class="center-lock-icon">🔒</div>
@@ -168,7 +303,6 @@ button:disabled{ background: linear-gradient(to bottom, #222, #111); border-colo
         </div>
     </div>
 
-    <!-- 30 دن کے باکسز -->
     <div class="days" id="daysContainer"></div>
 </div>
 
@@ -184,6 +318,17 @@ let userData = JSON.parse(localStorage.getItem("earnHubLockedSystem")) || {
     totalUC: 0,
     isCompleted: false
 };
+
+// کسٹم الرٹ شو کرنے کا فنکشن (گিট ہب کا نام اوپر شو نہیں ہوگا)
+function showCustomAlert(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("customModal").style.display = "none";
+}
 
 function getTodayString() {
     const now = new Date();
@@ -267,7 +412,7 @@ function renderUI() {
                 <img src="images/uc-logo.jpeg" class="uc-img" onerror="this.src='https://i.ibb.co/3s6K8Tf/uc-icon.png'">
             </div>
             <div class="reward-amount">${UC_PER_DAY} UC</div>
-            <button onclick="claimRewardDay(${i})" ${(!isToday || claimed || missed) ? "disabled" : ""}>${btnText}</button>
+            <button class="claim-btn" onclick="claimRewardDay(${i})" ${(!isToday || claimed || missed) ? "disabled" : ""}>${btnText}</button>
         `;
         container.appendChild(card);
     }
@@ -309,6 +454,43 @@ function onUserBuyPackage(packageId) {
         isCompleted: false
     };
     localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
+    renderUI();
+}
+
+function submitUcRequest() {
+    let name = document.getElementById("pubgUsername").value.trim();
+    let pubgId = document.getElementById("pubgUserId").value.trim();
+    let amount = Number(document.getElementById("pubgUcAmount").value);
+
+    if (name === "" || pubgId === "") {
+        showCustomAlert("Error", "برائے مہربانی اپنا پب جی یوزر نیم اور یوزر آئی ڈی درج کریں!");
+        return;
+    }
+
+    if (amount < 300) {
+        showCustomAlert("Invalid Amount", "کم از کم 300 UC ہونا لازمی ہے!");
+        return;
+    }
+
+    if (amount > 50000) {
+        showCustomAlert("Invalid Amount", "زیادہ سے زیادہ 50,000 UC ہی سبمٹ کی جا سکتی ہیں!");
+        return;
+    }
+
+    if (userData.totalUC < amount) {
+        showCustomAlert("Low Balance", "آپ کے پاس اتنے UC موجود نہیں ہیں جتنا آپ نے درج کیا ہے! آپ کا کل بیلنس: " + userData.totalUC + " UC ہے.");
+        return;
+    }
+
+    showCustomAlert("Success", "مبارک ہو! آپ کی " + amount + " UC کی ریکوئسٹ کامیابی سے سبمٹ ہو گئی ہے۔");
+    
+    userData.totalUC -= amount;
+    localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
+    
+    document.getElementById("pubgUsername").value = "";
+    document.getElementById("pubgUserId").value = "";
+    document.getElementById("pubgUcAmount").value = "";
+    
     renderUI();
 }
 
