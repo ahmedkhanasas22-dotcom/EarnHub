@@ -436,7 +436,7 @@ function renderUI() {
     document.getElementById("totalUC").innerText = firebaseUserData.totalUC;
 }
 
-// جب یوزر بائے پیکج پر کلک کرے گا تو فائر بیس چیک کرے گا
+// اب یہاں 'packages.html' چھوٹا نام کر دیا گیا ہے جو گیت ہب سے بالکل میچ کرتا ہے
 window.onUserBuyPackage = async function() {
     let user = auth.currentUser;
     if (!user) {
@@ -453,11 +453,10 @@ window.onUserBuyPackage = async function() {
             firebaseUserData.hasPubgPackage = true;
             renderUI();
         } else {
-            // یہاں اب صحیح فائل کا نام 'Packages.html' لگا دیا گیا ہے
-            window.location.href = "Packages.html";
+            window.location.href = "packages.html";
         }
     } else {
-        window.location.href = "Packages.html";
+        window.location.href = "packages.html";
     }
 }
 
