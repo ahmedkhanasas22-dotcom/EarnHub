@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUBG UC Daily Rewards - Clean Center Lock</title>
+<style>
+*{ box-sizing:border-box; margin:0; padding:0; user-select: none; }
+body{ font-family:Arial, sans-serif; background: radial-gradient(circle at top,#173b58,#071521 60%,#02080d); color:white; min-height:100vh; padding:10px 6px 30px; }
+
+.header{ max-width:1000px; margin:auto; text-align:center; margin-bottom:10px; }
+.header h1{ font-size:18px; color:#ffd900; text-shadow:0 0 8px #ffae00; }
+
+.total-box{ max-width:900px; margin:auto; background:rgba(5,18,28,.9); border:2px solid #e9b400; border-radius:6px; padding:8px; text-align:center; box-shadow:0 0 12px rgba(255,190,0,.2); margin-bottom:12px; }
+.total-uc{ font-size:20px; font-weight:bold; color:#ffd400; margin-top:2px; }
+
+.reward-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* 🌟 بالکل سینٹر میں صاف ستھرا بغیر باکس کے ٹیکسٹ اور لاک */
+.lock-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(7, 21, 33, 0.4);
+    backdrop-filter: blur(1.5px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+}
+
+.center-lock-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.center-lock-icon {
+    font-size: 32px;
+    text-shadow: 0 0 12px rgba(255, 170, 0, 0.8);
+    margin-bottom: 2px;
+}
+
+.center-lock-content h3 {
+    font-size: 14px;
+    color: #ffaa00;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
+}
+
+.center-lock-content p {
+    font-size: 10.5px;
+    color: #ddd;
+    text-shadow: 0 1px 3px #000;
+    max-width: 280px;
+    line-height: 1.4;
+}
+
+/* ٹیسٹنگ کے لیے چھوٹا سا بٹن */
+.center-unlock-btn {
+    margin-top: 8px;
+    background: linear-gradient(to bottom, #ffaa00, #cc8400);
+    color: #000;
+    border: none;
+    padding: 5px 14px;
+    font-size: 9px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ایک لائن میں 3 باکس */
+.days{ display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; }
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 10px rgba(255,215,0,0.6), inset 0 0 10px rgba(255,215,0,0.4); border-color: #ffd700; }
+    50% { transform: scale(1.02); box-shadow: 0 0 18px rgba(255,215,0,1), inset 0 0 15px rgba(255,255,255,0.7); border-color: #fff; }
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,215,0,0.6), inset 0 0 10px rgba(255,215,0,0.4); border-color: #ffd700; }
+}
+
+.card{ 
+    background: linear-gradient(135deg, #7a0b0b 0%, #450303 50%, #200101 100%);
+    border: 1.5px solid #d93838;
+    border-radius: 6px;
+    padding: 6px 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 100, 100, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 40%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0));
+    pointer-events: none;
+}
+
+.card-available { animation: pulse 1.5s infinite; }
+.day{ font-size:9px; font-weight:bold; color:#fff; margin-bottom:3px; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 1px 2px #000; }
+
+.uc-img-container {
+    width: 100%;
+    height: 42px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px 0;
+}
+.uc-img { max-height: 100%; object-fit: contain; }
+
+.reward-amount { 
+    font-size: 8.5px; 
+    color: #ffda44; 
+    font-weight: bold; 
+    text-align: right; 
+    padding-right: 3px;
+    margin-bottom: 3px;
+}
+
+button{ 
+    width:100%; padding:4px; border-radius:3px; font-weight:bold; cursor:pointer; 
+    background: linear-gradient(to bottom, #114b5f, #082530); color: #fff; border: 1px solid #20a9bd; font-size: 8.5px; text-transform: uppercase;
+}
+button:disabled{ background: linear-gradient(to bottom, #222, #111); border-color: #444; color: #777; }
+.claimed button { border-color: #16824f; color: #4ade80; background: linear-gradient(to bottom, #0d2b1f, #06150e); }
+.missed button { border-color: #a94442; color: #ff6b6b; background: linear-gradient(to bottom, #3a1111, #1a0505); }
+</style>
+</head>
+
+<body>
+
+<div class="header"><h1>🎮 PUBG UC DAILY REWARDS</h1></div>
+
+<div class="total-box">
+    <div style="font-size:8px; color:#aaa;">TOTAL UC COLLECTED</div>
+    <div class="total-uc"><span id="totalUC">0</span> UC</div>
+</div>
+
+<div class="reward-wrapper">
+    <!-- سینٹر میں صاف ستھرا ٹیکسٹ اور لاک (بغیر کسی بڑے ڈبے کے) -->
+    <div id="lockOverlay" class="lock-overlay">
+        <div class="center-lock-content">
+            <div class="center-lock-icon">🔒</div>
+            <h3 id="lockTitle">UC REWARDS LOCKED</h3>
+            <p id="lockDesc">نیا پیکج بائے کریں تاکہ یہ انلاک ہو جائیں!</p>
+            <button class="center-unlock-btn" onclick="onUserBuyPackage('pkg1')">Buy Package</button>
+        </div>
+    </div>
+
+    <!-- 30 دن کے باکسز -->
+    <div class="days" id="daysContainer"></div>
+</div>
+
+<script>
+const TOTAL_DAYS = 30;
+const UC_PER_DAY = 10;
+
+let userData = JSON.parse(localStorage.getItem("earnHubLockedSystem")) || {
+    hasActivePackage: false,
+    packageStartDate: null,
+    claimed: [],
+    missed: [],
+    totalUC: 0,
+    isCompleted: false
+};
+
+function getTodayString() {
+    const now = new Date();
+    return now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+}
+
+function updateSystemLogic() {
+    if (!userData.hasActivePackage || userData.isCompleted) return;
+
+    const todayStr = getTodayString();
+    const start = new Date(userData.packageStartDate);
+    const current = new Date(todayStr);
+    const diffTime = current - start;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    if (diffDays > TOTAL_DAYS || userData.claimed.length >= TOTAL_DAYS) {
+        userData.isCompleted = true;
+        userData.hasActivePackage = false;
+        localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
+        return;
+    }
+
+    for (let i = 1; i <= diffDays && i <= TOTAL_DAYS; i++) {
+        if (i < diffDays && !userData.claimed.includes(i) && !userData.missed.includes(i)) {
+            userData.missed.push(i);
+        }
+    }
+    localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
+}
+
+function renderUI() {
+    updateSystemLogic();
+
+    const overlay = document.getElementById("lockOverlay");
+    const lockTitle = document.getElementById("lockTitle");
+    const lockDesc = document.getElementById("lockDesc");
+    const container = document.getElementById("daysContainer");
+    container.innerHTML = "";
+
+    if (!userData.hasActivePackage) {
+        overlay.style.display = "flex";
+        if (userData.isCompleted) {
+            lockTitle.innerText = "30 DAYS COMPLETED!";
+            lockDesc.innerText = "تمام یو سی کلیم ہو چکے ہیں، نیا پیکج لیں۔";
+        } else {
+            lockTitle.innerText = "UC REWARDS LOCKED";
+            lockDesc.innerText = "نیا پیکج بائے کریں تاکہ یہ انلاک ہو جائیں!";
+        }
+    } else {
+        overlay.style.display = "none";
+    }
+
+    let activeDayIndex = 1;
+    if (userData.hasActivePackage && userData.packageStartDate) {
+        const todayStr = getTodayString();
+        const start = new Date(userData.packageStartDate);
+        const current = new Date(todayStr);
+        activeDayIndex = Math.floor((current - start) / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    for(let i = 1; i <= TOTAL_DAYS; i++){
+        const claimed = userData.claimed.includes(i);
+        const missed = userData.missed.includes(i) || (userData.hasActivePackage && i < activeDayIndex && !claimed);
+        const isToday = userData.hasActivePackage && (i === activeDayIndex);
+
+        const card = document.createElement("div");
+        let cardClasses = "card";
+        if (claimed) cardClasses += " claimed";
+        else if (missed) cardClasses += " missed";
+        else if (isToday) cardClasses += " card-available";
+        card.className = cardClasses;
+
+        let btnText = "Locked";
+        if (claimed) btnText = "✓ Collected";
+        else if (missed) btnText = "✗ Missed";
+        else if (isToday) btnText = "Collect";
+
+        card.innerHTML = `
+            <div class="day">Day ${i}</div>
+            <div class="uc-img-container">
+                <img src="images/uc-logo.jpeg" class="uc-img" onerror="this.src='https://i.ibb.co/3s6K8Tf/uc-icon.png'">
+            </div>
+            <div class="reward-amount">${UC_PER_DAY} UC</div>
+            <button onclick="claimRewardDay(${i})" ${(!isToday || claimed || missed) ? "disabled" : ""}>${btnText}</button>
+        `;
+        container.appendChild(card);
+    }
+
+    document.getElementById("totalUC").innerText = userData.totalUC;
+}
+
+function claimRewardDay(day){
+    if (!userData.hasActivePackage) return;
+
+    const todayStr = getTodayString();
+    const start = new Date(userData.packageStartDate);
+    const current = new Date(todayStr);
+    const activeDayIndex = Math.floor((current - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    if(day === activeDayIndex && !userData.claimed.includes(day)){
+        userData.claimed.push(day);
+        userData.totalUC += UC_PER_DAY;
+
+        if(userData.claimed.length >= TOTAL_DAYS) {
+            userData.isCompleted = true;
+            userData.hasActivePackage = false;
+        }
+
+        localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
+        renderUI();
+    }
+}
+
+function onUserBuyPackage(packageId) {
+    if (userData.hasActivePackage && !userData.isCompleted) return;
+
+    userData = {
+        hasActivePackage: true,
+        packageStartDate: getTodayString(),
+        claimed: [],
+        missed: [],
+        totalUC: userData.totalUC,
+        isCompleted: false
+    };
+    localStorage.setItem("earnHubLockedSystem", JSON.stringify(userData));
+    renderUI();
+}
+
+renderUI();
+</script>
+</body>
+</html>
