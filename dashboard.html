@@ -702,7 +702,6 @@ a{ text-decoration:none; color:white; }
             <div class="feature-icon ic-history"><i class="fas fa-history"></i></div>
             <span class="feature-name">History</span>
         </a>
-        <!-- Gift.html Button / Card Added Here -->
         <a href="Gift.html" class="feature-item">
             <div class="feature-icon ic-gift"><i class="fas fa-box-open"></i></div>
             <span class="feature-name">Ten Rs Game</span>
@@ -803,20 +802,30 @@ a{ text-decoration:none; color:white; }
 </div>
 </div>
 
-<!-- Popup Ad Modal on Dashboard -->
-<div id="dashboardPopupAd" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; justify-content: center; align-items: center; padding: 15px;">
-    <div style="background: #ffffff; width: 100%; max-width: 330px; border-radius: 16px; border: 2px solid #27ae60; padding: 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2); position: relative;">
+<!-- Beautiful Popup Ad Modal with Image, Colors & Pricing -->
+<div id="dashboardPopupAd" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 15px;">
+    <div style="background: linear-gradient(145deg, #161b22, #0b0c10); width: 100%; max-width: 340px; border-radius: 20px; border: 2px solid #00ffff; padding: 20px; text-align: center; box-shadow: 0 0 30px rgba(0,255,255,0.4); position: relative;">
         <!-- Close (Cross) Button -->
-        <span onclick="closePopupAd()" style="position: absolute; top: 10px; right: 15px; font-size: 22px; font-weight: bold; color: #333; cursor: pointer;">&times;</span>
+        <span onclick="closePopupAd()" style="position: absolute; top: 12px; right: 15px; font-size: 22px; font-weight: bold; color: #00ffff; cursor: pointer; background: rgba(0,255,255,0.1); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">&times;</span>
         
-        <div style="margin-bottom: 15px; margin-top: 10px;">
-            <h3 style="font-size: 18px; color: #111; margin-bottom: 5px; font-weight: 700;">Ten Rupee Game</h3>
-            <p style="font-size: 13px; color: #555;">Get items worth a fortune for just Rs. 10!</p>
+        <!-- Badge -->
+        <div style="display: inline-block; background: rgba(255,215,0,0.15); color: #ffd700; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.3); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
+            🔥 Special Offer
         </div>
 
-        <div style="padding: 10px 0;">
-            <a href="Gift.html" style="display: block; background-color: #27ae60; color: white; padding: 12px; font-size: 15px; font-weight: 700; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);">Play Now for Rs. 10</a>
+        <!-- Phone / Item Image -->
+        <div style="width: 100%; height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+            <img src="pubg.png" alt="Ten Rupee Game" style="max-height: 100%; max-width: 100%; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,255,255,0.3);" onerror="this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300';">
         </div>
+
+        <!-- Title & Description -->
+        <h3 style="font-size: 20px; color: #ffffff; margin: 0 0 6px 0; font-weight: 800;">Ten Rupee Game</h3>
+        <p style="font-size: 13px; color: #8b949e; margin: 0 0 16px 0; line-height: 1.4;">Get branded smartphones and items worth a fortune for just <span style="color: #00ffff; font-weight: bold;">Rs. 10</span>!</p>
+
+        <!-- Action Button linking to Gift.html -->
+        <a href="Gift.html" style="display: block; background: linear-gradient(135deg, #00ffff, #0048ff); color: #000000; padding: 13px; font-size: 15px; font-weight: 800; border-radius: 12px; text-decoration: none; box-shadow: 0 5px 20px rgba(0,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px;">
+            Play Now for Rs. 10
+        </a>
     </div>
 </div>
 
