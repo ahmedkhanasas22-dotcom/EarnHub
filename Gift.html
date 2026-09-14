@@ -164,7 +164,7 @@
         }
 
         .buy-btn:disabled {
-            background-color: #95a5a6;
+            background-color: #7f8c8d !important;
             cursor: not-allowed;
             box-shadow: none;
         }
@@ -250,7 +250,7 @@
                 </div>
                 <div class="product-name">Samsung Galaxy a54</div>
                 
-                <!-- قیمت کا درست فارمیٹ (80,000 پر کراس اور 10 روپے صاف) -->
+                <!-- قیمت کا درست فارمیٹ -->
                 <div class="price-box">
                     <span class="fake-price">Price: Rs. 80,000</span>
                     <span class="actual-price">Rs. 10</span>
@@ -260,7 +260,7 @@
             </div>
         </div>
 
-        <!-- Bottom Graphic Illustration (درست اور ورکنگ گرافک) -->
+        <!-- Bottom Graphic Illustration -->
         <div class="illustration-box">
             <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f381.png" style="width: 80px; height: 80px; margin-bottom: 10px;" alt="Gift">
             <p style="font-size: 13px; color: #666; font-weight: 500;">Win exciting prizes securely with EarnHub.</p>
@@ -297,6 +297,15 @@
         let currentUserId = null;
         let userData = null;
 
+        // پہلے سے لوکل اسٹوریج چیک کریں تاکہ ریفریش پر فورا بٹن ڈس ایبل رہے
+        if (localStorage.getItem("tenRupeeGameParticipated") === "true") {
+            let btn = document.getElementById("buyBtn1");
+            if(btn) {
+                btn.disabled = true;
+                btn.innerText = "Participated";
+            }
+        }
+
         window.showCustomAlert = function(msg) {
             document.getElementById("customAlertMessage").innerText = msg;
             document.getElementById("customAlertModal").style.display = "flex";
@@ -309,38 +318,57 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUserId = user.uid;
+                localStorage.setItem("currentFirebaseUid", user.uid);
                 try {
                     let userRef = doc(db, "users", currentUserId);
                     let userSnap = await getDoc(userRef);
                     if (userSnap.exists()) {
                         userData = userSnap.data();
                         
-                        // چیک کریں کہ کیا یوزر پہلے ہی اس گیم میں حصہ لے چکا ہے؟ (اگر ہاں تو ہمیشہ کے لیے ڈس ایبل)
+                        // چیک کریں کہ کیا یوزر پہلے ہی اس گیم میں حصہ لے چکا ہے؟
                         if (userData.oneRupeeGameParticipated === true) {
+                            localStorage.setItem("tenRupeeGameParticipated", "true");
                             let btn = document.getElementById("buyBtn1");
                             btn.disabled = true;
                             btn.innerText = "Participated";
-                            btn.style.backgroundColor = "#7f8c8d";
                         }
                     }
                 } catch (err) {
                     console.error("Error fetching user:", err);
                 }
+            } else {
+                currentUserId = null;
+                userData = null;
             }
         });
 
         window.participateGame = async function(btnId, productName) {
-            if (!currentUserId || !userData) {
-                showCustomAlert("Pehle login karein!");
+            // اگر پہلے سے لوکل اسٹوریج میں پارٹیسیپیٹڈ ہے تو آگے نہ بڑھنے دیں
+            if (localStorage.getItem("tenRupeeGameParticipated") === "true") {
+                let btn = document.getElementById(btnId);
+                btn.disabled = true;
+                btn.innerText = "Participated";
                 return;
             }
 
-            let currentBalance = parseFloat(userData.mainBalance) || 0;
+            // 1. لاگ ان چیک (فائر بیس یا لوکل اسٹوریج کے ذریعے)
+            let activeUid = currentUserId || localStorage.getItem("currentFirebaseUid");
+            if (!activeUid || !userData) {
+                // اگر یوزر کا ڈیٹا ابھی لوڈ نہیں ہوا لیکن وہ لاگ ان ہے تو تھوڑا انتظار یا چیک
+                if (auth.currentUser) {
+                    activeUid = auth.currentUser.uid;
+                } else {
+                    showCustomAlert("Pehle login karein!");
+                    return;
+                }
+            }
+
+            let currentBalance = parseFloat(userData?.mainBalance) || 0;
             let ticketPrice = 10;
 
-            // بیلنس چیک کرنے کی شرط
+            // 2. بیلنس چیک (اگر 10 روپے سے کم ہوں)
             if (currentBalance < ticketPrice) {
-                showCustomAlert("Your balance is insufficient! Aapke pas 10 rupay nahi hain.");
+                showCustomAlert("Aapke pas balance na-kafi hai!");
                 return;
             }
 
@@ -350,9 +378,9 @@
 
             try {
                 let newBalance = currentBalance - ticketPrice;
-                let userRef = doc(db, "users", currentUserId);
+                let userRef = doc(db, "users", activeUid);
 
-                // فائر بیس پر بیلنس سے 10 روپے کم کرنا اور گیم میں شمولیت ہمیشہ کے لیے محفوظ کرنا
+                // 3. فائر بیس پر بیلنس اپ ڈیٹ کرنا اور اسٹیٹ سیو کرنا
                 await updateDoc(userRef, {
                     mainBalance: newBalance,
                     oneRupeeGameParticipated: true
@@ -361,14 +389,19 @@
                 userData.mainBalance = newBalance;
                 userData.oneRupeeGameParticipated = true;
 
-                showCustomAlert("Congratulations! You have successfully participated in the Ten Rupee Game.");
+                // لوکل اسٹوریج میں مستقل سیو کر دیں تاکہ ریفریش یا لاگ آؤٹ پر بھی یاد رہے
+                localStorage.setItem("tenRupeeGameParticipated", "true");
+
+                // 4. کامیاب ہونے کا سکسس میसेज
+                showCustomAlert("Successful! Aapke main balance se 10 rupay kaat liye gaye hain.");
 
                 let countSpan = document.getElementById('participantCount');
                 let currentCount = parseInt(countSpan.innerText);
                 countSpan.innerText = currentCount + 1;
 
+                // بٹن کو ہمیشہ کے لیے ڈس ایبل کرنا
                 btn.innerText = "Participated";
-                btn.style.backgroundColor = "#7f8c8d";
+                btn.disabled = true;
 
             } catch (err) {
                 console.error("Error:", err);
