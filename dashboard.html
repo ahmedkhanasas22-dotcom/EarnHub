@@ -374,6 +374,7 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 .ic-packages { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
 .ic-referral { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
 .ic-history { background: rgba(53, 59, 72, 0.3); color: #a4b0be; }
+.ic-gift { background: rgba(255, 0, 128, 0.15); color: #ff0080; } /* Gift button style */
 
 /* Midasbuy Style PUBG Banner */
 .pubg-banner {
@@ -593,9 +594,105 @@ a{ text-decoration:none; color:white; }
 .ai-chat-input-area { padding: 10px; background: #161b22; display: flex; gap: 8px; border-top: 1px solid #333; }
 .ai-chat-input { flex: 1; background: #0b0f19; border: 1px solid #333; color: white; padding: 10px 12px; border-radius: 8px; font-size: 13px; outline: none; }
 .ai-send-btn { background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
+
+/* Mobile Ad Popup Styling */
+.mobile-ad-overlay {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+.mobile-ad-box {
+    background: linear-gradient(135deg, #161b22, #0b0f19);
+    width: 100%;
+    max-width: 340px;
+    border-radius: 22px;
+    border: 2px solid #00ffff;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0,255,255,0.3);
+    text-align: center;
+    position: relative;
+    padding-bottom: 20px;
+}
+.mobile-ad-header {
+    background: #1f2937;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    color: #00ffff;
+    font-weight: bold;
+    font-size: 14px;
+}
+.mobile-ad-img-container {
+    width: 100%;
+    height: 180px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+.mobile-ad-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.mobile-ad-content {
+    padding: 15px;
+}
+.mobile-ad-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 6px;
+}
+.mobile-ad-desc {
+    font-size: 12px;
+    color: #8b949e;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+.mobile-ad-btn {
+    background: linear-gradient(135deg, #00ffff, #0048ff);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(0,255,255,0.4);
+}
 </style>
 </head>
 <body>
+
+<!-- Samsung Galaxy Mobile Ad Popup (Appears on Load) -->
+<div class="mobile-ad-overlay" id="mobileAdPopup">
+    <div class="mobile-ad-box">
+        <div class="mobile-ad-header">
+            <span>🔥 Special Offer / Ad</span>
+            <button class="ai-close-btn" onclick="closeMobileAd()">✕</button>
+        </div>
+        <div class="mobile-ad-img-container">
+            <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500" alt="Samsung Galaxy Mobile">
+        </div>
+        <div class="mobile-ad-content">
+            <div class="mobile-ad-title">Samsung Galaxy New Edition</div>
+            <div class="mobile-ad-desc">Best performance, stunning display, and amazing camera. Grab your dream smartphone today through EarnHub!</div>
+            <a href="Gift.html" class="mobile-ad-btn">Check Gift / Offer Now</a>
+        </div>
+    </div>
+</div>
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="appSidebar">
@@ -697,6 +794,11 @@ a{ text-decoration:none; color:white; }
             <div class="feature-icon ic-claim"><i class="fas fa-gift"></i></div>
             <span class="feature-name">Claim</span>
         </a>
+        <!-- Added Gift Button leading directly to Gift.html -->
+        <a href="Gift.html" class="feature-item">
+            <div class="feature-icon ic-gift"><i class="fas fa-box-open"></i></div>
+            <span class="feature-name">Gift File</span>
+        </a>
         <a href="deposit.html" class="feature-item">
             <div class="feature-icon ic-deposit"><i class="fas fa-wallet"></i></div>
             <span class="feature-name">Deposit</span>
@@ -712,10 +814,6 @@ a{ text-decoration:none; color:white; }
         <a href="referral.html" class="feature-item">
             <div class="feature-icon ic-referral"><i class="fas fa-users"></i></div>
             <span class="feature-name">Referral</span>
-        </a>
-        <a href="withdraw-history.html" class="feature-item">
-            <div class="feature-icon ic-history"><i class="fas fa-history"></i></div>
-            <span class="feature-name">History</span>
         </a>
     </div>
 
@@ -777,7 +875,7 @@ a{ text-decoration:none; color:white; }
                         <div class="reviewer-location">Quetta • Verified User</div>
                     </div>
                 </div>
-                <p class="review-text">"Boht hi shandaar platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
+                <p class="review-text">"Boht hi shandaار platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
             </div>
 
             <div class="review-card">
@@ -832,50 +930,6 @@ a{ text-decoration:none; color:white; }
 <div class="ai-float" onclick="openAIAssistant()" title="AI Assistant">
     <svg viewBox="0 0 24 24"><path d="M12 2l2.4 6.8L21 11.2l-6.6 2.4L12 20.4 9.6 13.6 3 11.2l6.6-2.4zM5 18l1.2 3.2L9.4 22l-3.2 1.2L5 26.4 3.8 23.2 0.6 22l3.2-1.2zM19 3l1 2.5L22.5 6.5 20 7.5 19 10l-1-2.5L15.5 6.5 18 5.5z"/></svg>
 </div>
-
-<!-- ================= سام سنگ گلیکسی پاپ اپ ایڈ ================= -->
-<div id="samsungPopupAd" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 99999; justify-content: center; align-items: center; padding: 15px;">
-    <div style="background: #161b22; width: 100%; max-width: 340px; border-radius: 20px; border: 2px solid #00ffff; padding: 20px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        
-        <!-- Close Button (×) -->
-        <span onclick="closePopupAd()" style="position: absolute; top: 12px; right: 15px; font-size: 22px; font-weight: bold; color: #fff; cursor: pointer; background: #222; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">&times;</span>
-        
-        <div style="background: linear-gradient(90deg, #ff9900, #ff4500); color: white; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 12px; text-transform: uppercase;">
-            🔥 Special Offer
-        </div>
-        
-        <!-- Ad Clickable Area (Redirects to Gift.html) -->
-        <a href="Gift.html" style="text-decoration: none; color: inherit; display: block;">
-            <div style="height: 140px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; background: #0b1926; border-radius: 12px; padding: 10px;">
-                <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&auto=format&fit=crop&q=60" alt="Samsung Galaxy" style="max-height: 100%; max-width: 100%; object-fit: contain;">
-            </div>
-            
-            <h3 style="margin: 8px 0; font-size: 16px; color: #fff;">Samsung Galaxy Smartphone</h3>
-            <p style="font-size: 11px; color: #8c909c; margin-bottom: 12px; line-height: 1.4;">Get branded smartphones and items worth a fortune for just <b>Rs. 10!</b></p>
-            
-            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
-                <span style="font-size: 13px; color: #888; text-decoration: line-through;">Rs. 80,000</span>
-                <span style="font-size: 16px; font-weight: 700; color: #2ec4b6;">Rs. 10</span>
-            </div>
-            
-            <div style="background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,255,255,0.3);">
-                PLAY NOW FOR RS. 10
-            </div>
-        </a>
-    </div>
-</div>
-
-<script>
-    // ویب سائٹ کھلنے پر سام سنگ پاپ اپ شو کرنے کا فنکشن
-    window.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('samsungPopupAd').style.display = 'flex';
-    });
-
-    function closePopupAd() {
-        document.getElementById('samsungPopupAd').style.display = 'none';
-    }
-</script>
-<!-- ===================================================================== -->
 
 <!-- Notification Modal -->
 <div class="page-modal" id="notificationModal">
@@ -1019,7 +1073,7 @@ overlay.style.display = "block";
 }
 
 function logout(){
-    if(confirm("Kya aap waqai account se logout karna chahtay hain?")) {
+    if(confirm("Kya aap waqai account se logout کرنا چاہتay hain?")) {
         localStorage.clear();
         window.location.href = "index.html"; 
     }
@@ -1094,7 +1148,7 @@ function sendAiMessage() {
         } else if(lower.includes("withdraw") || lower.includes("paisa") || lower.includes("nikal") || lower.includes("cash")) {
             botMsg.innerText = "Pese nikalwane ke liye dashboard par 'Withdraw' button par click karein.";
         } else if(lower.includes("pkg") || lower.includes("package") || lower.includes("plan") || lower.includes("investment")) {
-            botMsg.innerText = "Aap 'Packages' section mein ja kar tamam active investment plans aur unki tafseel check kon saktay hain.";
+            botMsg.innerText = "Aap 'Packages' section mein ja kar tamam active investment plans aur unki tafseel check kar saktay hain.";
         } else if(lower.includes("spin") || lower.includes("lucky") || lower.includes("wheel")) {
             botMsg.innerText = "Daily Spin section mein ja kar aap rozana muft rewards aur bonus jeet saktay hain!";
         } else if(lower.includes("referral") || lower.includes("friend") || lower.includes("dost") || lower.includes("invite")) {
@@ -1140,6 +1194,11 @@ function toggleTheme() {
         document.body.style.background = "#f4f7f6";
         localStorage.setItem("theme", "light");
     }
+}
+
+// Function to close Mobile Ad Popup
+function closeMobileAd() {
+    document.getElementById("mobileAdPopup").style.display = "none";
 }
 </script>
 </body>
