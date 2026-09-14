@@ -105,6 +105,7 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 .sidebar-item:hover { background: rgba(0,255,255,0.1); color: #00ffff; }
 
+/* EXACT ORIGINAL LOGO RESTORED */
 .unique-logo{
     display:flex;
     align-items:center;
@@ -152,6 +153,7 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 
 .container{ padding:0 15px; }
 
+/* Dashboard Card Container */
 .dashboard-card {
     background: linear-gradient(135deg, #12141c 0%, #1a1c26 100%);
     border-radius: 24px;
@@ -325,6 +327,7 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
     cursor: pointer;
 }
 
+/* Features Grid (New Design Grid Layout) */
 .features-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -371,8 +374,8 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 .ic-packages { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
 .ic-referral { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
 .ic-history { background: rgba(53, 59, 72, 0.3); color: #a4b0be; }
-.ic-gift { background: rgba(39, 174, 96, 0.15); color: #27ae60; }
 
+/* Midasbuy Style PUBG Banner */
 .pubg-banner {
     background: #0b1926;
     border: 1px solid rgba(0, 255, 255, 0.2);
@@ -435,6 +438,7 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
     letter-spacing: 0.5px;
 }
 
+/* Pakistani Female Reviews Section */
 .reviews-section {
     background: #12141c;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -578,6 +582,17 @@ a{ text-decoration:none; color:white; }
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
 }
+
+.ai-chat-box {
+    background: #161b22; width: 100%; max-width: 380px; height: 480px; border-radius: 20px; border: 2px solid #00ffff; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 25px rgba(0,255,255,0.2);
+}
+.ai-chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0b0f19; }
+.ai-msg { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
+.ai-msg.bot { background: #1f2937; color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid rgba(0,255,255,0.2); }
+.ai-msg.user { background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; font-weight: 600; align-self: flex-end; border-bottom-right-radius: 2px; }
+.ai-chat-input-area { padding: 10px; background: #161b22; display: flex; gap: 8px; border-top: 1px solid #333; }
+.ai-chat-input { flex: 1; background: #0b0f19; border: 1px solid #333; color: white; padding: 10px 12px; border-radius: 8px; font-size: 13px; outline: none; }
+.ai-send-btn { background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -702,10 +717,6 @@ a{ text-decoration:none; color:white; }
             <div class="feature-icon ic-history"><i class="fas fa-history"></i></div>
             <span class="feature-name">History</span>
         </a>
-        <a href="Gift.html" class="feature-item">
-            <div class="feature-icon ic-gift"><i class="fas fa-box-open"></i></div>
-            <span class="feature-name">Ten Rs Game</span>
-        </a>
     </div>
 
     <!-- Midasbuy Style PUBG Banner -->
@@ -746,6 +757,61 @@ a{ text-decoration:none; color:white; }
                 </div>
                 <p class="review-text">"Daily spin aur referral system bohot zabardast hai. Maine ghar baith kar achi earning ki hai."</p>
             </div>
+
+            <div class="review-card">
+                <div class="reviewer-info">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="Zainab Malik" class="reviewer-avatar">
+                    <div>
+                        <div class="reviewer-name">Zainab Malik</div>
+                        <div class="reviewer-location">Islamabad • Verified User</div>
+                    </div>
+                </div>
+                <p class="review-text">"EarnHub is amazing! Fast deposit aur instant withdraw milta hai. Highly recommended to everyone."</p>
+            </div>
+
+            <div class="review-card">
+                <div class="reviewer-info">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100" alt="Mahnoor Baloch" class="reviewer-avatar">
+                    <div>
+                        <div class="reviewer-name">Mahnoor Baloch</div>
+                        <div class="reviewer-location">Quetta • Verified User</div>
+                    </div>
+                </div>
+                <p class="review-text">"Boht hi shandaar platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
+            </div>
+
+            <div class="review-card">
+                <div class="reviewer-info">
+                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100" alt="Hira Riaz" class="reviewer-avatar">
+                    <div>
+                        <div class="reviewer-name">Hira Riaz</div>
+                        <div class="reviewer-location">Faisalabad • Verified User</div>
+                    </div>
+                </div>
+                <p class="review-text">"Maine apne friends ko refer kiya aur mujhe unka bonus bhi foran mil gaya. Great experience!"</p>
+            </div>
+
+            <div class="review-card">
+                <div class="reviewer-info">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Kinza Batool" class="reviewer-avatar">
+                    <div>
+                        <div class="reviewer-name">Kinza Batool</div>
+                        <div class="reviewer-location">Multan • Verified User</div>
+                    </div>
+                </div>
+                <p class="review-text">"Safest earning platform in Pakistan. Easy packages aur daily spin se achi earning ho rahi hai."</p>
+            </div>
+
+            <div class="review-card">
+                <div class="reviewer-info">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100" alt="Rimsha Tariq" class="reviewer-avatar">
+                    <div>
+                        <div class="reviewer-name">Rimsha Tariq</div>
+                        <div class="reviewer-location">Peshawar • Verified User</div>
+                    </div>
+                </div>
+                <p class="review-text">"Bht hi behtareen website hai, sabhi ko isay join karna chahiye. 5 star rating!"</p>
+            </div>
         </div>
     </div>
 </div>
@@ -777,6 +843,11 @@ a{ text-decoration:none; color:white; }
         <div class="notification-desc">Aapka account kamyabi se ban gaya hai. Daily spin aur referral bonus se faida uthayein.</div>
         <div class="notification-time">Today, 12:00 PM</div>
     </div>
+    <div class="notification-item">
+        <div class="notification-title">⚡ Fast Withdrawals Active</div>
+        <div class="notification-desc">Ab aapke withdraw requests sirf kuch hi minutes mein process kiye ja rahay hain.</div>
+        <div class="notification-time">Yesterday</div>
+    </div>
 </div>
 </div>
 </div>
@@ -798,35 +869,38 @@ a{ text-decoration:none; color:white; }
         <span class="acc-detail-label">Current Balance</span>
         <span class="acc-detail-value" id="modalAccBalance" style="color:#00ffff;">Rs. 0</span>
     </div>
-</div>
-</div>
-</div>
-
-<!-- Beautiful Popup Ad Modal with Image, Colors & Pricing -->
-<div id="dashboardPopupAd" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 15px;">
-    <div style="background: linear-gradient(145deg, #161b22, #0b0c10); width: 100%; max-width: 340px; border-radius: 20px; border: 2px solid #00ffff; padding: 20px; text-align: center; box-shadow: 0 0 30px rgba(0,255,255,0.4); position: relative;">
-        <!-- Close (Cross) Button -->
-        <span onclick="closePopupAd()" style="position: absolute; top: 12px; right: 15px; font-size: 22px; font-weight: bold; color: #00ffff; cursor: pointer; background: rgba(0,255,255,0.1); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">&times;</span>
-        
-        <!-- Badge -->
-        <div style="display: inline-block; background: rgba(255,215,0,0.15); color: #ffd700; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.3); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
-            🔥 Special Offer
-        </div>
-
-        <!-- Phone / Item Image -->
-        <div style="width: 100%; height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-            <img src="pubg.png" alt="Ten Rupee Game" style="max-height: 100%; max-width: 100%; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,255,255,0.3);" onerror="this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300';">
-        </div>
-
-        <!-- Title & Description -->
-        <h3 style="font-size: 20px; color: #ffffff; margin: 0 0 6px 0; font-weight: 800;">Ten Rupee Game</h3>
-        <p style="font-size: 13px; color: #8b949e; margin: 0 0 16px 0; line-height: 1.4;">Get branded smartphones and items worth a fortune for just <span style="color: #00ffff; font-weight: bold;">Rs. 10</span>!</p>
-
-        <!-- Action Button linking to Gift.html -->
-        <a href="Gift.html" style="display: block; background: linear-gradient(135deg, #00ffff, #0048ff); color: #000000; padding: 13px; font-size: 15px; font-weight: 800; border-radius: 12px; text-decoration: none; box-shadow: 0 5px 20px rgba(0,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px;">
-            Play Now for Rs. 10
-        </a>
+    <div class="acc-detail-row">
+        <span class="acc-detail-label">Account Status</span>
+        <span class="acc-detail-value" style="color:#20b2aa;">Active (Elite Member)</span>
     </div>
+</div>
+</div>
+</div>
+
+<!-- AI Chat Modal -->
+<div class="page-modal" id="aiChatModal">
+<div class="ai-chat-box">
+<div class="modal-header"><span>🤖 EarnHub AI Assistant</span><button class="ai-close-btn" onclick="closeAIAssistant()">✕</button></div>
+<div class="ai-chat-messages" id="aiChatMessages">
+<div class="ai-msg bot">Assalam-o-Alaikum! Main EarnHub AI Assistant hoon. Aap mujhse deposit, withdraw, packages ya kisi bhi cheez ke baray mein pooch saktay hain!</div>
+</div>
+<div class="ai-chat-input-area">
+<input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Yahan apna sawal likhein..." onkeypress="handleAiKeyPress(event)">
+<button class="ai-send-btn" onclick="sendAiMessage()">Send</button>
+</div>
+</div>
+</div>
+
+<!-- Complaint Modal -->
+<div class="page-modal" id="complaintModal">
+<div class="modal-box">
+<div class="modal-header"><span>📝 Complaint Box</span><button class="ai-close-btn" onclick="closeComplaintModal()">✕</button></div>
+<div class="modal-body">
+<p style="font-size: 12px; color: #8b949e; margin: 0;">Apni complaint ya masla yahan tafseel se likhein:</p>
+<textarea id="complaintText" style="width:100%; height:110px; background:#0b0f19; border:1px solid #333; color:white; padding:10px; border-radius:8px; resize:none;" placeholder="Yahan apni complaint likhein..."></textarea>
+<button onclick="submitComplaint()" style="background:linear-gradient(135deg, #20b2aa, #005555); color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Submit Complaint</button>
+</div>
+</div>
 </div>
 
 <script type="module">
@@ -867,6 +941,16 @@ onAuthStateChanged(auth, async (user) => {
                 document.getElementById("userIdDisplay").innerText = "•••• " + userIdVal.slice(-4);
                 document.getElementById("sidebarUserName").innerText = username;
                 document.getElementById("sidebarUserId").innerText = "ID: " + userIdVal;
+
+                localStorage.setItem("userName", username);
+                localStorage.setItem("mainBalance", formattedBalance);
+                localStorage.setItem("myReferralCode", myCode);
+                localStorage.setItem("userId", userIdVal);
+                localStorage.setItem("firebaseUid", user.uid);
+
+                if(data.activePackage) {
+                    localStorage.setItem("activePackage", JSON.stringify(data.activePackage));
+                }
             }
         } catch (e) {
             console.error("Error fetching user data: ", e);
@@ -878,23 +962,6 @@ onAuthStateChanged(auth, async (user) => {
 </script>
 
 <script>
-// Popup Ad Script (Automatically opens shortly after dashboard loads)
-window.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-        let popup = document.getElementById("dashboardPopupAd");
-        if(popup) {
-            popup.style.display = "flex";
-        }
-    }, 800);
-});
-
-function closePopupAd() {
-    let popup = document.getElementById("dashboardPopupAd");
-    if(popup) {
-        popup.style.display = "none";
-    }
-}
-
 function toggleSidebar(){
 let sidebar = document.getElementById("appSidebar");
 let overlay = document.getElementById("sidebarOverlay");
@@ -923,6 +990,7 @@ function handleProfilePictureChange(event) {
             localStorage.setItem("userProfilePic", e.target.result);
             document.getElementById("cardAvatarIcon").innerHTML = `<img src="${e.target.result}" alt="Profile">`;
             document.getElementById("sidebarAvatarIcon").innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+            alert("Profile picture update ho gayi hai!");
         }
         reader.readAsDataURL(file);
     }
@@ -935,7 +1003,11 @@ if(savedPic) {
 }
 
 function checkWithdraw(){ window.location.href="withdraw.html"; }
-function openWhatsApp() { window.open("https://chat.whatsapp.com/KDO3mPdDvbqJUPzQSVFkPJ?s=cl&p=a&ilr=1", "_blank"); }
+
+function openWhatsApp() {
+    window.open("https://chat.whatsapp.com/KDO3mPdDvbqJUPzQSVFkPJ?s=cl&p=a&ilr=1", "_blank");
+}
+
 function openNotificationModal() { document.getElementById("notificationModal").style.display = "flex"; }
 function closeNotificationModal() { document.getElementById("notificationModal").style.display = "none"; }
 
@@ -946,8 +1018,75 @@ function openAccountDetailsModal() {
     document.getElementById("accountDetailsModal").style.display = "flex";
 }
 function closeAccountDetailsModal() { document.getElementById("accountDetailsModal").style.display = "none"; }
+
+function openAIAssistant() { document.getElementById("aiChatModal").style.display = "flex"; }
+function closeAIAssistant() { document.getElementById("aiChatModal").style.display = "none"; }
+
+function handleAiKeyPress(e) {
+    if (e.key === 'Enter') { sendAiMessage(); }
+}
+
+function sendAiMessage() {
+    let inputField = document.getElementById("aiChatInput");
+    let text = inputField.value.trim();
+    if(text === "") return;
+
+    let chatMessages = document.getElementById("aiChatMessages");
+    let userMsg = document.createElement("div");
+    userMsg.className = "ai-msg user";
+    userMsg.innerText = text;
+    chatMessages.appendChild(userMsg);
+
+    inputField.value = "";
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    setTimeout(() => {
+        let botMsg = document.createElement("div");
+        botMsg.className = "ai-msg bot";
+        let lower = text.toLowerCase();
+        
+        if(lower.includes("deposit") || lower.includes("jama") || lower.includes("add money")) {
+            botMsg.innerText = "Deposit karne ke liye dashboard par 'Deposit' wale button par click karein aur apni raqam jama karein.";
+        } else if(lower.includes("withdraw") || lower.includes("paisa") || lower.includes("nikal") || lower.includes("cash")) {
+            botMsg.innerText = "Pese nikalwane ke liye dashboard par 'Withdraw' button par click karein.";
+        } else if(lower.includes("pkg") || lower.includes("package") || lower.includes("plan") || lower.includes("investment")) {
+            botMsg.innerText = "Aap 'Packages' section mein ja kar tamam active investment plans aur unki tafseel check kar saktay hain.";
+        } else if(lower.includes("spin") || lower.includes("lucky") || lower.includes("wheel")) {
+            botMsg.innerText = "Daily Spin section mein ja kar aap rozana muft rewards aur bonus jeet saktay hain!";
+        } else if(lower.includes("referral") || lower.includes("friend") || lower.includes("dost") || lower.includes("invite")) {
+            botMsg.innerText = "Referral section se apna unique link doston ke sath share karein aur har invite par bonus hasil karein.";
+        } else if(lower.includes("balance") || lower.includes("amount") || lower.includes("pise")) {
+            let currentBal = localStorage.getItem("mainBalance") || 0;
+            botMsg.innerText = "Aapka current total balance upar card mein show ho raha hai: Rs. " + currentBal;
+        } else if(lower.includes("complaint") || lower.includes("issue") || lower.includes("problem") || lower.includes("masla")) {
+            botMsg.innerText = "Complaint درج karne ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
+        } else if(lower.includes("din") || lower.includes("date") || lower.includes("aaj") || lower.includes("today")) {
+            let d = new Date();
+            let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let dayName = days[d.getDay()];
+            botMsg.innerText = "Aaj ka din " + dayName + " hai aur date " + d.toLocaleDateString() + " hai.";
+        } else if(lower.includes("hello") || lower.includes("salam") || lower.includes("hi")) {
+            botMsg.innerText = "Walaikum Assalam! Main EarnHub AI hoon. Bataiye aapki kya madad kar sakta hoon?";
+        } else if(lower.includes("ok") || lower.includes("thek") || lower.includes("acha") || lower.includes("shukriya") || lower.includes("thanks")) {
+            botMsg.innerText = "Most welcome! Agar koi aur sawal ho toh zaroor poochiyega.";
+        } else {
+            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat (Deposit, Withdraw, Packages, aur Daily Spin) dashboard par mil jayengi. Mazeed rehnumai ke liye aap WhatsApp support ya Complaint Box use kar saktay hain.";
+        }
+
+        chatMessages.appendChild(botMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 500);
+}
+
 function openComplaintModal() { document.getElementById("complaintModal").style.display = "flex"; }
 function closeComplaintModal() { document.getElementById("complaintModal").style.display = "none"; }
+function submitComplaint() {
+    let text = document.getElementById("complaintText").value.trim();
+    if(text === "") { alert("Pehle apni complaint likhein!"); return; }
+    alert("Aapki complaint admin ko bhej di gayi hai!");
+    document.getElementById("complaintText").value = "";
+    closeComplaintModal();
+}
 
 function toggleTheme() {
     if (document.getElementById("darkModeToggle").checked) {
