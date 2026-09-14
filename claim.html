@@ -245,7 +245,7 @@
 
     <a class="back-link" href="dashboard.html">⬅ Back to Dashboard</a>
 
-    <!-- کسٹم الرট ماڈل HTML -->
+    <!-- کسٹم الرٹ ماڈل HTML -->
     <div class="custom-modal" id="customAlertModal">
         <div class="custom-modal-box">
             <div class="custom-modal-text" id="customAlertMessage">Alert Message Here</div>
@@ -273,6 +273,7 @@ const auth = getAuth(app);
 
 let currentUserData = null;
 let currentUserId = null;
+let activeTimers = []; // پرانے ٹائمرز کلیئر کرنے کے لیے
 
 // کسٹم الرٹ شو کرنے کا فنکشن (جو براؤزر کے الرٹ کی جگہ لے گا)
 window.showCustomAlert = function(msg) {
@@ -306,15 +307,15 @@ async function fetchUserData() {
     }
 }
 
-// کیلنڈر کے دنوں کے حساب سے گزرے ہوئے دن اور ایکسپائری چیک کرنے کا فنکشن
+// درست دن اور تاریخ کا حساب لگانے والا فنکشن (جو ٹائم زون کے مسائل کو ختم کرتا ہے)
 function calculateDaysPassed(startDateStr) {
-    let startDate = new Date(startDateStr);
-    startDate.setHours(0, 0, 0, 0);
+    let start = new Date(startDateStr);
+    let now = new Date();
 
-    let currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
+    let utcStart = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
+    let utcNow = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
 
-    let diffTime = currentDate.getTime() - startDate.getTime();
+    let diffTime = utcNow - utcStart;
     let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
     return diffDays;
@@ -346,7 +347,13 @@ async function checkAndCleanCompletedPackages() {
     renderClaimBox();
 }
 
+function clearAllTimers() {
+    activeTimers.forEach(timer => clearInterval(timer));
+    activeTimers = [];
+}
+
 window.renderClaimBox = function() {
+    clearAllTimers(); // پرانے چلتے ہوئے ٹائمرز کو کلیئر کریں
     let container = document.getElementById("claimBoxContainer");
     let titleBox = document.getElementById("packageTitle");
 
@@ -416,7 +423,7 @@ window.renderClaimBox = function() {
                         <h4>Day ${d}</h4>
                         <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
-                    <span class="status-locked">Locked 🔒</span>
+                    <span class="status-locked" id="timer-${pkgIndex}-${d}">Locked 🔒</span>
                 </div>
                 `;
             }
@@ -426,6 +433,56 @@ window.renderClaimBox = function() {
     });
 
     container.innerHTML = html;
+
+    // آنے والے بند دن (Lock) پر اگلی رات 12 بجے تک کا لائیو الٹی گنتی ٹائمر چلانے کا سسٹم
+    currentUserData.activePackages.forEach((pkg, pkgIndex) => {
+        let daysPassed = calculateDaysPassed(pkg.startDate);
+        
+        for (let d = 1; d <= pkg.totalDays; d++) {
+            if (d === daysPassed + 1) {
+                let timerElemId = `timer-${pkgIndex}-${d}`;
+                
+                // اگلی آدھی رات (Next Midnight UTC) کا وقت نکالیں
+                let now = new Date();
+                let nextMidnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
+
+                startCountdown(nextMidnight, timerElemId);
+            }
+        }
+    });
+}
+
+// لائیو الٹی گنتی (Countdown) چلانے کا فنکشن جو رات کے 12 بجتے ہی پیج ریفریش کر دے گا
+function startCountdown(targetTime, elementId) {
+    function updateTimer() {
+        let now = new Date().getTime();
+        let distance = targetTime - now;
+        let elem = document.getElementById(elementId);
+
+        if (!elem) return;
+
+        if (distance <= 0) {
+            elem.innerHTML = "Opening...";
+            setTimeout(() => {
+                location.reload(); // رات کے 12 بجتے ہی دن خود بخود کھل جائے گا
+            }, 1000);
+            return;
+        }
+
+        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        let hStr = String(hours).padStart(2, '0');
+        let mStr = String(minutes).padStart(2, '0');
+        let sStr = String(seconds).padStart(2, '0');
+
+        elem.innerHTML = `🔒 ${hStr}:${mStr}:${sStr}`;
+    }
+
+    updateTimer();
+    let interval = setInterval(updateTimer, 1000);
+    activeTimers.push(interval);
 }
 
 window.claimDay = async function(pkgIndex, currentDay, amount) {
