@@ -833,6 +833,50 @@ a{ text-decoration:none; color:white; }
     <svg viewBox="0 0 24 24"><path d="M12 2l2.4 6.8L21 11.2l-6.6 2.4L12 20.4 9.6 13.6 3 11.2l6.6-2.4zM5 18l1.2 3.2L9.4 22l-3.2 1.2L5 26.4 3.8 23.2 0.6 22l3.2-1.2zM19 3l1 2.5L22.5 6.5 20 7.5 19 10l-1-2.5L15.5 6.5 18 5.5z"/></svg>
 </div>
 
+<!-- ================= سام سنگ گلیکسی پاپ اپ ایڈ ================= -->
+<div id="samsungPopupAd" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 99999; justify-content: center; align-items: center; padding: 15px;">
+    <div style="background: #161b22; width: 100%; max-width: 340px; border-radius: 20px; border: 2px solid #00ffff; padding: 20px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        
+        <!-- Close Button (×) -->
+        <span onclick="closePopupAd()" style="position: absolute; top: 12px; right: 15px; font-size: 22px; font-weight: bold; color: #fff; cursor: pointer; background: #222; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">&times;</span>
+        
+        <div style="background: linear-gradient(90deg, #ff9900, #ff4500); color: white; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 12px; text-transform: uppercase;">
+            🔥 Special Offer
+        </div>
+        
+        <!-- Ad Clickable Area (Redirects to Gift.html) -->
+        <a href="Gift.html" style="text-decoration: none; color: inherit; display: block;">
+            <div style="height: 140px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; background: #0b1926; border-radius: 12px; padding: 10px;">
+                <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&auto=format&fit=crop&q=60" alt="Samsung Galaxy" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            </div>
+            
+            <h3 style="margin: 8px 0; font-size: 16px; color: #fff;">Samsung Galaxy Smartphone</h3>
+            <p style="font-size: 11px; color: #8c909c; margin-bottom: 12px; line-height: 1.4;">Get branded smartphones and items worth a fortune for just <b>Rs. 10!</b></p>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+                <span style="font-size: 13px; color: #888; text-decoration: line-through;">Rs. 80,000</span>
+                <span style="font-size: 16px; font-weight: 700; color: #2ec4b6;">Rs. 10</span>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,255,255,0.3);">
+                PLAY NOW FOR RS. 10
+            </div>
+        </a>
+    </div>
+</div>
+
+<script>
+    // ویب سائٹ کھلنے پر سام سنگ پاپ اپ شو کرنے کا فنکشن
+    window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('samsungPopupAd').style.display = 'flex';
+    });
+
+    function closePopupAd() {
+        document.getElementById('samsungPopupAd').style.display = 'none';
+    }
+</script>
+<!-- ===================================================================== -->
+
 <!-- Notification Modal -->
 <div class="page-modal" id="notificationModal">
 <div class="modal-box">
@@ -1050,7 +1094,7 @@ function sendAiMessage() {
         } else if(lower.includes("withdraw") || lower.includes("paisa") || lower.includes("nikal") || lower.includes("cash")) {
             botMsg.innerText = "Pese nikalwane ke liye dashboard par 'Withdraw' button par click karein.";
         } else if(lower.includes("pkg") || lower.includes("package") || lower.includes("plan") || lower.includes("investment")) {
-            botMsg.innerText = "Aap 'Packages' section mein ja kar tamam active investment plans aur unki tafseel check kar saktay hain.";
+            botMsg.innerText = "Aap 'Packages' section mein ja kar tamam active investment plans aur unki tafseel check kon saktay hain.";
         } else if(lower.includes("spin") || lower.includes("lucky") || lower.includes("wheel")) {
             botMsg.innerText = "Daily Spin section mein ja kar aap rozana muft rewards aur bonus jeet saktay hain!";
         } else if(lower.includes("referral") || lower.includes("friend") || lower.includes("dost") || lower.includes("invite")) {
