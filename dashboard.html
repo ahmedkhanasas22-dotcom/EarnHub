@@ -105,7 +105,6 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 .sidebar-item:hover { background: rgba(0,255,255,0.1); color: #00ffff; }
 
-/* EXACT ORIGINAL LOGO RESTORED */
 .unique-logo{
     display:flex;
     align-items:center;
@@ -153,7 +152,6 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 
 .container{ padding:0 15px; }
 
-/* Dashboard Card Container */
 .dashboard-card {
     background: linear-gradient(135deg, #12141c 0%, #1a1c26 100%);
     border-radius: 24px;
@@ -327,7 +325,6 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
     cursor: pointer;
 }
 
-/* Features Grid (New Design Grid Layout) */
 .features-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -374,9 +371,8 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 .ic-packages { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
 .ic-referral { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
 .ic-history { background: rgba(53, 59, 72, 0.3); color: #a4b0be; }
-.ic-gift { background: rgba(255, 0, 128, 0.15); color: #ff0080; } /* Gift button style */
+.ic-gift { background: rgba(255, 0, 128, 0.15); color: #ff0080; }
 
-/* Midasbuy Style PUBG Banner */
 .pubg-banner {
     background: #0b1926;
     border: 1px solid rgba(0, 255, 255, 0.2);
@@ -439,7 +435,6 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
     letter-spacing: 0.5px;
 }
 
-/* Pakistani Female Reviews Section */
 .reviews-section {
     background: #12141c;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -595,7 +590,6 @@ a{ text-decoration:none; color:white; }
 .ai-chat-input { flex: 1; background: #0b0f19; border: 1px solid #333; color: white; padding: 10px 12px; border-radius: 8px; font-size: 13px; outline: none; }
 .ai-send-btn { background: linear-gradient(135deg, #00ffff, #0048ff); color: #000; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
-/* Mobile Ad Popup Styling */
 .mobile-ad-overlay {
     display: flex;
     position: fixed;
@@ -676,7 +670,6 @@ a{ text-decoration:none; color:white; }
 </head>
 <body>
 
-<!-- Samsung Galaxy Mobile Ad Popup (Appears on Load) -->
 <div class="mobile-ad-overlay" id="mobileAdPopup">
     <div class="mobile-ad-box">
         <div class="mobile-ad-header">
@@ -780,7 +773,6 @@ a{ text-decoration:none; color:white; }
         <div class="card-details-pill" onclick="openAccountDetailsModal()">Card details</div>
     </div>
 
-    <!-- Features Grid -->
     <div class="features-grid">
         <a href="spin.html" class="feature-item">
             <div class="feature-icon ic-spin"><i class="fas fa-dharmachakra"></i></div>
@@ -794,7 +786,6 @@ a{ text-decoration:none; color:white; }
             <div class="feature-icon ic-claim"><i class="fas fa-gift"></i></div>
             <span class="feature-name">Claim</span>
         </a>
-        <!-- Updated Gift Button -->
         <a href="Gift.html" class="feature-item">
             <div class="feature-icon ic-gift"><i class="fas fa-box-open"></i></div>
             <span class="feature-name">Gift</span>
@@ -817,7 +808,6 @@ a{ text-decoration:none; color:white; }
         </a>
     </div>
 
-    <!-- Midasbuy Style PUBG Banner -->
     <a href="uc.html" class="pubg-banner">
         <div class="card-image-box">
             <img src="pubg.png" alt="PUBG" onerror="this.onerror=null; this.src='pubg.JPG';">
@@ -828,7 +818,6 @@ a{ text-decoration:none; color:white; }
         <div class="card-title">PUBG MOBILE</div>
     </a>
 
-    <!-- Pakistani Female Reviews Section -->
     <div class="reviews-section">
         <div class="review-header">
             <i class="fas fa-shield-alt"></i> Trusted User Reviews
@@ -875,7 +864,7 @@ a{ text-decoration:none; color:white; }
                         <div class="reviewer-location">Quetta • Verified User</div>
                     </div>
                 </div>
-                <p class="review-text">"Boht hi shandaار platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
+                <p class="review-text">"Boht hi shandaar platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
             </div>
 
             <div class="review-card">
@@ -922,7 +911,6 @@ a{ text-decoration:none; color:white; }
 </label>
 </div>
 
-<!-- Floating Action Buttons -->
 <div class="whatsapp-float" onclick="openWhatsApp()" title="Contact WhatsApp">
     <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2zM12.04 20.14c-1.42 0-2.81-.38-4.02-1.11l-.29-.17-3.03.8.81-2.95-.19-.31c-.81-1.31-1.24-2.83-1.24-4.38 0-4.57 3.72-8.29 8.29-8.29 2.22 0 4.31.86 5.88 2.43 1.57 1.57 2.43 3.66 2.43 5.88 0 4.57-3.72 8.29-8.29 8.29zm4.55-6.23c-.25-.13-1.48-.73-1.71-.82-.23-.09-.4-.13-.57.13-.17.25-.66.82-.81.99-.15.17-.3.19-.55.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.73-.15-.25-.02-.39.11-.52.11-.11.25-.3.37-.45.12-.15.16-.25.24-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.38-.78-1.89-.2-.48-.41-.42-.57-.43h-.49c-.17 0-.45.06-.68.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.32 3.81.6.26 1.07.42 1.44.54.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/></svg>
 </div>
@@ -931,7 +919,6 @@ a{ text-decoration:none; color:white; }
     <svg viewBox="0 0 24 24"><path d="M12 2l2.4 6.8L21 11.2l-6.6 2.4L12 20.4 9.6 13.6 3 11.2l6.6-2.4zM5 18l1.2 3.2L9.4 22l-3.2 1.2L5 26.4 3.8 23.2 0.6 22l3.2-1.2zM19 3l1 2.5L22.5 6.5 20 7.5 19 10l-1-2.5L15.5 6.5 18 5.5z"/></svg>
 </div>
 
-<!-- Notification Modal -->
 <div class="page-modal" id="notificationModal">
 <div class="modal-box">
 <div class="modal-header"><span>🔔 Latest Updates & Notifications</span><button class="ai-close-btn" onclick="closeNotificationModal()">✕</button></div>
@@ -950,7 +937,6 @@ a{ text-decoration:none; color:white; }
 </div>
 </div>
 
-<!-- Account Details Modal -->
 <div class="page-modal" id="accountDetailsModal">
 <div class="modal-box">
 <div class="modal-header"><span>👤 Account Details</span><button class="ai-close-btn" onclick="closeAccountDetailsModal()">✕</button></div>
@@ -975,7 +961,6 @@ a{ text-decoration:none; color:white; }
 </div>
 </div>
 
-<!-- AI Chat Modal -->
 <div class="page-modal" id="aiChatModal">
 <div class="ai-chat-box">
 <div class="modal-header"><span>🤖 EarnHub AI Assistant</span><button class="ai-close-btn" onclick="closeAIAssistant()">✕</button></div>
@@ -989,7 +974,6 @@ a{ text-decoration:none; color:white; }
 </div>
 </div>
 
-<!-- Complaint Modal -->
 <div class="page-modal" id="complaintModal">
 <div class="modal-box">
 <div class="modal-header"><span>📝 Complaint Box</span><button class="ai-close-btn" onclick="closeComplaintModal()">✕</button></div>
@@ -1073,7 +1057,7 @@ overlay.style.display = "block";
 }
 
 function logout(){
-    if(confirm("Kya aap waqai account se logout کرنا چاہتay hain?")) {
+    if(confirm("Kya aap waqai account se logout karna chahtay hain?")) {
         localStorage.clear();
         window.location.href = "index.html"; 
     }
@@ -1105,7 +1089,6 @@ function checkWithdraw(){ window.location.href="withdraw.html"; }
 function openWhatsApp() {
     window.open("https://chat.whatsapp.com/CHN1xn8HDaOC1I2kBsSnzI", "_blank");
 }
-
 
 function openNotificationModal() { document.getElementById("notificationModal").style.display = "flex"; }
 function closeNotificationModal() { document.getElementById("notificationModal").style.display = "none"; }
@@ -1158,7 +1141,7 @@ function sendAiMessage() {
             let currentBal = localStorage.getItem("mainBalance") || 0;
             botMsg.innerText = "Aapka current total balance upar card mein show ho raha hai: Rs. " + currentBal;
         } else if(lower.includes("complaint") || lower.includes("issue") || lower.includes("problem") || lower.includes("masla")) {
-            botMsg.innerText = "Complaint درج karne ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
+            botMsg.innerText = "Complaint darj karne ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
         } else if(lower.includes("din") || lower.includes("date") || lower.includes("aaj") || lower.includes("today")) {
             let d = new Date();
             let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -1169,7 +1152,7 @@ function sendAiMessage() {
         } else if(lower.includes("ok") || lower.includes("thek") || lower.includes("acha") || lower.includes("shukriya") || lower.includes("thanks")) {
             botMsg.innerText = "Most welcome! Agar koi aur sawal ho toh zaroor poochiyega.";
         } else {
-            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat (Deposit, Withdraw, Packages, aur Daily Spin) dashboard par mil jayengi. Mazeed rehnumai ke liye aap WhatsApp support ya Complaint Box use kar saktay hain.";
+            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat dashboard par mil jayengi. Mazeed rehnumai ke liye aap WhatsApp support ya Complaint Box use kar saktay hain.";
         }
 
         chatMessages.appendChild(botMsg);
@@ -1197,7 +1180,6 @@ function toggleTheme() {
     }
 }
 
-// Function to close Mobile Ad Popup
 function closeMobileAd() {
     document.getElementById("mobileAdPopup").style.display = "none";
 }
