@@ -192,7 +192,8 @@ window.selectMethod = function(method, event) {
 window.copyText = function(elementId) {
     let text = document.getElementById(elementId).innerText;
     navigator.clipboard.writeText(text);
-    alert("Copied: " + text);
+    // براؤزر کے ڈیفالٹ الرٹ کو ہٹا کر ڈسکرٹ کامیابی کا میسج باکس شو کیا گیا ہے تاکہ نام شو نہ ہو
+    showAlert("Copied successfully!", "success");
 }
 
 window.handleFileSelect = function(event) {
