@@ -109,7 +109,7 @@ font-size:12px;
 }
 
 
-button{
+button.action-btn{
 
 width:100%;
 padding:13px;
@@ -118,6 +118,7 @@ border-radius:25px;
 background:#00ffff;
 font-weight:bold;
 margin-top:20px;
+cursor:pointer;
 
 }
 
@@ -212,7 +213,7 @@ Copy
 
 
 
-<button onclick="logout()">
+<button class="action-btn" onclick="logout()">
 
 🚪 Logout
 
@@ -262,8 +263,7 @@ function copyText(id){
 let text=document.getElementById(id).innerText;
 
 navigator.clipboard.writeText(text);
-
-alert("Copied");
+// براؤزر کا نام والا الرٹ ختم کر دیا گیا ہے تاکہ کوئی نام شو نہ ہو
 
 }
 
