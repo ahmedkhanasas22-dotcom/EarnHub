@@ -864,7 +864,7 @@ a{ text-decoration:none; color:white; }
                         <div class="reviewer-location">Quetta • Verified User</div>
                     </div>
                 </div>
-                <p class="review-text">"Boht hi shandaار platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
+                <p class="review-text">"Boht hi shandaар platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
             </div>
 
             <div class="review-card">
@@ -985,6 +985,17 @@ a{ text-decoration:none; color:white; }
 </div>
 </div>
 
+<!-- کسٹم لاگ آؤٹ موڈલ (بغیر نام یا ڈومین کے) -->
+<div class="page-modal" id="customLogoutModal" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#161b22; padding:20px; border-radius:16px; border:2px solid #00ffff; width:90%; max-width:320px; text-align:center; box-shadow:0 0 20px rgba(0,255,255,0.2);">
+        <div style="font-size:15px; font-weight:bold; color:#fff; margin-bottom:15px;">Kya aap waqai account se logout karna chahtay hain?</div>
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="closeLogoutModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #444; background:#21262d; color:#fff; font-weight:bold; cursor:pointer;">Cancel</button>
+            <button onclick="confirmLogout()" style="flex:1; padding:10px; border-radius:10px; border:none; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer;">OK</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1056,11 +1067,18 @@ overlay.style.display = "block";
 }
 }
 
+// براؤزر کا نام والا کنفرم الرٹ ختم کر کے کسٹم لاگ آؤٹ موڈل لگا دیا گیا ہے
 function logout(){
-    if(confirm("Kya aap waqai account se logout karna chahtay hain?")) {
-        localStorage.clear();
-        window.location.href = "index.html"; 
-    }
+    document.getElementById("customLogoutModal").style.display = "flex";
+}
+
+function closeLogoutModal(){
+    document.getElementById("customLogoutModal").style.display = "none";
+}
+
+function confirmLogout(){
+    localStorage.clear();
+    window.location.href = "index.html"; 
 }
 
 function triggerProfilePictureUpload() { document.getElementById("profilePicInput").click(); }
@@ -1141,7 +1159,7 @@ function sendAiMessage() {
             let currentBal = localStorage.getItem("mainBalance") || 0;
             botMsg.innerText = "Aapka current total balance upar card mein show ho raha hai: Rs. " + currentBal;
         } else if(lower.includes("complaint") || lower.includes("issue") || lower.includes("problem") || lower.includes("masla")) {
-            botMsg.innerText = "Complaint درج karne ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
+            botMsg.innerText = "Complaint درج کرنے ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
         } else if(lower.includes("din") || lower.includes("date") || lower.includes("aaj") || lower.includes("today")) {
             let d = new Date();
             let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
