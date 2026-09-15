@@ -864,7 +864,7 @@ a{ text-decoration:none; color:white; }
                         <div class="reviewer-location">Quetta • Verified User</div>
                     </div>
                 </div>
-                <p class="review-text">"Boht hi shandaar platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
+                <p class="review-text">"Boht hi shandaار platform hai, customer support bhi bohot active hai aur 24/7 help milti hai."</p>
             </div>
 
             <div class="review-card">
@@ -1141,7 +1141,7 @@ function sendAiMessage() {
             let currentBal = localStorage.getItem("mainBalance") || 0;
             botMsg.innerText = "Aapka current total balance upar card mein show ho raha hai: Rs. " + currentBal;
         } else if(lower.includes("complaint") || lower.includes("issue") || lower.includes("problem") || lower.includes("masla")) {
-            botMsg.innerText = "Complaint darj karne ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
+            botMsg.innerText = "Complaint درج karne ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
         } else if(lower.includes("din") || lower.includes("date") || lower.includes("aaj") || lower.includes("today")) {
             let d = new Date();
             let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -1152,7 +1152,7 @@ function sendAiMessage() {
         } else if(lower.includes("ok") || lower.includes("thek") || lower.includes("acha") || lower.includes("shukriya") || lower.includes("thanks")) {
             botMsg.innerText = "Most welcome! Agar koi aur sawal ho toh zaroor poochiyega.";
         } else {
-            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat dashboard par mil jayengi. Mazeed rehnumai ke liye aap WhatsApp support ya Complaint Box use kar saktay hain.";
+            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat (Deposit, Withdraw, Packages, aur Daily Spin) dashboard par mil jayengi. Mazeed rehnumai ke liye aap WhatsApp support ya Complaint Box use kar saktay hain.";
         }
 
         chatMessages.appendChild(botMsg);
