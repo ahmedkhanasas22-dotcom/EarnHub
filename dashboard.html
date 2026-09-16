@@ -978,13 +978,14 @@ a{ text-decoration:none; color:white; }
 <div class="modal-box">
 <div class="modal-header"><span>📝 Complaint Box</span><button class="ai-close-btn" onclick="closeComplaintModal()">✕</button></div>
 <div class="modal-body">
-<p style="font-size: 12px; color: #8b949e; margin: 0;">Apni complaint ya masla yahan tafseel سے likhein:</p>
+<p style="font-size: 12px; color: #8b949e; margin: 0;">Apni complaint ya masla yahan tafseel se likhein:</p>
 <textarea id="complaintText" style="width:100%; height:110px; background:#0b0f19; border:1px solid #333; color:white; padding:10px; border-radius:8px; resize:none;" placeholder="Yahan apni complaint likhein..."></textarea>
 <button onclick="submitComplaint()" style="background:linear-gradient(135deg, #20b2aa, #005555); color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Submit Complaint</button>
 </div>
 </div>
 </div>
 
+<!-- کسٹم لاگ آؤٹ موڈل (بغیر نام یا ڈومین کے) -->
 <div class="page-modal" id="customLogoutModal" style="display:none; align-items:center; justify-content:center;">
     <div style="background:#161b22; padding:20px; border-radius:16px; border:2px solid #00ffff; width:90%; max-width:320px; text-align:center; box-shadow:0 0 20px rgba(0,255,255,0.2);">
         <div style="font-size:15px; font-weight:bold; color:#fff; margin-bottom:15px;">Kya aap waqai account se logout karna chahtay hain?</div>
@@ -992,6 +993,14 @@ a{ text-decoration:none; color:white; }
             <button onclick="closeLogoutModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #444; background:#21262d; color:#fff; font-weight:bold; cursor:pointer;">Cancel</button>
             <button onclick="confirmLogout()" style="flex:1; padding:10px; border-radius:10px; border:none; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer;">OK</button>
         </div>
+    </div>
+</div>
+
+<!-- پروفائل پکچر اپڈیٹ کا کسٹم پاپ اپ (بغیر ڈومین/نام کے) -->
+<div class="page-modal" id="customProfileModal" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#161b22; padding:22px; border-radius:16px; border:2px solid #00ffff; width:90%; max-width:320px; text-align:center; box-shadow:0 0 20px rgba(0,255,255,0.2);">
+        <div style="font-size:14px; font-weight:bold; color:#fff; margin-bottom:18px;" id="customProfileText">آپ کی پروفائل پکچر کامیابی سے اپڈیٹ ہو چکی ہے !</div>
+        <button onclick="closeCustomProfileModal()" style="background:linear-gradient(135deg, #00ffff, #0048ff); color:#000; border:none; padding:8px 25px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px;">OK</button>
     </div>
 </div>
 
@@ -1080,6 +1089,7 @@ function confirmLogout(){
 }
 
 function triggerProfilePictureUpload() { document.getElementById("profilePicInput").click(); }
+
 function handleProfilePictureChange(event) {
     let file = event.target.files[0];
     if (file) {
@@ -1088,11 +1098,16 @@ function handleProfilePictureChange(event) {
             localStorage.setItem("userProfilePic", e.target.result);
             document.getElementById("cardAvatarIcon").innerHTML = `<img src="${e.target.result}" alt="Profile">`;
             document.getElementById("sidebarAvatarIcon").innerHTML = `<img src="${e.target.result}" alt="Profile">`;
-            // نام ہٹا کر صرف کامیابی کا نوٹیفیکیشن سیٹ کر دیا گیا ہے
-            alert("آپ کی پروفائل پکچر کامیابی سے اپڈیٹ ہو چکی ہے!");
+            
+            // براؤزر الرٹ ہٹا کر یہ کسٹم پاپ اپ شو کر دیا گیا ہے جس پر کوئی ڈومین یا نام نہیں آئے گا
+            document.getElementById("customProfileModal").style.display = "flex";
         }
         reader.readAsDataURL(file);
     }
+}
+
+function closeCustomProfileModal() {
+    document.getElementById("customProfileModal").style.display = "none";
 }
 
 let savedPic = localStorage.getItem("userProfilePic");
