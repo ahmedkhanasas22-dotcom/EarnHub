@@ -109,13 +109,13 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:12px;
+    gap:10px;
     margin: 5px auto;
 }
 
 .unique-icon{
-    width:55px;
-    height:55px;
+    width:45px;
+    height:45px;
     border-radius:50%;
     background: linear-gradient(135deg,#00ffff,#0048ff);
     display:flex;
@@ -125,22 +125,22 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 
 .eh-symbol{
-    width:40px;
-    height:40px;
+    width:33px;
+    height:33px;
     border-radius:50%;
     background:#050505;
     display:flex;
     align-items:center;
     justify-content:center;
     color:#ffd700;
-    font-size:14px;
+    font-size:12px;
     font-weight:900;
     border:2px solid #ffd700;
 }
 
 .unique-text h1{
     margin:0;
-    font-size:24px;
+    font-size:20px;
     font-weight:900;
     color:white;
     text-align: left;
@@ -148,7 +148,20 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 
 .unique-text h1 span{ color:#00ffff; }
-.unique-text p{ margin:2px 0 0 0; color:#ffd700; font-size:8px; letter-spacing:1.5px; text-align: left; }
+.unique-text p{ margin:2px 0 0 0; color:#ffd700; font-size:7px; letter-spacing:1px; text-align: left; }
+
+/* नया करंसी सेलेक्टर स्टाइल */
+.currency-selector-container select {
+    background: #161b22;
+    color: #00ffff;
+    border: 1px solid rgba(0,255,255,0.3);
+    padding: 5px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+}
 
 .container{ padding:0 15px; }
 
@@ -722,7 +735,16 @@ a{ text-decoration:none; color:white; }
         <p>SMART MONEY NETWORK</p>
     </div>
 </div>
-<div style="width: 18px;"></div>
+<!-- यहाँ पर नया करेंसी सेलेक्टर (Dropdown) जोड़ दिया गया है -->
+<div class="currency-selector-container">
+    <select id="userCurrency" onchange="updateGlobalCurrency()">
+        <option value="USD">USD ($)</option>
+        <option value="PKR">PKR (Rs)</option>
+        <option value="INR">INR (₹)</option>
+        <option value="IDR">IDR (Rp)</option>
+        <option value="CAD">CAD (CA$)</option>
+    </select>
+</div>
 </div>
 
 <div class="container">
@@ -745,7 +767,8 @@ a{ text-decoration:none; color:white; }
         <div class="balance-action-row">
             <div class="balance-info">
                 <span class="balance-label">Your balance</span>
-                <h2 class="balance-amount" id="mainBalance">Rs. 0</h2>
+                <!-- ব্যালেন্স کو بھی ڈیٹا بیس ڈالر کے ساتھ لنک کر دیا گیا ہے تاکہ یہ بھی کرنسی کے مطابق بدل سکے -->
+                <h2 class="balance-amount currency-price" id="mainBalance" data-base-usd="0">$0.00</h2>
             </div>
             <a href="deposit.html" class="add-card-btn">
                 <i class="fas fa-plus"></i> Add card
@@ -759,7 +782,7 @@ a{ text-decoration:none; color:white; }
 
         <div class="atm-card">
             <div class="atm-card-top">
-                <span class="atm-balance" id="atmBalanceText">Rs. 0</span>
+                <span class="atm-balance currency-price" id="atmBalanceText" data-base-usd="0">$0.00</span>
             </div>
             <div class="atm-card-bottom">
                 <span class="atm-number" id="userIdDisplay">•••• 0343</span>
@@ -951,7 +974,7 @@ a{ text-decoration:none; color:white; }
     </div>
     <div class="acc-detail-row">
         <span class="acc-detail-label">Current Balance</span>
-        <span class="acc-detail-value" id="modalAccBalance" style="color:#00ffff;">Rs. 0</span>
+        <span class="acc-detail-value currency-price" id="modalAccBalance" data-base-usd="0" style="color:#00ffff;">$0.00</span>
     </div>
     <div class="acc-detail-row">
         <span class="acc-detail-label">Account Status</span>
@@ -985,10 +1008,9 @@ a{ text-decoration:none; color:white; }
 </div>
 </div>
 
-<!-- کسٹم لاگ آؤٹ موڈل (بغیر نام یا ڈومین کے) -->
 <div class="page-modal" id="customLogoutModal" style="display:none; align-items:center; justify-content:center;">
     <div style="background:#161b22; padding:20px; border-radius:16px; border:2px solid #00ffff; width:90%; max-width:320px; text-align:center; box-shadow:0 0 20px rgba(0,255,255,0.2);">
-        <div style="font-size:15px; font-weight:bold; color:#fff; margin-bottom:15px;">Kya aap waqai account se logout karna chahtay hain?</div>
+        <div style="font-size:15px; font-weight:bold; color:#fff; margin-bottom:15px;">Kya aap waqai account سے logout karna chahtay hain?</div>
         <div style="display:flex; gap:10px; justify-content:center;">
             <button onclick="closeLogoutModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #444; background:#21262d; color:#fff; font-weight:bold; cursor:pointer;">Cancel</button>
             <button onclick="confirmLogout()" style="flex:1; padding:10px; border-radius:10px; border:none; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer;">OK</button>
@@ -996,7 +1018,6 @@ a{ text-decoration:none; color:white; }
     </div>
 </div>
 
-<!-- پروفائل پکچر اپڈیٹ کا کسٹم پاپ اپ (بغیر ڈومین/نام کے) -->
 <div class="page-modal" id="customProfileModal" style="display:none; align-items:center; justify-content:center;">
     <div style="background:#161b22; padding:22px; border-radius:16px; border:2px solid #00ffff; width:90%; max-width:320px; text-align:center; box-shadow:0 0 20px rgba(0,255,255,0.2);">
         <div style="font-size:14px; font-weight:bold; color:#fff; margin-bottom:18px;" id="customProfileText">آپ کی پروفائل پکچر کامیابی سے اپڈیٹ ہو چکی ہے !</div>
@@ -1031,23 +1052,36 @@ onAuthStateChanged(auth, async (user) => {
                 let data = userDoc.data();
                 let username = data.username || "User";
                 let userIdVal = data.userId || "#00000";
-                let balance = Number(data.mainBalance || 0);
+                
+                // فرض کریں آپ کا ڈیٹا بیس مین بیلنس PKR میں ہے، تو ہم اسے ڈالر میں بیس سیٹ کرنے کے لیے کنورٹ یا ریڈ کریں گے
+                let balancePKR = Number(data.mainBalance || 0);
+                
+                // मान लेते हैं कि 1 USD लगभग 280 PKR का है, या हम इसे सीधे डॉलर बेस मान सकते हैं। 
+                // चूंकि आपकी पुरानी साइट में बैलेंस PKR में था, हम इसे डॉलर बेस ($) में बदल कर data-base-usd में सेट कर देंगे:
+                let balanceUSD = (balancePKR / 280).toFixed(2); 
+
                 let myCode = data.myReferralCode || "EH0000";
 
-                let formattedBalance = balance.toFixed(2);
+                // ایلیمنٹس میں ویلیو اور ڈیٹا بیس USD سیٹ کرنا
+                let mainBalEl = document.getElementById("mainBalance");
+                let atmBalEl = document.getElementById("atmBalanceText");
 
-                document.getElementById("mainBalance").innerText = "Rs. " + formattedBalance;
-                document.getElementById("atmBalanceText").innerText = "Rs. " + formattedBalance;
+                mainBalEl.setAttribute("data-base-usd", balanceUSD);
+                atmBalEl.setAttribute("data-base-usd", balanceUSD);
+
                 document.getElementById("userNameDisplay").innerText = username;
                 document.getElementById("userIdDisplay").innerText = "•••• " + userIdVal.slice(-4);
                 document.getElementById("sidebarUserName").innerText = username;
                 document.getElementById("sidebarUserId").innerText = "ID: " + userIdVal;
 
                 localStorage.setItem("userName", username);
-                localStorage.setItem("mainBalance", formattedBalance);
+                localStorage.setItem("mainBalanceUSD", balanceUSD);
                 localStorage.setItem("myReferralCode", myCode);
                 localStorage.setItem("userId", userIdVal);
                 localStorage.setItem("firebaseUid", user.uid);
+
+                // चुनी हुई करंसी के मुताबिक तुरंत बैलेंस रेंडर करना
+                applyGlobalCurrencyToElements();
 
                 if(data.activePackage) {
                     localStorage.setItem("activePackage", JSON.stringify(data.activePackage));
@@ -1063,6 +1097,55 @@ onAuthStateChanged(auth, async (user) => {
 </script>
 
 <script>
+// صفحہ لوڈ ہوتے ہی یا کرंसी بدلنے پر کام کرنے والا ماسٹر اسکرپٹ
+window.addEventListener('DOMContentLoaded', () => {
+    let savedCurrency = localStorage.getItem('selectedCurrency') || 'USD';
+    let dropdown = document.getElementById('userCurrency');
+    if (dropdown) dropdown.value = savedCurrency;
+    applyGlobalCurrencyToElements();
+});
+
+async function updateGlobalCurrency() {
+    let selectedCurrency = document.getElementById('userCurrency').value;
+    localStorage.setItem('selectedCurrency', selectedCurrency);
+    applyGlobalCurrencyToElements();
+}
+
+async function applyGlobalCurrencyToElements() {
+    let targetCurrency = localStorage.getItem('selectedCurrency') || 'USD';
+    let dropdown = document.getElementById('userCurrency');
+    if(dropdown) dropdown.value = targetCurrency;
+
+    try {
+        // लाइव एक्सचेंज रेट्स API से मंगवाना (डिफ़ॉल्ट बेस USD)
+        let response = await fetch('https://open.er-api.com/v6/latest/USD');
+        let data = await response.json();
+        let rate = data.rates[targetCurrency] || 1;
+        let symbol = getCurrencySymbol(targetCurrency);
+
+        // सभी .currency-price क्लास वाले एलिमेंट्स को ऑटोमैटिकली बदलना
+        let priceElements = document.querySelectorAll('.currency-price');
+        priceElements.forEach(el => {
+            let baseUSD = parseFloat(el.getAttribute('data-base-usd')) || 0;
+            let finalVal = (baseUSD * rate).toFixed(2);
+            el.innerText = symbol + " " + finalVal;
+        });
+    } catch (e) {
+        console.log("Currency offline mode active");
+    }
+}
+
+function getCurrencySymbol(curr) {
+    switch(curr) {
+        case 'USD': return '$';
+        case 'PKR': return 'Rs';
+        case 'INR': return '₹';
+        case 'IDR': return 'Rp';
+        case 'CAD': return 'CA$';
+        default: return '$';
+    }
+}
+
 function toggleSidebar(){
 let sidebar = document.getElementById("appSidebar");
 let overlay = document.getElementById("sidebarOverlay");
@@ -1098,8 +1181,6 @@ function handleProfilePictureChange(event) {
             localStorage.setItem("userProfilePic", e.target.result);
             document.getElementById("cardAvatarIcon").innerHTML = `<img src="${e.target.result}" alt="Profile">`;
             document.getElementById("sidebarAvatarIcon").innerHTML = `<img src="${e.target.result}" alt="Profile">`;
-            
-            // براؤزر الرٹ ہٹا کر یہ کسٹم پاپ اپ شو کر دیا گیا ہے جس پر کوئی ڈومین یا نام نہیں آئے گا
             document.getElementById("customProfileModal").style.display = "flex";
         }
         reader.readAsDataURL(file);
@@ -1128,8 +1209,14 @@ function closeNotificationModal() { document.getElementById("notificationModal")
 function openAccountDetailsModal() {
     document.getElementById("modalAccName").innerText = localStorage.getItem("userName") || "User";
     document.getElementById("modalAccId").innerText = localStorage.getItem("userId") || "#00000";
-    document.getElementById("modalAccBalance").innerText = "Rs. " + (localStorage.getItem("mainBalance") || 0);
+    
+    // अकाउंट डिटेल्स में भी बैलेंस को सिंक करना
+    let balUSD = localStorage.getItem("mainBalanceUSD") || "0";
+    let modalBalEl = document.getElementById("modalAccBalance");
+    modalBalEl.setAttribute("data-base-usd", balUSD);
+    
     document.getElementById("accountDetailsModal").style.display = "flex";
+    applyGlobalCurrencyToElements();
 }
 function closeAccountDetailsModal() { document.getElementById("accountDetailsModal").style.display = "none"; }
 
@@ -1170,21 +1257,14 @@ function sendAiMessage() {
         } else if(lower.includes("referral") || lower.includes("friend") || lower.includes("dost") || lower.includes("invite")) {
             botMsg.innerText = "Referral section se apna unique link doston ke sath share karein aur har invite par bonus hasil karein.";
         } else if(lower.includes("balance") || lower.includes("amount") || lower.includes("pise")) {
-            let currentBal = localStorage.getItem("mainBalance") || 0;
-            botMsg.innerText = "Aapka current total balance upar card mein show ho raha hai: Rs. " + currentBal;
+            let currentBal = localStorage.getItem("mainBalanceUSD") || 0;
+            botMsg.innerText = "Aapka current total balance upar card mein show ho raha hai.";
         } else if(lower.includes("complaint") || lower.includes("issue") || lower.includes("problem") || lower.includes("masla")) {
             botMsg.innerText = "Complaint درج کرنے ke liye dashboard par 'Complaint Box' ka button mojood hai, wahan apna masla likhein.";
-        } else if(lower.includes("din") || lower.includes("date") || lower.includes("aaj") || lower.includes("today")) {
-            let d = new Date();
-            let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            let dayName = days[d.getDay()];
-            botMsg.innerText = "Aaj ka din " + dayName + " hai aur date " + d.toLocaleDateString() + " hai.";
         } else if(lower.includes("hello") || lower.includes("salam") || lower.includes("hi")) {
             botMsg.innerText = "Walaikum Assalam! Main EarnHub AI hoon. Bataiye aapki kya madad kar sakta hoon?";
-        } else if(lower.includes("ok") || lower.includes("thek") || lower.includes("acha") || lower.includes("shukriya") || lower.includes("thanks")) {
-            botMsg.innerText = "Most welcome! Agar koi aur sawal ho toh zaroor poochiyega.";
         } else {
-            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat (Deposit, Withdraw, Packages, aur Daily Spin) dashboard par mil jayengi. Mazeed rehnumai ke liye aap WhatsApp support ya Complaint Box use kar saktay hain.";
+            botMsg.innerText = "Aapne acha sawal pucha hai! EarnHub ke platform par aapko tamam sahuliyat dashboard par mil jayengi.";
         }
 
         chatMessages.appendChild(botMsg);
