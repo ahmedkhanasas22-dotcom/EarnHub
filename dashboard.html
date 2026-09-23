@@ -150,17 +150,71 @@ border-bottom: 1px solid rgba(255,255,255,0.03);
 .unique-text h1 span{ color:#00ffff; }
 .unique-text p{ margin:2px 0 0 0; color:#ffd700; font-size:7px; letter-spacing:1px; text-align: left; }
 
-/* नया करंसी सेलेक्टर स्टाइल */
-.currency-selector-container select {
-    background: #161b22;
+/* جدید اور پرکشش کسٹم کرنسی سلیکٹر ڈیزائن */
+.custom-currency-btn {
+    background: linear-gradient(135deg, #161b22, #1f2937);
     color: #00ffff;
-    border: 1px solid rgba(0,255,255,0.3);
-    padding: 5px 8px;
-    border-radius: 8px;
-    font-size: 11px;
+    border: 1px solid rgba(0,255,255,0.4);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
     font-weight: bold;
     outline: none;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+.custom-currency-btn:hover {
+    border-color: #00ffff;
+    box-shadow: 0 0 12px rgba(0,255,255,0.3);
+}
+
+.currency-modal-content {
+    background: #161b22;
+    width: 100%;
+    max-width: 340px;
+    max-height: 80vh;
+    border-radius: 20px;
+    border: 2px solid #00ffff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0,255,255,0.3);
+}
+.currency-list {
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.currency-option {
+    background: #0b0f19;
+    padding: 10px 14px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.2s;
+}
+.currency-option:hover {
+    background: rgba(0,255,255,0.1);
+    border-color: rgba(0,255,255,0.3);
+}
+.currency-option span {
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+}
+.currency-flag-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .container{ padding:0 15px; }
@@ -735,16 +789,26 @@ a{ text-decoration:none; color:white; }
         <p>SMART MONEY NETWORK</p>
     </div>
 </div>
-<!-- यहाँ पर नया करेंसी सेलेक्टर (Dropdown) जोड़ दिया गया है -->
+
+<!-- خوبصورت کسٹم کرنسی سلیکٹر بٹن -->
 <div class="currency-selector-container">
-    <select id="userCurrency" onchange="updateGlobalCurrency()">
-        <option value="USD">USD ($)</option>
-        <option value="PKR">PKR (Rs)</option>
-        <option value="INR">INR (₹)</option>
-        <option value="IDR">IDR (Rp)</option>
-        <option value="CAD">CAD (CA$)</option>
-    </select>
+    <button class="custom-currency-btn" id="currentCurrencyBtn" onclick="openCurrencyModal()">
+        <span id="btnFlag">🇺🇸</span> <span id="btnCode">USD</span> <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+    </button>
 </div>
+</div>
+
+<!-- تمام دنیا کی کرنسیز کے لیے فلیگ پاپ اپ ماڈل -->
+<div class="page-modal" id="currencySelectionModal">
+    <div class="currency-modal-content">
+        <div class="modal-header">
+            <span>🌐 Select Country Currency</span>
+            <button class="ai-close-btn" onclick="closeCurrencyModal()">✕</button>
+        </div>
+        <div class="currency-list" id="currencyListContainer">
+            <!-- جاوید بھائی! یہاں تمام ممالک کے فلیگز اور کرنسیاں خودکار طریقے سے شامل ہیں -->
+        </div>
+    </div>
 </div>
 
 <div class="container">
@@ -767,7 +831,6 @@ a{ text-decoration:none; color:white; }
         <div class="balance-action-row">
             <div class="balance-info">
                 <span class="balance-label">Your balance</span>
-                <!-- ব্যালেন্স کو بھی ڈیٹا بیس ڈالر کے ساتھ لنک کر دیا گیا ہے تاکہ یہ بھی کرنسی کے مطابق بدل سکے -->
                 <h2 class="balance-amount currency-price" id="mainBalance" data-base-usd="0">$0.00</h2>
             </div>
             <a href="deposit.html" class="add-card-btn">
@@ -1053,16 +1116,10 @@ onAuthStateChanged(auth, async (user) => {
                 let username = data.username || "User";
                 let userIdVal = data.userId || "#00000";
                 
-                // فرض کریں آپ کا ڈیٹا بیس مین بیلنس PKR میں ہے، تو ہم اسے ڈالر میں بیس سیٹ کرنے کے لیے کنورٹ یا ریڈ کریں گے
                 let balancePKR = Number(data.mainBalance || 0);
-                
-                // मान लेते हैं कि 1 USD लगभग 280 PKR का है, या हम इसे सीधे डॉलर बेस मान सकते हैं। 
-                // चूंकि आपकी पुरानी साइट में बैलेंस PKR में था, हम इसे डॉलर बेस ($) में बदल कर data-base-usd में सेट कर देंगे:
                 let balanceUSD = (balancePKR / 280).toFixed(2); 
-
                 let myCode = data.myReferralCode || "EH0000";
 
-                // ایلیمنٹس میں ویلیو اور ڈیٹا بیس USD سیٹ کرنا
                 let mainBalEl = document.getElementById("mainBalance");
                 let atmBalEl = document.getElementById("atmBalanceText");
 
@@ -1080,7 +1137,6 @@ onAuthStateChanged(auth, async (user) => {
                 localStorage.setItem("userId", userIdVal);
                 localStorage.setItem("firebaseUid", user.uid);
 
-                // चुनी हुई करंसी के मुताबिक तुरंत बैलेंस रेंडर करना
                 applyGlobalCurrencyToElements();
 
                 if(data.activePackage) {
@@ -1097,33 +1153,85 @@ onAuthStateChanged(auth, async (user) => {
 </script>
 
 <script>
-// صفحہ لوڈ ہوتے ہی یا کرंसी بدلنے پر کام کرنے والا ماسٹر اسکرپٹ
+// دنیا بھر کی اہم کرنسیز اور ان کے فلیگز کی فہرست
+const countriesCurrencies = [
+    { code: 'USD', name: 'United States Dollar', flag: '🇺🇸', symbol: '$' },
+    { code: 'PKR', name: 'Pakistani Rupee', flag: '🇵🇰', symbol: 'Rs' },
+    { code: 'INR', name: 'Indian Rupee', flag: '🇮🇳', symbol: '₹' },
+    { code: 'EUR', name: 'Euro', flag: '🇪🇺', symbol: '€' },
+    { code: 'GBP', name: 'British Pound', flag: '🇬🇧', symbol: '£' },
+    { code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦', symbol: 'CA$' },
+    { code: 'AUD', name: 'Australian Dollar', flag: '🇦🇺', symbol: 'AU$' },
+    { code: 'AED', name: 'UAE Dirham', flag: '🇦🇪', symbol: 'AED' },
+    { code: 'SAR', name: 'Saudi Riyal', flag: '🇸🇦', symbol: 'SAR' },
+    { code: 'IDR', name: 'Indonesian Rupiah', flag: '🇮🇩', symbol: 'Rp' },
+    { code: 'MYR', name: 'Malaysian Ringgit', flag: '🇲🇾', symbol: 'RM' },
+    { code: 'TRY', name: 'Turkish Lira', flag: '🇹🇷', symbol: '₺' },
+    { code: 'CNY', name: 'Chinese Yuan', flag: '🇨🇳', symbol: '¥' },
+    { code: 'JPY', name: 'Japanese Yen', flag: '🇯🇵', symbol: '¥' }
+];
+
 window.addEventListener('DOMContentLoaded', () => {
+    buildCurrencyModalList();
     let savedCurrency = localStorage.getItem('selectedCurrency') || 'USD';
-    let dropdown = document.getElementById('userCurrency');
-    if (dropdown) dropdown.value = savedCurrency;
+    updateCurrencyButtonDisplay(savedCurrency);
     applyGlobalCurrencyToElements();
 });
 
-async function updateGlobalCurrency() {
-    let selectedCurrency = document.getElementById('userCurrency').value;
-    localStorage.setItem('selectedCurrency', selectedCurrency);
+function buildCurrencyModalList() {
+    let container = document.getElementById('currencyListContainer');
+    container.innerHTML = '';
+    countriesCurrencies.forEach(item => {
+        let div = document.createElement('div');
+        div.className = 'currency-option';
+        div.onclick = () => selectCurrency(item.code);
+        div.innerHTML = `
+            <div class="currency-flag-name">
+                <span style="font-size:20px;">${item.flag}</span>
+                <div>
+                    <div style="font-size:13px; font-weight:bold; color:#fff;">${item.code}</div>
+                    <div style="font-size:10px; color:#8b949e;">${item.name}</div>
+                </div>
+            </div>
+            <span style="color:#00ffff;">${item.symbol}</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function openCurrencyModal() {
+    document.getElementById('currencySelectionModal').style.display = 'flex';
+}
+
+function closeCurrencyModal() {
+    document.getElementById('currencySelectionModal').style.display = 'none';
+}
+
+function selectCurrency(code) {
+    localStorage.setItem('selectedCurrency', code);
+    updateCurrencyButtonDisplay(code);
     applyGlobalCurrencyToElements();
+    closeCurrencyModal();
+}
+
+function updateCurrencyButtonDisplay(code) {
+    let found = countriesCurrencies.find(c => c.code === code) || countriesCurrencies[0];
+    document.getElementById('btnFlag').innerText = found.flag;
+    document.getElementById('btnCode').innerText = found.code;
 }
 
 async function applyGlobalCurrencyToElements() {
     let targetCurrency = localStorage.getItem('selectedCurrency') || 'USD';
-    let dropdown = document.getElementById('userCurrency');
-    if(dropdown) dropdown.value = targetCurrency;
+    updateCurrencyButtonDisplay(targetCurrency);
 
     try {
-        // लाइव एक्सचेंज रेट्स API से मंगवाना (डिफ़ॉल्ट बेस USD)
         let response = await fetch('https://open.er-api.com/v6/latest/USD');
         let data = await response.json();
         let rate = data.rates[targetCurrency] || 1;
-        let symbol = getCurrencySymbol(targetCurrency);
+        
+        let found = countriesCurrencies.find(c => c.code === targetCurrency);
+        let symbol = found ? found.symbol : '$';
 
-        // सभी .currency-price क्लास वाले एलिमेंट्स को ऑटोमैटिकली बदलना
         let priceElements = document.querySelectorAll('.currency-price');
         priceElements.forEach(el => {
             let baseUSD = parseFloat(el.getAttribute('data-base-usd')) || 0;
@@ -1132,17 +1240,6 @@ async function applyGlobalCurrencyToElements() {
         });
     } catch (e) {
         console.log("Currency offline mode active");
-    }
-}
-
-function getCurrencySymbol(curr) {
-    switch(curr) {
-        case 'USD': return '$';
-        case 'PKR': return 'Rs';
-        case 'INR': return '₹';
-        case 'IDR': return 'Rp';
-        case 'CAD': return 'CA$';
-        default: return '$';
     }
 }
 
@@ -1210,7 +1307,6 @@ function openAccountDetailsModal() {
     document.getElementById("modalAccName").innerText = localStorage.getItem("userName") || "User";
     document.getElementById("modalAccId").innerText = localStorage.getItem("userId") || "#00000";
     
-    // अकाउंट डिटेल्स में भी बैलेंस को सिंक करना
     let balUSD = localStorage.getItem("mainBalanceUSD") || "0";
     let modalBalEl = document.getElementById("modalAccBalance");
     modalBalEl.setAttribute("data-base-usd", balUSD);
