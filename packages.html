@@ -3,422 +3,1924 @@
 <head>
 <title>EarnHub Investment Plans</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-*{ box-sizing:border-box; }
-body{ margin:0; max-width:430px; margin:auto; font-family:Arial; background:#050505; color:white; padding-bottom: 30px; }
-.header{ text-align:center; padding:15px; }
-.unique-logo{ display:flex; align-items:center; justify-content:center; gap:14px; font-family:Arial,sans-serif; margin: 10px 0; }
-.unique-icon{ width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#00ffff,#0048ff); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 20px #00ffff; }
-.eh-symbol{ width:44px; height:44px; border-radius:50%; background:#050505; display:flex; align-items:center; justify-content:center; color:#ffd700; font-size:16px; font-weight:900; border:2px solid #ffd700; }
-.unique-text h1{ margin:0; font-size:24px; font-weight:900; color:white; text-align: left; }
-.unique-text h1 span{ color:#00ffff; }
-.unique-text p{ margin:2px 0 0 0; color:#ffd700; font-size:8px; letter-spacing:1.5px; text-align: left; }
-.container{ padding:12px; }
-.title{ text-align:center; color:#00ffff; font-size:20px; font-weight:bold; margin-bottom:15px; }
-
-.package{ 
-    background:#111; padding:15px; margin-bottom:12px; border-radius:18px; box-shadow:0 0 12px rgba(0,255,255,0.3); border:1px solid #00ffff; 
+*{
+    box-sizing:border-box;
 }
-.package h2{ color:#00ffff; font-size:18px; margin:0 0 12px 0; text-align:center; border-bottom:1px solid #333; padding-bottom:6px; }
 
-.plan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 5px; }
-.plan-item { background: #161f2d; padding: 8px 10px; border-radius: 10px; border: 1px solid #333; }
-.plan-label { font-size: 12px; color: #888; margin-bottom: 4px; }
-.plan-value { font-size: 14px; font-weight: bold; color: #fff; }
-.return-value { color: #00ff99 !important; }
+html{
+    scroll-behavior:smooth;
+}
 
-button{ width:100%; padding:10px; margin-top:12px; border:none; border-radius:25px; background:linear-gradient(135deg,#00ffff,#1a73e8); font-weight:bold; font-size:14px; cursor:pointer; color:#000; box-shadow: 0 4px 10px rgba(0,255,255,0.2); }
-button:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow: none; }
-.back-btn { display: inline-block; margin-bottom: 10px; color: #00ffff; font-size: 13px; text-decoration: none; font-weight: bold; }
+body{
+    margin:0;
+    max-width:430px;
+    margin:auto;
+    font-family:Arial,sans-serif;
+    background:#050505;
+    color:white;
+    padding-bottom:40px;
+    overflow-x:hidden;
+}
 
-/* کسٹم پاپ اپ ماڈل ڈیزائن */
-.custom-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
+/* ================= HEADER ================= */
+
+.header{
+    text-align:center;
+    padding:15px 15px 20px;
 }
-.custom-modal-box {
-    background: #161b22;
-    width: 100%;
-    max-width: 320px;
-    border-radius: 16px;
-    border: 2px solid #00ffff;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 0 25px rgba(0,255,255,0.3);
+
+.unique-logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    font-family:Arial,sans-serif;
+    margin:10px 0;
 }
-.custom-modal-text {
-    color: #fff;
-    font-size: 14px;
-    margin-bottom: 20px;
-    line-height: 1.4;
+
+.unique-icon{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#00ffff,#0048ff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 20px #00ffff;
 }
-.custom-modal-btn {
-    background: linear-gradient(135deg, #00ffff, #0048ff);
-    color: #000;
-    border: none;
-    padding: 8px 25px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    width: auto;
-    margin-top: 0;
-    box-shadow: none;
+
+.eh-symbol{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:#050505;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#ffd700;
+    font-size:16px;
+    font-weight:900;
+    border:2px solid #ffd700;
+}
+
+.unique-text h1{
+    margin:0;
+    font-size:24px;
+    font-weight:900;
+    color:white;
+    text-align:left;
+}
+
+.unique-text h1 span{
+    color:#00ffff;
+}
+
+.unique-text p{
+    margin:2px 0 0 0;
+    color:#ffd700;
+    font-size:8px;
+    letter-spacing:1.5px;
+    text-align:left;
+}
+
+/* ================= PAGE ================= */
+
+.container{
+    padding:12px;
+}
+
+.back-btn{
+    display:inline-block;
+    margin:0 0 18px 4px;
+    color:#00ffff;
+    font-size:14px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.title{
+    text-align:center;
+    color:#00ffff;
+    font-size:25px;
+    font-weight:900;
+    margin-bottom:28px;
+}
+
+.title:after{
+    content:"";
+    display:block;
+    width:65px;
+    height:4px;
+    margin:10px auto 0;
+    border-radius:20px;
+    background:linear-gradient(90deg,#ff00a8,#00ffff);
+}
+
+/* ==================================================
+   ENVELOPE AREA
+================================================== */
+
+.envelope-plan{
+    position:relative;
+    width:100%;
+    height:245px;
+    margin-bottom:28px;
+    perspective:1000px;
+}
+
+/* Shadow under envelope */
+
+.envelope-plan:after{
+    content:"";
+    position:absolute;
+    left:8%;
+    right:8%;
+    bottom:3px;
+    height:25px;
+    background:rgba(0,255,255,.12);
+    filter:blur(14px);
+    border-radius:50%;
+    z-index:0;
+}
+
+/* ================= ENVELOPE ================= */
+
+.envelope{
+    position:absolute;
+    left:0;
+    bottom:10px;
+    width:100%;
+    height:190px;
+    cursor:pointer;
+    z-index:10;
+    transition:all .45s ease;
+}
+
+/* Envelope body */
+
+.envelope-body{
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:145px;
+    border-radius:0 0 20px 20px;
+    background:
+        linear-gradient(145deg,#171b2b,#0b0d16);
+    border:1px solid rgba(0,255,255,.55);
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.65),
+        0 0 20px rgba(0,255,255,.12);
+    overflow:hidden;
+}
+
+/* Envelope diagonal lines */
+
+.envelope-body:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(35deg,
+        transparent 48%,
+        rgba(0,255,255,.16) 49%,
+        rgba(0,255,255,.16) 50%,
+        transparent 51%),
+        linear-gradient(-35deg,
+        transparent 48%,
+        rgba(0,255,255,.16) 49%,
+        rgba(0,255,255,.16) 50%,
+        transparent 51%);
+}
+
+/* Envelope top flap */
+
+.envelope-flap{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:105px;
+    z-index:5;
+    transform-origin:top center;
+    transition:transform .65s cubic-bezier(.2,.8,.2,1);
+}
+
+.envelope-flap:before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:linear-gradient(145deg,#242a42,#101321);
+    clip-path:polygon(0 0,100% 0,50% 88%);
+    border-top:1px solid rgba(0,255,255,.55);
+    filter:drop-shadow(0 5px 7px rgba(0,0,0,.4));
+}
+
+/* Envelope seal */
+
+.envelope-seal{
+    position:absolute;
+    left:50%;
+    top:69px;
+    transform:translateX(-50%);
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    z-index:8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#ff00a8,#7d3cff);
+    border:3px solid #ffd700;
+    color:white;
+    font-size:16px;
+    font-weight:900;
+    box-shadow:
+        0 0 15px rgba(255,0,168,.55),
+        0 0 8px rgba(255,215,0,.4);
+    transition:all .5s ease;
+}
+
+/* Envelope title */
+
+.envelope-title{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:38px;
+    z-index:7;
+    text-align:center;
+    pointer-events:none;
+}
+
+.envelope-title .small{
+    color:#8992a7;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.envelope-title .plan-number{
+    margin-top:5px;
+    color:white;
+    font-size:22px;
+    font-weight:900;
+}
+
+.tap-text{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:13px;
+    z-index:8;
+    text-align:center;
+    font-size:10px;
+    color:#00ffff;
+    letter-spacing:1px;
+    opacity:.8;
+}
+
+/* ================= PACKAGE ================= */
+
+.package{
+    position:absolute;
+    left:8px;
+    right:8px;
+    top:4px;
+    padding:15px;
+    border-radius:20px;
+    background:
+        linear-gradient(145deg,#151923,#0d1018);
+    border:1px solid rgba(0,255,255,.6);
+    box-shadow:
+        0 0 25px rgba(0,255,255,.18),
+        0 18px 35px rgba(0,0,0,.7);
+    z-index:4;
+
+    opacity:0;
+    transform:translateY(125px) scale(.82);
+    pointer-events:none;
+
+    transition:
+        transform .75s cubic-bezier(.18,.9,.25,1),
+        opacity .45s ease;
+}
+
+/* Package heading */
+
+.package h2{
+    color:#00ffff;
+    font-size:18px;
+    margin:0 0 12px 0;
+    text-align:center;
+    border-bottom:1px solid #333;
+    padding-bottom:8px;
+}
+
+/* ================= OPEN STATE ================= */
+
+.envelope-plan.open{
+    height:390px;
+}
+
+.envelope-plan.open .package{
+    opacity:1;
+    transform:translateY(-5px) scale(1);
+    pointer-events:auto;
+    z-index:20;
+}
+
+.envelope-plan.open .envelope{
+    bottom:5px;
+    z-index:10;
+}
+
+.envelope-plan.open .envelope-flap{
+    transform:rotateX(180deg);
+    z-index:2;
+}
+
+.envelope-plan.open .envelope-seal{
+    opacity:0;
+    transform:translateX(-50%) scale(.4);
+}
+
+.envelope-plan.open .envelope-title,
+.envelope-plan.open .tap-text{
+    opacity:0;
+}
+
+/* ================= PLAN GRID ================= */
+
+.plan-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-bottom:5px;
+}
+
+.plan-item{
+    background:
+        linear-gradient(145deg,#1a2230,#111721);
+    padding:10px;
+    min-height:58px;
+    border-radius:12px;
+    border:1px solid #2c3545;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+.plan-label{
+    font-size:11px;
+    color:#7f8999;
+    margin-bottom:5px;
+}
+
+.plan-value{
+    font-size:14px;
+    font-weight:bold;
+    color:#fff;
+}
+
+.return-value{
+    color:#00ff99 !important;
+}
+
+/* ================= BUTTON ================= */
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+    border:none;
+    border-radius:14px;
+    background:
+        linear-gradient(135deg,#00ffff,#1a73e8);
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+    color:#000;
+    box-shadow:0 5px 15px rgba(0,255,255,.22);
+    transition:transform .2s ease,box-shadow .2s ease;
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+button:disabled{
+    background:#333;
+    color:#777;
+    cursor:not-allowed;
+    box-shadow:none;
+}
+
+/* ================= CLOSE BUTTON ================= */
+
+.close-envelope{
+    display:block;
+    width:auto;
+    margin:10px auto 0;
+    padding:7px 18px;
+    background:#1a1f2b;
+    color:#00ffff;
+    border:1px solid #00ffff;
+    border-radius:20px;
+    font-size:11px;
+    box-shadow:none;
+}
+
+.close-envelope:hover{
+    background:#222b3a;
+}
+
+/* ================= MODAL ================= */
+
+.custom-modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.82);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;
+    padding:15px;
+}
+
+.custom-modal-box{
+    background:#161b22;
+    width:100%;
+    max-width:320px;
+    border-radius:16px;
+    border:2px solid #00ffff;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 0 25px rgba(0,255,255,.3);
+}
+
+.custom-modal-text{
+    color:#fff;
+    font-size:14px;
+    margin-bottom:20px;
+    line-height:1.4;
+}
+
+.custom-modal-btn{
+    background:linear-gradient(135deg,#00ffff,#0048ff);
+    color:#000;
+    border:none;
+    padding:8px 25px;
+    border-radius:10px;
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+    width:auto;
+    margin-top:0;
+    box-shadow:none;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:360px){
+
+    .envelope-plan{
+        height:235px;
+    }
+
+    .envelope-plan.open{
+        height:380px;
+    }
+
+    .package{
+        left:4px;
+        right:4px;
+        padding:12px;
+    }
+
+    .plan-grid{
+        gap:7px;
+    }
+
+    .plan-item{
+        padding:8px;
+    }
+
+    .plan-value{
+        font-size:13px;
+    }
 }
 </style>
 </head>
+
 <body>
 
+<!-- ================= HEADER ================= -->
+
 <div class="header">
-<div class="unique-logo">
-    <div class="unique-icon"><div class="eh-symbol">E↗H</div></div>
-    <div class="unique-text">
-        <h1>Earn<span>Hub</span></h1>
-        <p>SMART MONEY NETWORK</p>
+
+    <div class="unique-logo">
+
+        <div class="unique-icon">
+            <div class="eh-symbol">E↗H</div>
+        </div>
+
+        <div class="unique-text">
+            <h1>Earn<span>Hub</span></h1>
+            <p>SMART MONEY NETWORK</p>
+        </div>
+
     </div>
+
 </div>
-</div>
+
 
 <div class="container">
-<a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
-<div class="title">Investment Plans</div>
 
-<!-- Plan 01 -->
-<div class="package" id="box-Plan 01">
-    <h2>Plan 01</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 220</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 36.67</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 1,100</div></div>
+<a href="dashboard.html" class="back-btn">
+← Back to Dashboard
+</a>
+
+<div class="title">
+Investment Plans
+</div>
+
+
+<!-- ==================================================
+     PLAN 01
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 01">
+
+    <div class="package" id="box-Plan 01">
+
+        <h2>Plan 01</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 220</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 36.67</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 1,100</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 01"
+        onclick="buyPlan('Plan 01', 220, 36.67); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 01'); event.stopPropagation();">
+        Close
+        </button>
+
     </div>
-    <button id="btn-Plan 01" onclick="buyPlan('Plan 01', 220, 36.67)">Invest Now</button>
-</div>
 
-<!-- Plan 02 -->
-<div class="package" id="box-Plan 02">
-    <h2>Plan 02</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 450</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 75.00</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 2,250</div></div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 01')">
+
+        <div class="envelope-flap"></div>
+
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">
+            EH
+        </div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 01</div>
+        </div>
+
+        <div class="tap-text">
+            TAP TO OPEN
+        </div>
+
     </div>
-    <button id="btn-Plan 02" onclick="buyPlan('Plan 02', 450, 75.00)">Invest Now</button>
+
 </div>
 
-<!-- Plan 03 -->
-<div class="package" id="box-Plan 03">
-    <h2>Plan 03</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 850</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 141.67</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 4,250</div></div>
+
+<!-- ==================================================
+     PLAN 02
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 02">
+
+    <div class="package" id="box-Plan 02">
+
+        <h2>Plan 02</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 450</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 75.00</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 2,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 02"
+        onclick="buyPlan('Plan 02', 450, 75.00); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 02'); event.stopPropagation();">
+        Close
+        </button>
+
     </div>
-    <button id="btn-Plan 03" onclick="buyPlan('Plan 03', 850, 141.67)">Invest Now</button>
-</div>
 
-<!-- Plan 04 -->
-<div class="package" id="box-Plan 04">
-    <h2>Plan 04</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 1,650</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 275.00</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 8,250</div></div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 02')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 02</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
     </div>
-    <button id="btn-Plan 04" onclick="buyPlan('Plan 04', 1650, 275.00)">Invest Now</button>
+
 </div>
 
-<!-- Plan 05 -->
-<div class="package" id="box-Plan 05">
-    <h2>Plan 05</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 3,250</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 541.67</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 16,250</div></div>
+
+<!-- ==================================================
+     PLAN 03
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 03">
+
+    <div class="package" id="box-Plan 03">
+
+        <h2>Plan 03</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 850</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 141.67</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 4,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 03"
+        onclick="buyPlan('Plan 03', 850, 141.67); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 03'); event.stopPropagation();">
+        Close
+        </button>
+
     </div>
-    <button id="btn-Plan 05" onclick="buyPlan('Plan 05', 3250, 541.67)">Invest Now</button>
-</div>
 
-<!-- Plan 06 -->
-<div class="package" id="box-Plan 06">
-    <h2>Plan 06</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 6,450</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 1,075.00</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 32,250</div></div>
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 03')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 03</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
     </div>
-    <button id="btn-Plan 06" onclick="buyPlan('Plan 06', 6450, 1075.00)">Invest Now</button>
+
 </div>
 
-<!-- Plan 07 -->
-<div class="package" id="box-Plan 07">
-    <h2>Plan 07</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 12,850</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 2,141.67</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 64,250</div></div>
+
+<!-- ==================================================
+     PLAN 04
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 04">
+
+    <div class="package" id="box-Plan 04">
+
+        <h2>Plan 04</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 1,650</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 275.00</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 8,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 04"
+        onclick="buyPlan('Plan 04', 1650, 275.00); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 04'); event.stopPropagation();">
+        Close
+        </button>
+
     </div>
-    <button id="btn-Plan 07" onclick="buyPlan('Plan 07', 12850, 2141.67)">Invest Now</button>
-</div>
 
-<!-- Plan 08 -->
-<div class="package" id="box-Plan 08">
-    <h2>Plan 08</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 25,650</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 4,275.00</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 128,250</div></div>
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 04')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 04</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
     </div>
-    <button id="btn-Plan 08" onclick="buyPlan('Plan 08', 25650, 4275.00)">Invest Now</button>
+
 </div>
 
-<!-- Plan 09 -->
-<div class="package" id="box-Plan 09">
-    <h2>Plan 09</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 51,250</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 8,541.67</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 256,250</div></div>
+
+<!-- ==================================================
+     PLAN 05
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 05">
+
+    <div class="package" id="box-Plan 05">
+
+        <h2>Plan 05</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 3,250</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 541.67</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 16,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 05"
+        onclick="buyPlan('Plan 05', 3250, 541.67); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 05'); event.stopPropagation();">
+        Close
+        </button>
+
     </div>
-    <button id="btn-Plan 09" onclick="buyPlan('Plan 09', 51250, 8541.67)">Invest Now</button>
-</div>
 
-<!-- Plan 10 -->
-<div class="package" id="box-Plan 10">
-    <h2>Plan 10</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 102,450</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 17,075.00</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 512,250</div></div>
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 05')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 05</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
     </div>
-    <button id="btn-Plan 10" onclick="buyPlan('Plan 10', 102450, 17075.00)">Invest Now</button>
+
 </div>
 
-<!-- Plan 11 -->
-<div class="package" id="box-Plan 11">
-    <h2>Plan 11</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 204,850</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 34,141.67</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 1,024,250</div></div>
+
+<!-- ==================================================
+     PLAN 06
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 06">
+
+    <div class="package" id="box-Plan 06">
+
+        <h2>Plan 06</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 6,450</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 1,075.00</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 32,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 06"
+        onclick="buyPlan('Plan 06', 6450, 1075.00); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 06'); event.stopPropagation();">
+        Close
+        </button>
+
     </div>
-    <button id="btn-Plan 11" onclick="buyPlan('Plan 11', 204850, 34141.67)">Invest Now</button>
-</div>
 
-<!-- Plan 12 -->
-<div class="package" id="box-Plan 12">
-    <h2>Plan 12</h2>
-    <div class="plan-grid">
-        <div class="plan-item"><div class="plan-label">Investment</div><div class="plan-value">Rs. 409,650</div></div>
-        <div class="plan-item"><div class="plan-label">Daily Earn</div><div class="plan-value">Rs. 68,275.00</div></div>
-        <div class="plan-item"><div class="plan-label">Duration</div><div class="plan-value">30 Days</div></div>
-        <div class="plan-item"><div class="plan-label">Total Earn</div><div class="plan-value return-value">Rs. 2,048,250</div></div>
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 06')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 06</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
     </div>
-    <button id="btn-Plan 12" onclick="buyPlan('Plan 12', 409650, 68275.00)">Invest Now</button>
-</div>
 
 </div>
 
-<!-- کسٹم الرٹ ماڈل HTML -->
+
+<!-- ==================================================
+     PLAN 07
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 07">
+
+    <div class="package" id="box-Plan 07">
+
+        <h2>Plan 07</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 12,850</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 2,141.67</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 64,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 07"
+        onclick="buyPlan('Plan 07', 12850, 2141.67); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 07'); event.stopPropagation();">
+        Close
+        </button>
+
+    </div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 07')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 07</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PLAN 08
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 08">
+
+    <div class="package" id="box-Plan 08">
+
+        <h2>Plan 08</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 25,650</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 4,275.00</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 128,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 08"
+        onclick="buyPlan('Plan 08', 25650, 4275.00); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 08'); event.stopPropagation();">
+        Close
+        </button>
+
+    </div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 08')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 08</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PLAN 09
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 09">
+
+    <div class="package" id="box-Plan 09">
+
+        <h2>Plan 09</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 51,250</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 8,541.67</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 256,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 09"
+        onclick="buyPlan('Plan 09', 51250, 8541.67); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 09'); event.stopPropagation();">
+        Close
+        </button>
+
+    </div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 09')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 09</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PLAN 10
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 10">
+
+    <div class="package" id="box-Plan 10">
+
+        <h2>Plan 10</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 102,450</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 17,075.00</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 512,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 10"
+        onclick="buyPlan('Plan 10', 102450, 17075.00); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 10'); event.stopPropagation();">
+        Close
+        </button>
+
+    </div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 10')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 10</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PLAN 11
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 11">
+
+    <div class="package" id="box-Plan 11">
+
+        <h2>Plan 11</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 204,850</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 34,141.67</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 1,024,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 11"
+        onclick="buyPlan('Plan 11', 204850, 34141.67); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 11'); event.stopPropagation();">
+        Close
+        </button>
+
+    </div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 11')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 11</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PLAN 12
+================================================== -->
+
+<div class="envelope-plan" id="envelope-Plan 12">
+
+    <div class="package" id="box-Plan 12">
+
+        <h2>Plan 12</h2>
+
+        <div class="plan-grid">
+
+            <div class="plan-item">
+                <div class="plan-label">Investment</div>
+                <div class="plan-value">Rs. 409,650</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Daily Earn</div>
+                <div class="plan-value">Rs. 68,275.00</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Duration</div>
+                <div class="plan-value">30 Days</div>
+            </div>
+
+            <div class="plan-item">
+                <div class="plan-label">Total Earn</div>
+                <div class="plan-value return-value">Rs. 2,048,250</div>
+            </div>
+
+        </div>
+
+        <button id="btn-Plan 12"
+        onclick="buyPlan('Plan 12', 409650, 68275.00); event.stopPropagation();">
+        Invest Now
+        </button>
+
+        <button class="close-envelope"
+        onclick="closeEnvelope('Plan 12'); event.stopPropagation();">
+        Close
+        </button>
+
+    </div>
+
+    <div class="envelope"
+    onclick="toggleEnvelope('Plan 12')">
+
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+
+        <div class="envelope-seal">EH</div>
+
+        <div class="envelope-title">
+            <div class="small">Investment Package</div>
+            <div class="plan-number">Plan 12</div>
+        </div>
+
+        <div class="tap-text">TAP TO OPEN</div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- ================= CUSTOM ALERT ================= -->
+
 <div class="custom-modal" id="customAlertModal">
+
     <div class="custom-modal-box">
-        <div class="custom-modal-text" id="customAlertMessage">Alert Message Here</div>
-        <button class="custom-modal-btn" onclick="closeCustomAlert()">OK</button>
+
+        <div class="custom-modal-text"
+        id="customAlertMessage">
+        Alert Message Here
+        </div>
+
+        <button class="custom-modal-btn"
+        onclick="closeCustomAlert()">
+        OK
+        </button>
+
     </div>
+
 </div>
+
+
+<script>
+
+/* ==================================================
+   ENVELOPE DESIGN ONLY
+   Firebase working کو نہیں چھیڑا گیا
+================================================== */
+
+function toggleEnvelope(planName){
+
+    const current = document.getElementById("envelope-" + planName);
+
+    if(!current) return;
+
+    const isOpen = current.classList.contains("open");
+
+    /* دوسرے envelopes بند */
+
+    document.querySelectorAll(".envelope-plan.open").forEach(function(item){
+
+        if(item !== current){
+            item.classList.remove("open");
+        }
+
+    });
+
+    /* موجودہ envelope toggle */
+
+    if(isOpen){
+        current.classList.remove("open");
+    }else{
+        current.classList.add("open");
+
+        setTimeout(function(){
+
+            current.scrollIntoView({
+                behavior:"smooth",
+                block:"center"
+            });
+
+        },150);
+    }
+}
+
+
+function closeEnvelope(planName){
+
+    const current = document.getElementById("envelope-" + planName);
+
+    if(current){
+        current.classList.remove("open");
+    }
+
+}
+
+</script>
+
+
+<!-- ==================================================
+     YOUR ORIGINAL FIREBASE WORKING
+     BELOW THIS LINE
+================================================== -->
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+    getAuth,
+    onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyBsXMyLONHGs0R7wzAz5MI7ozw0SRBYEvI",
+
     authDomain: "earnhub-55c59.firebaseapp.com",
+
     projectId: "earnhub-55c59",
+
     storageBucket: "earnhub-55c59.firebasestorage.app",
+
     messagingSenderId: "636270810711",
+
     appId: "1:636270810711:web:da2bb0625524bcddc27512"
+
 };
 
+
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
+
 const auth = getAuth(app);
+
 
 let pendingRedirectUrl = null;
 
-// کسٹم الرٹ فنکشنز
-window.showCustomAlert = function(msg, redirectTo = null) {
-    document.getElementById("customAlertMessage").innerText = msg;
-    pendingRedirectUrl = redirectTo;
-    document.getElementById("customAlertModal").style.display = "flex";
-}
 
-window.closeCustomAlert = function() {
+/* ==================================================
+   ORIGINAL CUSTOM ALERT
+================================================== */
+
+window.showCustomAlert = function(msg, redirectTo = null){
+
+    document.getElementById("customAlertMessage").innerText = msg;
+
+    pendingRedirectUrl = redirectTo;
+
+    document.getElementById("customAlertModal").style.display = "flex";
+
+};
+
+
+window.closeCustomAlert = function(){
+
     document.getElementById("customAlertModal").style.display = "none";
-    if (pendingRedirectUrl) {
+
+    if(pendingRedirectUrl){
+
         let url = pendingRedirectUrl;
+
         pendingRedirectUrl = null;
+
         window.location.href = url;
+
     }
-}
+
+};
+
+
+/* ==================================================
+   ORIGINAL AUTH CHECK
+================================================== */
 
 onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        try {
-            let userDocRef = doc(db, "users", user.uid);
-            let userDocSnap = await getDoc(userDocRef);
-            if (userDocSnap.exists()) {
-                let data = userDocSnap.data();
-                let activePlans = data.activePackages || [];
-                
+
+    if(user){
+
+        try{
+
+            let userDocRef =
+                doc(db, "users", user.uid);
+
+            let userDocSnap =
+                await getDoc(userDocRef);
+
+
+            if(userDocSnap.exists()){
+
+                let data =
+                    userDocSnap.data();
+
+                let activePlans =
+                    data.activePackages || [];
+
+
                 let now = new Date();
-                let todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+                let todayMidnight =
+                    new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        now.getDate()
+                    ).getTime();
+
 
                 activePlans.forEach(plan => {
-                    let startMidnight = new Date(new Date(plan.startDate).getFullYear(), new Date(plan.startDate).getMonth(), new Date(plan.startDate).getDate()).getTime();
-                    let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
 
-                    if (daysPassed <= 30) {
-                        let btn = document.getElementById("btn-" + plan.name);
-                        if (btn) {
+                    let startMidnight =
+                        new Date(
+                            new Date(plan.startDate).getFullYear(),
+                            new Date(plan.startDate).getMonth(),
+                            new Date(plan.startDate).getDate()
+                        ).getTime();
+
+
+                    let daysPassed =
+                        Math.floor(
+                            (todayMidnight - startMidnight) /
+                            (1000 * 60 * 60 * 24)
+                        ) + 1;
+
+
+                    if(daysPassed <= 30){
+
+                        let btn =
+                            document.getElementById(
+                                "btn-" + plan.name
+                            );
+
+
+                        if(btn){
+
                             btn.disabled = true;
-                            btn.innerText = "Already Active / Running";
+
+                            btn.innerText =
+                                "Already Active / Running";
+
                         }
+
                     }
+
                 });
+
             }
-        } catch(e) {
-            console.error("Error loading active plans from Firebase:", e);
+
+        }catch(e){
+
+            console.error(
+                "Error loading active plans from Firebase:",
+                e
+            );
+
         }
+
     }
+
 });
 
-window.buyPlan = async function(planName, price, dailyEarn) {
+
+/* ==================================================
+   ORIGINAL BUY PLAN
+================================================== */
+
+window.buyPlan = async function(
+    planName,
+    price,
+    dailyEarn
+){
+
     let user = auth.currentUser;
-    if (!user) {
-        showCustomAlert("Pehle Login karein!", "login.html");
+
+
+    if(!user){
+
+        showCustomAlert(
+            "Pehle Login karein!",
+            "login.html"
+        );
+
         return;
+
     }
 
-    let btn = document.getElementById("btn-" + planName);
-    if(btn) {
+
+    let btn =
+        document.getElementById(
+            "btn-" + planName
+        );
+
+
+    if(btn){
+
         btn.disabled = true;
-        btn.innerText = "Processing...";
+
+        btn.innerText =
+            "Processing...";
+
     }
 
-    try {
-        let userDocRef = doc(db, "users", user.uid);
-        let userDocSnap = await getDoc(userDocRef);
-        
-        if (!userDocSnap.exists()) {
-            showCustomAlert("User data nahi mila!");
-            if(btn) {
+
+    try{
+
+        let userDocRef =
+            doc(db, "users", user.uid);
+
+
+        let userDocSnap =
+            await getDoc(userDocRef);
+
+
+        if(!userDocSnap.exists()){
+
+            showCustomAlert(
+                "User data nahi mila!"
+            );
+
+
+            if(btn){
+
                 btn.disabled = false;
-                btn.innerText = "Invest Now";
+
+                btn.innerText =
+                    "Invest Now";
+
             }
+
             return;
+
         }
 
-        let userData = userDocSnap.data();
-        let currentBalance = parseFloat(userData.mainBalance) || 0;
-        let activePlans = userData.activePackages || [];
-        let referrerUid = userData.referralUid || "";
+
+        let userData =
+            userDocSnap.data();
+
+
+        let currentBalance =
+            parseFloat(
+                userData.mainBalance
+            ) || 0;
+
+
+        let activePlans =
+            userData.activePackages || [];
+
+
+        let referrerUid =
+            userData.referralUid || "";
+
 
         let now = new Date();
-        let todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
-        let isAlreadyActive = activePlans.some(p => {
-            let startMidnight = new Date(new Date(p.startDate).getFullYear(), new Date(p.startDate).getMonth(), new Date(p.startDate).getDate()).getTime();
-            let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
-            return p.name === planName && daysPassed <= 30;
-        });
 
-        if (isAlreadyActive) {
-            showCustomAlert("Yeh plan pehle سے active hai! Jab tak yeh 30 din poore nahi karta aap dobara nahi khareed sakte.");
-            if(btn) {
+        let todayMidnight =
+            new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate()
+            ).getTime();
+
+
+        let isAlreadyActive =
+            activePlans.some(p => {
+
+                let startMidnight =
+                    new Date(
+                        new Date(p.startDate).getFullYear(),
+                        new Date(p.startDate).getMonth(),
+                        new Date(p.startDate).getDate()
+                    ).getTime();
+
+
+                let daysPassed =
+                    Math.floor(
+                        (todayMidnight - startMidnight) /
+                        (1000 * 60 * 60 * 24)
+                    ) + 1;
+
+
+                return (
+                    p.name === planName &&
+                    daysPassed <= 30
+                );
+
+            });
+
+
+        if(isAlreadyActive){
+
+            showCustomAlert(
+                "Yeh plan pehle سے active hai! Jab tak yeh 30 din poore nahi karta aap dobara nahi khareed sakte."
+            );
+
+
+            if(btn){
+
                 btn.disabled = true;
-                btn.innerText = "Already Active / Running";
+
+                btn.innerText =
+                    "Already Active / Running";
+
             }
+
             return;
+
         }
 
-        if (currentBalance >= price) {
-            let newBalance = currentBalance - price;
+
+        if(currentBalance >= price){
+
+            let newBalance =
+                currentBalance - price;
+
 
             let newActivePlan = {
+
                 name: planName,
+
                 price: price,
+
                 dailyEarn: dailyEarn,
-                startDate: new Date().toISOString(),
+
+                startDate:
+                    new Date().toISOString(),
+
                 totalDays: 30,
+
                 claimedDays: []
+
             };
 
-            activePlans = activePlans.filter(p => {
-                let startMidnight = new Date(new Date(p.startDate).getFullYear(), new Date(p.startDate).getMonth(), new Date(p.startDate).getDate()).getTime();
-                let daysPassed = Math.floor((todayMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
-                return p.name !== planName || daysPassed <= 30;
-            });
 
-            activePlans.push(newActivePlan);
+            activePlans =
+                activePlans.filter(p => {
 
-            // یہاں آپ کی پرانی ورکنگ کے ساتھ صرف 'hasPubgPackage: true' کا اضافہ کر دیا گیا ہے
-            await updateDoc(userDocRef, {
-                mainBalance: newBalance,
-                activePackages: activePlans,
-                hasPubgPackage: true
-            });
+                    let startMidnight =
+                        new Date(
+                            new Date(p.startDate).getFullYear(),
+                            new Date(p.startDate).getMonth(),
+                            new Date(p.startDate).getDate()
+                        ).getTime();
 
-            if (referrerUid) {
-                let uplineDocRef = doc(db, "users", referrerUid);
-                let uplineSnap = await getDoc(uplineDocRef);
 
-                if (uplineSnap.exists()) {
-                    let uplineData = uplineSnap.data();
-                    let currentWithdrawCount = Number(uplineData.withdrawCount || 0);
+                    let daysPassed =
+                        Math.floor(
+                            (todayMidnight - startMidnight) /
+                            (1000 * 60 * 60 * 24)
+                        ) + 1;
 
-                    await updateDoc(uplineDocRef, {
-                        withdrawCount: currentWithdrawCount + 1
-                    });
+
+                    return (
+                        p.name !== planName ||
+                        daysPassed <= 30
+                    );
+
+                });
+
+
+            activePlans.push(
+                newActivePlan
+            );
+
+
+            await updateDoc(
+                userDocRef,
+                {
+
+                    mainBalance:
+                        newBalance,
+
+                    activePackages:
+                        activePlans,
+
+                    hasPubgPackage:
+                        true
+
                 }
+            );
+
+
+            if(referrerUid){
+
+                let uplineDocRef =
+                    doc(
+                        db,
+                        "users",
+                        referrerUid
+                    );
+
+
+                let uplineSnap =
+                    await getDoc(
+                        uplineDocRef
+                    );
+
+
+                if(uplineSnap.exists()){
+
+                    let uplineData =
+                        uplineSnap.data();
+
+
+                    let currentWithdrawCount =
+                        Number(
+                            uplineData.withdrawCount || 0
+                        );
+
+
+                    await updateDoc(
+                        uplineDocRef,
+                        {
+
+                            withdrawCount:
+                                currentWithdrawCount + 1
+
+                        }
+                    );
+
+                }
+
             }
 
-            showCustomAlert("✅ Your Plan has been purchased successfully from Firebase!", "dashboard.html");
 
-        } else {
-            showCustomAlert("Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.", "deposit.html");
-            if(btn) {
+            showCustomAlert(
+                "✅ Your Plan has been purchased successfully from Firebase!",
+                "dashboard.html"
+            );
+
+
+        }else{
+
+            showCustomAlert(
+                "Aapke main balance mein na-kaafi rakam hai! Pehle deposit karein.",
+                "deposit.html"
+            );
+
+
+            if(btn){
+
                 btn.disabled = false;
-                btn.innerText = "Invest Now";
+
+                btn.innerText =
+                    "Invest Now";
+
             }
+
         }
 
-    } catch (error) {
-        console.error("Purchase error:", error);
-        showCustomAlert("Kuch masla ho gaya hai, dobara koshish karein!");
-        if(btn) {
+
+    }catch(error){
+
+        console.error(
+            "Purchase error:",
+            error
+        );
+
+
+        showCustomAlert(
+            "Kuch masla ho gaya hai, dobara koshish karein!"
+        );
+
+
+        if(btn){
+
             btn.disabled = false;
-            btn.innerText = "Invest Now";
+
+            btn.innerText =
+                "Invest Now";
+
         }
+
     }
+
 }
+
 </script>
+
 </body>
 </html>
