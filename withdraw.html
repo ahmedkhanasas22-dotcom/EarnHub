@@ -323,7 +323,7 @@ button.submit-btn:disabled{ background: #555; color: #aaa; cursor: not-allowed; 
         <div class="selected-method-title" id="displayMethodName">JazzCash</div>
         
         <div class="form-group">
-            <label>Withdrawal Amount (Min 200 - Max 50,000)</label>
+            <label>Withdrawal Amount (Min <span class="currency-price" data-base-usd="200">Rs. 200</span> - Max <span class="currency-price" data-base-usd="50000">Rs. 50,000</span>)</label>
             <input id="amount" class="form-control" type="number" placeholder="Enter amount">
         </div>
         <div class="form-group">
@@ -349,6 +349,42 @@ button.submit-btn:disabled{ background: #555; color: #aaa; cursor: not-allowed; 
 </div>
 
 <script>
+/* ==================================================
+   CURRENCY CONVERSION LOGIC (GLOBAL SETTING)
+================================================== */
+const countriesCurrencies = {
+    PKR: { symbol: "Rs. ", rate: 1, decimals: 0 },
+    USD: { symbol: "$", rate: 0.0036, decimals: 2 },
+    INR: { symbol: "₹", rate: 0.30, decimals: 0 },
+    EUR: { symbol: "€", rate: 0.0033, decimals: 2 },
+    GBP: { symbol: "£", rate: 0.0028, decimals: 2 },
+    AED: { symbol: "AED ", rate: 0.013, decimals: 2 },
+    SAR: { symbol: "SAR ", rate: 0.013, decimals: 2 }
+};
+
+function applyGlobalCurrencyToElements() {
+    const selectedCurrKey = localStorage.getItem('selectedCurrency') || 'PKR';
+    const currObj = countriesCurrencies[selectedCurrKey] || countriesCurrencies['PKR'];
+    
+    const priceElements = document.querySelectorAll('.currency-price');
+    priceElements.forEach(el => {
+        const baseVal = parseFloat(el.getAttribute('data-base-usd'));
+        if (!isNaN(baseVal)) {
+            const convertedVal = baseVal * currObj.rate;
+            let formattedNum = convertedVal.toLocaleString('en-US', {
+                minimumFractionDigits: currObj.decimals,
+                maximumFractionDigits: currObj.decimals
+            });
+            el.innerText = currObj.symbol + formattedNum;
+        }
+    });
+}
+
+// पेज लोड होते ہی کرنسی اپلائی کریں
+document.addEventListener("DOMContentLoaded", () => {
+    applyGlobalCurrencyToElements();
+});
+
 function showCustomAlert(message, callback) {
     document.getElementById("customAlertText").innerText = message;
     document.getElementById("customAlertOverlay").style.display = "flex";
