@@ -87,6 +87,37 @@ body{
 </div>
 
 <script>
+/* ==================================================
+   CURRENCY CONVERSION LOGIC (GLOBAL SETTING)
+================================================== */
+const countriesCurrencies = {
+    PKR: { symbol: "Rs. ", rate: 1, decimals: 0 },
+    USD: { symbol: "$", rate: 0.0036, decimals: 2 },
+    INR: { symbol: "₹", rate: 0.30, decimals: 0 },
+    EUR: { symbol: "€", rate: 0.0033, decimals: 2 },
+    GBP: { symbol: "£", rate: 0.0028, decimals: 2 },
+    AED: { symbol: "AED ", rate: 0.013, decimals: 2 },
+    SAR: { symbol: "SAR ", rate: 0.013, decimals: 2 }
+};
+
+function applyGlobalCurrencyToElements() {
+    const selectedCurrKey = localStorage.getItem('selectedCurrency') || 'PKR';
+    const currObj = countriesCurrencies[selectedCurrKey] || countriesCurrencies['PKR'];
+    
+    const priceElements = document.querySelectorAll('.currency-price');
+    priceElements.forEach(el => {
+        const baseVal = parseFloat(el.getAttribute('data-base-usd'));
+        if (!isNaN(baseVal)) {
+            const convertedVal = baseVal * currObj.rate;
+            let formattedNum = convertedVal.toLocaleString('en-US', {
+                minimumFractionDigits: currObj.decimals,
+                maximumFractionDigits: currObj.decimals
+            });
+            el.innerText = currObj.symbol + formattedNum;
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     loadWithdrawHistory();
 });
@@ -120,7 +151,7 @@ function loadWithdrawHistory() {
                     </div>
                     <div style="text-align: right;">
                         <span class="label">Amount:</span>
-                        <div class="amount-val">Rs. ${item.amount}</div>
+                        <div class="amount-val currency-price" data-base-usd="${item.amount}">Rs. ${item.amount}</div>
                     </div>
                 </div>
                 <div class="history-row">
@@ -131,7 +162,7 @@ function loadWithdrawHistory() {
                     <div style="text-align: right;">
                         <span class="label">Account No:</span>
                         <div class="value">${item.number}</div>
-         .           </div>
+                    </div>
                 </div>
                 <div class="history-row" style="border-top: 1px solid #21262d; padding-top: 8px; margin-top: 4px;">
                     <div>
@@ -146,6 +177,9 @@ function loadWithdrawHistory() {
     });
 
     container.innerHTML = html;
+
+    // रेंडर होने के बाद करेंसी अप्लाई करें
+    applyGlobalCurrencyToElements();
 }
 </script>
 
