@@ -124,8 +124,8 @@ width: 100%; background: linear-gradient(135deg, #00ffff, #1a73e8); color: #000;
         </div>
 
         <div class="form-group">
-            <label>Enter Amount (PKR)</label>
-            <input type="number" id="depositAmount" class="form-control">
+            <label>Enter Amount (<span class="currency-label-text">PKR</span>)</label>
+            <input type="number" id="depositAmount" class="form-control" placeholder="Enter amount">
         </div>
 
         <div class="form-group">
@@ -144,6 +144,35 @@ width: 100%; background: linear-gradient(135deg, #00ffff, #1a73e8); color: #000;
         <button class="submit-btn" id="submitBtn" onclick="submitDeposit()">Confirm & Submit</button>
     </div>
 </div>
+
+<script>
+/* ==================================================
+   CURRENCY CONVERSION LOGIC (GLOBAL SETTING)
+================================================== */
+const countriesCurrencies = {
+    PKR: { symbol: "Rs. ", rate: 1, decimals: 0 },
+    USD: { symbol: "$", rate: 0.0036, decimals: 2 },
+    INR: { symbol: "₹", rate: 0.30, decimals: 0 },
+    EUR: { symbol: "€", rate: 0.0033, decimals: 2 },
+    GBP: { symbol: "£", rate: 0.0028, decimals: 2 },
+    AED: { symbol: "AED ", rate: 0.013, decimals: 2 },
+    SAR: { symbol: "SAR ", rate: 0.013, decimals: 2 }
+};
+
+function applyGlobalCurrencyToElements() {
+    const selectedCurrKey = localStorage.getItem('selectedCurrency') || 'PKR';
+    
+    // करेंसी के नाम को लेबल में अपडेट करें (जैसे PKR, USD, EUR आदि)
+    const currencyLabelElements = document.querySelectorAll('.currency-label-text');
+    currencyLabelElements.forEach(el => {
+        el.innerText = selectedCurrKey;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    applyGlobalCurrencyToElements();
+});
+</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -192,7 +221,6 @@ window.selectMethod = function(method, event) {
 window.copyText = function(elementId) {
     let text = document.getElementById(elementId).innerText;
     navigator.clipboard.writeText(text);
-    // براؤزر کے ڈیفالٹ الرٹ کو ہٹا کر ڈسکرٹ کامیابی کا میسج باکس شو کیا گیا ہے تاکہ نام شو نہ ہو
     showAlert("Copied successfully!", "success");
 }
 
