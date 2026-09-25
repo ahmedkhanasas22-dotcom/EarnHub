@@ -253,6 +253,45 @@
         </div>
     </div>
 
+<script>
+/* ==================================================
+   CURRENCY CONVERSION LOGIC (GLOBAL SETTING)
+================================================== */
+const countriesCurrencies = {
+    PKR: { symbol: "Rs. ", rate: 1, decimals: 0 },
+    USD: { symbol: "$", rate: 0.0036, decimals: 2 },
+    INR: { symbol: "₹", rate: 0.30, decimals: 0 },
+    EUR: { symbol: "€", rate: 0.0033, decimals: 2 },
+    GBP: { symbol: "£", rate: 0.0028, decimals: 2 },
+    AED: { symbol: "AED ", rate: 0.013, decimals: 2 },
+    SAR: { symbol: "SAR ", rate: 0.013, decimals: 2 }
+};
+
+function applyGlobalCurrencyToElements() {
+    const selectedCurrKey = localStorage.getItem('selectedCurrency') || 'PKR';
+    const currObj = countriesCurrencies[selectedCurrKey] || countriesCurrencies['PKR'];
+    
+    const priceElements = document.querySelectorAll('.currency-price');
+    priceElements.forEach(el => {
+        const baseVal = parseFloat(el.getAttribute('data-base-usd'));
+        if (!isNaN(baseVal)) {
+            const convertedVal = baseVal * currObj.rate;
+            let formattedNum = convertedVal.toLocaleString('en-US', {
+                minimumFractionDigits: currObj.decimals,
+                maximumFractionDigits: currObj.decimals
+            });
+            
+            // اگر ایلیمنٹ کے اندر کوئی اور ٹیکسٹ یا بٹن کا prefix ہے تو اسے مینٹین رکھیں
+            if (el.hasAttribute('data-claim-btn')) {
+                el.innerText = `Claim ${currObj.symbol}${formattedNum}`;
+            } else {
+                el.innerText = `${currObj.symbol}${formattedNum}`;
+            }
+        }
+    });
+}
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -275,7 +314,7 @@ let currentUserData = null;
 let currentUserId = null;
 let activeTimers = []; // پرانے ٹائمرز کلیئر کرنے کے لیے
 
-// کسٹم الرٹ شو کرنے کا فنکشن (جو براؤزر کے الرٹ کی جگہ لے گا)
+// کسٹم الرٹ شو کرنے کا فنکشن (जो براؤزر के الرٹ کی جگہ लेगा)
 window.showCustomAlert = function(msg) {
     document.getElementById("customAlertMessage").innerText = msg;
     document.getElementById("customAlertModal").style.display = "flex";
@@ -389,7 +428,7 @@ window.renderClaimBox = function() {
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
+                        <p class="currency-price" data-base-usd="${pkg.dailyEarn}">Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
                     <span class="status-collected">✔ Collected</span>
                 </div>
@@ -399,7 +438,7 @@ window.renderClaimBox = function() {
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
+                        <p class="currency-price" data-base-usd="${pkg.dailyEarn}">Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
                     <span class="status-expired">❌ Missed (Expired)</span>
                 </div>
@@ -409,9 +448,9 @@ window.renderClaimBox = function() {
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
+                        <p class="currency-price" data-base-usd="${pkg.dailyEarn}">Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
-                    <button class="btn-action" id="claim-btn-${pkgIndex}-${d}" onclick="claimDay(${pkgIndex}, ${d}, ${pkg.dailyEarn})">
+                    <button class="btn-action currency-price" data-base-usd="${pkg.dailyEarn}" data-claim-btn="true" id="claim-btn-${pkgIndex}-${d}" onclick="claimDay(${pkgIndex}, ${d}, ${pkg.dailyEarn})">
                         Claim Rs. ${pkg.dailyEarn.toFixed(2)}
                     </button>
                 </div>
@@ -421,7 +460,7 @@ window.renderClaimBox = function() {
                 <div class="day-card">
                     <div class="day-info">
                         <h4>Day ${d}</h4>
-                        <p>Rs. ${pkg.dailyEarn.toFixed(2)}</p>
+                        <p class="currency-price" data-base-usd="${pkg.dailyEarn}">Rs. ${pkg.dailyEarn.toFixed(2)}</p>
                     </div>
                     <span class="status-locked" id="timer-${pkgIndex}-${d}">Locked 🔒</span>
                 </div>
@@ -433,6 +472,11 @@ window.renderClaimBox = function() {
     });
 
     container.innerHTML = html;
+
+    // رینڈर ہونے کے بعد فوری طور پر گلوبल करेंसी اپلائی کریں
+    if (typeof applyGlobalCurrencyToElements === 'function') {
+        applyGlobalCurrencyToElements();
+    }
 
     // آنے والے بند دن (Lock) پر اگلی رات 12 بجے تک کا لائیو الٹی گنتی ٹائمر چلانے کا سسٹم
     currentUserData.activePackages.forEach((pkg, pkgIndex) => {
@@ -452,7 +496,7 @@ window.renderClaimBox = function() {
     });
 }
 
-// لائیو الٹی گنتی (Countdown) چلانے کا فنکشن جو رات کے 12 بجتے ہی پیج ریفریش کر دے گا
+// لائیو الٹی گنتی (Countdown) چلانے کا فنکشن جو رات کے 12 بجते ہی پیج ریفریش कर दे गा
 function startCountdown(targetTime, elementId) {
     function updateTimer() {
         let now = new Date().getTime();
@@ -464,7 +508,7 @@ function startCountdown(targetTime, elementId) {
         if (distance <= 0) {
             elem.innerHTML = "Opening...";
             setTimeout(() => {
-                location.reload(); // رات کے 12 بجتے ہی دن خود بخود کھل جائے گا
+                location.reload(); // رات के 12 بجते ہی دن خود بخود کھل جائے گا
             }, 1000);
             return;
         }
@@ -506,7 +550,7 @@ window.claimDay = async function(pkgIndex, currentDay, amount) {
             showCustomAlert("Yeh din pehle hi claim ho chuka hai!");
             if (btn) {
                 btn.disabled = false;
-                btn.innerText = `Claim Rs. ${amount.toFixed(2)}`;
+                applyGlobalCurrencyToElements(); // دوبارہ ری-اپلائی کریں تاکہ کرنسی ٹھیک رہے
             }
             return;
         }
@@ -533,7 +577,7 @@ window.claimDay = async function(pkgIndex, currentDay, amount) {
         showCustomAlert("Claim karne mein masla hua, dobara koshish karein!");
         if (btn) {
             btn.disabled = false;
-            btn.innerText = `Claim Rs. ${amount.toFixed(2)}`;
+            applyGlobalCurrencyToElements();
         }
     }
 }
