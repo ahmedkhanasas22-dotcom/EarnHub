@@ -135,7 +135,7 @@ color: #000;
 <div class="container">
 <div class="card">
 <div class="title">Referral Program</div>
-<p>Earn Rs. 50 when your referred member buys a package</p>
+<p>Earn <span class="currency-price" data-base-usd="50">Rs. 50</span> when your referred member buys a package</p>
 
 <div class="link" id="refLink">
 Loading link...
@@ -148,7 +148,7 @@ Copy Referral Link
 
 <div class="card">
 <h3>Referral Earnings</h3>
-<h1 id="refEarnings" style="color:#00ff99;">Rs. 0</h1>
+<h1 id="refEarnings" class="currency-price" style="color:#00ff99;" data-base-usd="0">Rs. 0</h1>
 </div>
 
 <!-- 10 Levels Section -->
@@ -170,6 +170,39 @@ Copy Referral Link
     </div>
 </div>
 
+<script>
+/* ==================================================
+   CURRENCY CONVERSION LOGIC (GLOBAL SETTING)
+================================================== */
+const countriesCurrencies = {
+    PKR: { symbol: "Rs. ", rate: 1, decimals: 0 },
+    USD: { symbol: "$", rate: 0.0036, decimals: 2 },
+    INR: { symbol: "₹", rate: 0.30, decimals: 0 },
+    EUR: { symbol: "€", rate: 0.0033, decimals: 2 },
+    GBP: { symbol: "£", rate: 0.0028, decimals: 2 },
+    AED: { symbol: "AED ", rate: 0.013, decimals: 2 },
+    SAR: { symbol: "SAR ", rate: 0.013, decimals: 2 }
+};
+
+function applyGlobalCurrencyToElements() {
+    const selectedCurrKey = localStorage.getItem('selectedCurrency') || 'PKR';
+    const currObj = countriesCurrencies[selectedCurrKey] || countriesCurrencies['PKR'];
+    
+    const priceElements = document.querySelectorAll('.currency-price');
+    priceElements.forEach(el => {
+        const baseVal = parseFloat(el.getAttribute('data-base-usd'));
+        if (!isNaN(baseVal)) {
+            const convertedVal = baseVal * currObj.rate;
+            let formattedNum = convertedVal.toLocaleString('en-US', {
+                minimumFractionDigits: currObj.decimals,
+                maximumFractionDigits: currObj.decimals
+            });
+            el.innerText = currObj.symbol + formattedNum;
+        }
+    });
+}
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -190,9 +223,9 @@ const db = getFirestore(app);
 
 let globalRefCode = "";
 
-// کسٹم الرٹ کو ہینڈل کرنے کے فنکشنز
 window.showCustomAlert = function(msg) {
-    document.getElementById("customAlertMessageinnerText") || (document.getElementById("customAlertMessage").innerText = msg);
+    let msgBox = document.getElementById("customAlertMessage");
+    if(msgBox) msgBox.innerText = msg;
     document.getElementById("customAlertModal").style.display = "flex";
 }
 
@@ -213,7 +246,10 @@ onAuthStateChanged(auth, async (user) => {
                 let level1Count = Number(data.level1Count || data.totalReferrals || 0);
                 let totalEarnings = level1Count * 50;
 
-                document.getElementById("refEarnings").innerText = "Rs. " + totalEarnings;
+                let earnElem = document.getElementById("refEarnings");
+                earnElem.setAttribute("data-base-usd", totalEarnings);
+                applyGlobalCurrencyToElements();
+
                 renderLevels(level1Count);
             }
         } catch (err) {
@@ -222,7 +258,12 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         globalRefCode = localStorage.getItem("myUid") || localStorage.getItem("myReferralCode") || "EarnHubUser";
         let localRefs = Number(localStorage.getItem("totalReferrals") || 0);
-        document.getElementById("refEarnings").innerText = "Rs. " + (localRefs * 50);
+        let totalEarnings = localRefs * 50;
+
+        let earnElem = document.getElementById("refEarnings");
+        earnElem.setAttribute("data-base-usd", totalEarnings);
+        applyGlobalCurrencyToElements();
+
         renderLevels(localRefs);
     }
 
